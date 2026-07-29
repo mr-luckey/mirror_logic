@@ -1,0 +1,28 @@
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mirror_logic/data/repositories/economy_repository.dart';
+import 'package:mirror_logic/data/repositories/level_repository.dart';
+import 'package:mirror_logic/data/repositories/save_repository.dart';
+import 'package:mirror_logic/infrastructure/storage/local_storage_service.dart';
+
+final Map<Type, Object> _services = {};
+
+T sl<T extends Object>() {
+  final service = _services[T];
+  if (service == null) {
+    throw StateError('Service $T not registered');
+  }
+  return service as T;
+}
+
+Future<void> configureDependencies() async {
+  final box = await Hive.openBox<dynamic>('mirror_logic');
+  final storage = LocalStorageService(box);
+  final saveRepository = SaveRepository(storage);
+  final economyRepository = EconomyRepository(saveRepository);
+  final levelRepository = LevelRepository();
+
+  _services[LocalStorageService] = storage;
+  _services[SaveRepository] = saveRepository;
+  _services[EconomyRepository] = economyRepository;
+  _services[LevelRepository] = levelRepository;
+}

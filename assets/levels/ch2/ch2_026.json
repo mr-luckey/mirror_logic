@@ -1,0 +1,101 @@
+{
+  "levelId": "ch2_026",
+  "chapterId": "ch2",
+  "schemaVersion": 1,
+  "levelIndex": 26,
+  "title": "House 26",
+  "roomBounds": {
+    "width": 1080,
+    "height": 1920
+  },
+  "lightSources": [
+    {
+      "id": "ls1",
+      "position": [
+        100.0,
+        520.0
+      ],
+      "direction": 0.0,
+      "locked": true
+    }
+  ],
+  "mirrors": [
+    {
+      "id": "m1",
+      "hingePosition": [
+        360.0,
+        520.0
+      ],
+      "length": 150.0,
+      "initialAngle": 20.0,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m2",
+      "hingePosition": [
+        760.0,
+        1180.0
+      ],
+      "length": 160.0,
+      "initialAngle": 90.0,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 15.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m3",
+      "hingePosition": [
+        200.0,
+        1500.0
+      ],
+      "length": 120.0,
+      "initialAngle": 60.0,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": true,
+      "type": "locked"
+    }
+  ],
+  "obstacles": [],
+  "targetCrystals": [
+    {
+      "id": "c1",
+      "position": [
+        271.93798159494116,
+        827.1087549395857
+      ],
+      "hitRadius": 52,
+      "groupId": "g1"
+    }
+  ],
+  "crystalGroups": [
+    {
+      "groupId": "g1",
+      "requiredCount": 1
+    }
+  ],
+  "doorPortals": [],
+  "intendedSolution": {
+    "mirrorAngles": {
+      "m1": 53.0,
+      "m2": 136.0
+    },
+    "toleranceDegrees": 5.0
+  },
+  "starThresholds": {
+    "threeStarMoveCount": 6,
+    "threeStarTimeSeconds": 71
+  },
+  "metadata": {
+    "designer": "generator",
+    "difficultyBand": "ch2",
+    "newConceptsIntroduced": []
+  }
+}

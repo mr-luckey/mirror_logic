@@ -1,0 +1,72 @@
+{
+  "levelId": "ch1_005",
+  "chapterId": "ch1",
+  "schemaVersion": 1,
+  "levelIndex": 5,
+  "title": "Lab 5",
+  "roomBounds": {
+    "width": 1080,
+    "height": 1920
+  },
+  "lightSources": [
+    {
+      "id": "ls1",
+      "position": [
+        235.0,
+        900.0
+      ],
+      "direction": 0.0,
+      "locked": true
+    }
+  ],
+  "mirrors": [
+    {
+      "id": "m1",
+      "hingePosition": [
+        540.0,
+        900.0
+      ],
+      "length": 160.0,
+      "initialAngle": 27.5,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    }
+  ],
+  "obstacles": [],
+  "targetCrystals": [
+    {
+      "id": "c1",
+      "position": [
+        431.2960010569411,
+        1305.6888470414087
+      ],
+      "hitRadius": 44,
+      "groupId": "g1"
+    }
+  ],
+  "crystalGroups": [
+    {
+      "groupId": "g1",
+      "requiredCount": 1
+    }
+  ],
+  "doorPortals": [],
+  "intendedSolution": {
+    "mirrorAngles": {
+      "m1": 52.5
+    },
+    "toleranceDegrees": 5.0
+  },
+  "starThresholds": {
+    "threeStarMoveCount": 2,
+    "threeStarTimeSeconds": 40
+  },
+  "metadata": {
+    "designer": "generator",
+    "difficultyBand": "ch1",
+    "newConceptsIntroduced": []
+  }
+}
