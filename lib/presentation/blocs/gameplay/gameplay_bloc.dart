@@ -361,6 +361,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     final lit = _win.isSatisfied(
       level: state.level!,
       litCrystalIds: state.beam.litCrystalIds,
+      segments: state.beam.segments,
     );
 
     var charge = state.chargeProgress;

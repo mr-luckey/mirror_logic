@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:equatable/equatable.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
 import 'package:mirror_logic/domain/beam/vec2.dart';
@@ -16,6 +18,22 @@ class LightSource extends Equatable {
   final Vec2 position;
   final double directionDegrees;
   final bool locked;
+
+  /// Beam nozzle origin, snapped to the room wall this source mounts on.
+  /// Keeps the lateral axis from [position]; pushes onto the wall behind the beam.
+  Vec2 mountedOrigin(Vec2 roomBounds, {double inset = 52}) {
+    final rad = directionDegrees * math.pi / 180.0;
+    final dx = math.cos(rad);
+    final dy = math.sin(rad);
+    final y = position.y.clamp(inset, roomBounds.y - inset);
+    final x = position.x.clamp(inset, roomBounds.x - inset);
+    if (dx.abs() >= dy.abs()) {
+      if (dx >= 0) return Vec2(inset, y); // left wall → fire right
+      return Vec2(roomBounds.x - inset, y); // right wall → fire left
+    }
+    if (dy >= 0) return Vec2(x, inset); // top wall → fire down
+    return Vec2(x, roomBounds.y - inset); // bottom wall → fire up
+  }
 
   factory LightSource.fromJson(Map<String, dynamic> json) {
     final pos = (json['position'] as List<dynamic>).cast<num>();
@@ -130,12 +148,17 @@ class TargetCrystalDef extends Equatable {
     required this.position,
     this.hitRadius = GameConstants.defaultHitRadius,
     this.groupId = 'g1',
+    this.relay = false,
+    this.label = '',
   });
 
   final String id;
   final Vec2 position;
   final double hitRadius;
   final String groupId;
+  /// Beam passes through without stopping (still marks lit).
+  final bool relay;
+  final String label;
 
   factory TargetCrystalDef.fromJson(Map<String, dynamic> json) {
     final pos = (json['position'] as List<dynamic>).cast<num>();
@@ -145,11 +168,39 @@ class TargetCrystalDef extends Equatable {
       hitRadius: (json['hitRadius'] as num?)?.toDouble() ??
           GameConstants.defaultHitRadius,
       groupId: json['groupId'] as String? ?? 'g1',
+      relay: json['relay'] as bool? ?? false,
+      label: json['label'] as String? ?? '',
     );
   }
 
   @override
-  List<Object?> get props => [id, position, hitRadius, groupId];
+  List<Object?> get props => [id, position, hitRadius, groupId, relay, label];
+}
+
+class LevelMetadata extends Equatable {
+  const LevelMetadata({
+    this.objective = '',
+    this.hints = const [],
+    this.deviceLabels = const {},
+  });
+
+  final String objective;
+  final List<String> hints;
+  final Map<String, String> deviceLabels;
+
+  factory LevelMetadata.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return const LevelMetadata();
+    final rawHints = json['hints'] as List<dynamic>? ?? [];
+    final rawLabels = json['deviceLabels'] as Map<String, dynamic>? ?? {};
+    return LevelMetadata(
+      objective: json['objective'] as String? ?? '',
+      hints: rawHints.map((e) => e as String).toList(),
+      deviceLabels: rawLabels.map((k, v) => MapEntry(k, v as String)),
+    );
+  }
+
+  @override
+  List<Object?> get props => [objective, hints, deviceLabels];
 }
 
 class CrystalGroupDef extends Equatable {
@@ -233,6 +284,8 @@ class LevelModel extends Equatable {
     this.schemaVersion = 1,
     this.levelIndex = 1,
     this.title = '',
+    this.requiredMirrorBounces,
+    this.metadata = const LevelMetadata(),
   });
 
   final String levelId;
@@ -248,6 +301,9 @@ class LevelModel extends Equatable {
   final StarThresholds starThresholds;
   final int levelIndex;
   final String title;
+  /// Win requires exactly this many mirror hits (null = no constraint).
+  final int? requiredMirrorBounces;
+  final LevelMetadata metadata;
 
   factory LevelModel.fromJson(Map<String, dynamic> json) {
     final bounds = json['roomBounds'] as Map<String, dynamic>;
@@ -289,6 +345,10 @@ class LevelModel extends Equatable {
           ) ??
           1,
       title: json['title'] as String? ?? '',
+      requiredMirrorBounces: json['requiredMirrorBounces'] as int?,
+      metadata: LevelMetadata.fromJson(
+        json['metadata'] as Map<String, dynamic>?,
+      ),
     );
   }
 
@@ -307,5 +367,7 @@ class LevelModel extends Equatable {
         starThresholds,
         levelIndex,
         title,
+        requiredMirrorBounces,
+        metadata,
       ];
 }

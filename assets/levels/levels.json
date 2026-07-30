@@ -1,0 +1,1807 @@
+{
+  "schemaVersion": 1,
+  "levels": [
+    {
+      "levelId": "ch1_001",
+      "chapterId": "ch1",
+      "schemaVersion": 1,
+      "levelIndex": 1,
+      "title": "First Bounce",
+      "roomBounds": {
+        "width": 1080,
+        "height": 1920
+      },
+      "lightSources": [
+        {
+          "id": "ls1",
+          "position": [
+            130,
+            960
+          ],
+          "direction": 0,
+          "locked": true
+        }
+      ],
+      "mirrors": [
+        {
+          "id": "m1",
+          "hingePosition": [
+            480,
+            960
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "w0",
+          "polygon": [
+            [
+              280,
+              836.0
+            ],
+            [
+              700,
+              836.0
+            ],
+            [
+              700,
+              884.0
+            ],
+            [
+              280,
+              884.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        }
+      ],
+      "targetCrystals": [
+        {
+          "id": "c1",
+          "position": [
+            480,
+            1560
+          ],
+          "hitRadius": 44,
+          "groupId": "g1"
+        }
+      ],
+      "crystalGroups": [
+        {
+          "groupId": "g1",
+          "requiredCount": 1
+        }
+      ],
+      "doorPortals": [],
+      "intendedSolution": {
+        "mirrorAngles": {
+          "m1": 45.0
+        },
+        "toleranceDegrees": 5.0
+      },
+      "starThresholds": {
+        "threeStarMoveCount": 2,
+        "threeStarTimeSeconds": 35
+      },
+      "metadata": {
+        "designer": "handcrafted_v2",
+        "difficultyBand": "ch1",
+        "newConceptsIntroduced": [
+          "reflection"
+        ],
+        "objective": "A stone wall runs above the mirror post. Tilt it upward and the beam slams into the wall \u2014 send it down instead.",
+        "hints": [
+          "The wall sits just above the mirror.",
+          "Tilting up will hit stone, not crystal.",
+          "Turn the beam down toward the floor."
+        ],
+        "pillars": [
+          {
+            "position": [
+              480,
+              860
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          }
+        ],
+        "wallAssetNote": "obstacles render with renderAsset (wall_h_cut tiled horizontally, or 90-rotated for vertical); pillars render with wall_v_cut at each joint."
+      }
+    },
+    {
+      "levelId": "ch1_002",
+      "chapterId": "ch1",
+      "schemaVersion": 1,
+      "levelIndex": 2,
+      "title": "Ceiling Drop",
+      "roomBounds": {
+        "width": 1080,
+        "height": 1920
+      },
+      "lightSources": [
+        {
+          "id": "ls1",
+          "position": [
+            540,
+            130
+          ],
+          "direction": 90,
+          "locked": true
+        }
+      ],
+      "mirrors": [
+        {
+          "id": "m1",
+          "hingePosition": [
+            540,
+            760
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "w0",
+          "polygon": [
+            [
+              276.0,
+              600
+            ],
+            [
+              324.0,
+              600
+            ],
+            [
+              324.0,
+              920
+            ],
+            [
+              276.0,
+              920
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut_rotated",
+          "orientation": "vertical",
+          "thickness": 48
+        }
+      ],
+      "targetCrystals": [
+        {
+          "id": "c1",
+          "position": [
+            1000,
+            760
+          ],
+          "hitRadius": 44,
+          "groupId": "g1"
+        }
+      ],
+      "crystalGroups": [
+        {
+          "groupId": "g1",
+          "requiredCount": 1
+        }
+      ],
+      "doorPortals": [],
+      "intendedSolution": {
+        "mirrorAngles": {
+          "m1": 45.0
+        },
+        "toleranceDegrees": 5.0
+      },
+      "starThresholds": {
+        "threeStarMoveCount": 2,
+        "threeStarTimeSeconds": 40
+      },
+      "metadata": {
+        "designer": "handcrafted_v2",
+        "difficultyBand": "ch1",
+        "newConceptsIntroduced": [
+          "top_emitter"
+        ],
+        "objective": "Light drops from the ceiling. A stone wall blocks the left corridor \u2014 send the beam right.",
+        "hints": [
+          "The wall runs down the left side.",
+          "Going left dead-ends in stone.",
+          "Angle the mirror to send the beam right."
+        ],
+        "pillars": [
+          {
+            "position": [
+              300,
+              760
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          }
+        ],
+        "wallAssetNote": "obstacles render with renderAsset (wall_h_cut tiled horizontally, or 90-rotated for vertical); pillars render with wall_v_cut at each joint."
+      }
+    },
+    {
+      "levelId": "ch1_003",
+      "chapterId": "ch1",
+      "schemaVersion": 1,
+      "levelIndex": 3,
+      "title": "Corner Route",
+      "roomBounds": {
+        "width": 1080,
+        "height": 1920
+      },
+      "lightSources": [
+        {
+          "id": "ls1",
+          "position": [
+            130,
+            480
+          ],
+          "direction": 0,
+          "locked": true
+        }
+      ],
+      "mirrors": [
+        {
+          "id": "m1",
+          "hingePosition": [
+            540,
+            480
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m2",
+          "hingePosition": [
+            540,
+            1200
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "w0",
+          "polygon": [
+            [
+              650,
+              456.0
+            ],
+            [
+              870,
+              456.0
+            ],
+            [
+              870,
+              504.0
+            ],
+            [
+              650,
+              504.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        },
+        {
+          "id": "w1",
+          "polygon": [
+            [
+              230,
+              1176.0
+            ],
+            [
+              450,
+              1176.0
+            ],
+            [
+              450,
+              1224.0
+            ],
+            [
+              230,
+              1224.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        }
+      ],
+      "targetCrystals": [
+        {
+          "id": "c1",
+          "position": [
+            950,
+            1200
+          ],
+          "hitRadius": 44,
+          "groupId": "g1"
+        }
+      ],
+      "crystalGroups": [
+        {
+          "groupId": "g1",
+          "requiredCount": 1
+        }
+      ],
+      "doorPortals": [],
+      "intendedSolution": {
+        "mirrorAngles": {
+          "m1": 45.0,
+          "m2": 45.0
+        },
+        "toleranceDegrees": 5.0
+      },
+      "starThresholds": {
+        "threeStarMoveCount": 3,
+        "threeStarTimeSeconds": 55
+      },
+      "metadata": {
+        "designer": "handcrafted_v2",
+        "difficultyBand": "ch1",
+        "newConceptsIntroduced": [
+          "double_mirror"
+        ],
+        "objective": "Corridor walls box the straight paths \u2014 drop down at the first post, then swing right around the second.",
+        "hints": [
+          "The top wall stops you continuing right at the first mirror.",
+          "Drop down instead.",
+          "The bottom wall blocks left \u2014 swing right to the crystal."
+        ],
+        "pillars": [
+          {
+            "position": [
+              540,
+              480
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              540,
+              1200
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          }
+        ],
+        "wallAssetNote": "obstacles render with renderAsset (wall_h_cut tiled horizontally, or 90-rotated for vertical); pillars render with wall_v_cut at each joint."
+      }
+    },
+    {
+      "levelId": "ch1_004",
+      "chapterId": "ch1",
+      "schemaVersion": 1,
+      "levelIndex": 4,
+      "title": "High Road",
+      "roomBounds": {
+        "width": 1080,
+        "height": 1920
+      },
+      "lightSources": [
+        {
+          "id": "ls1",
+          "position": [
+            130,
+            1536
+          ],
+          "direction": 0,
+          "locked": true
+        }
+      ],
+      "mirrors": [
+        {
+          "id": "m1",
+          "hingePosition": [
+            480,
+            1536
+          ],
+          "length": 145,
+          "initialAngle": 155.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m2",
+          "hingePosition": [
+            480,
+            384
+          ],
+          "length": 145,
+          "initialAngle": 155.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "w0",
+          "polygon": [
+            [
+              676.0,
+              480
+            ],
+            [
+              724.0,
+              480
+            ],
+            [
+              724.0,
+              1920
+            ],
+            [
+              676.0,
+              1920
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut_rotated",
+          "orientation": "vertical",
+          "thickness": 48
+        }
+      ],
+      "targetCrystals": [
+        {
+          "id": "c1",
+          "position": [
+            950,
+            384
+          ],
+          "hitRadius": 44,
+          "groupId": "g1"
+        }
+      ],
+      "crystalGroups": [
+        {
+          "groupId": "g1",
+          "requiredCount": 1
+        }
+      ],
+      "doorPortals": [],
+      "intendedSolution": {
+        "mirrorAngles": {
+          "m1": 135.0,
+          "m2": 135.0
+        },
+        "toleranceDegrees": 5.0
+      },
+      "starThresholds": {
+        "threeStarMoveCount": 3,
+        "threeStarTimeSeconds": 60
+      },
+      "metadata": {
+        "designer": "handcrafted_v2",
+        "difficultyBand": "ch1",
+        "newConceptsIntroduced": [
+          "upward_reflect"
+        ],
+        "objective": "A floor-to-ceiling wall splits the room. The only gap is up near the ceiling \u2014 lift the beam up and over.",
+        "hints": [
+          "The dividing wall runs almost the full height.",
+          "There's a gap only near the top.",
+          "Lift the beam up first, then send it right through the gap."
+        ],
+        "pillars": [
+          {
+            "position": [
+              480,
+              384
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              700,
+              384
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          }
+        ],
+        "wallAssetNote": "obstacles render with renderAsset (wall_h_cut tiled horizontally, or 90-rotated for vertical); pillars render with wall_v_cut at each joint."
+      }
+    },
+    {
+      "levelId": "ch1_005",
+      "chapterId": "ch1",
+      "schemaVersion": 1,
+      "levelIndex": 5,
+      "title": "The Zigzag",
+      "roomBounds": {
+        "width": 1080,
+        "height": 1920
+      },
+      "lightSources": [
+        {
+          "id": "ls1",
+          "position": [
+            130,
+            300
+          ],
+          "direction": 0,
+          "locked": true
+        }
+      ],
+      "mirrors": [
+        {
+          "id": "m1",
+          "hingePosition": [
+            480,
+            300
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m2",
+          "hingePosition": [
+            480,
+            900
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m3",
+          "hingePosition": [
+            830,
+            900
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "w0",
+          "polygon": [
+            [
+              560,
+              276.0
+            ],
+            [
+              780,
+              276.0
+            ],
+            [
+              780,
+              324.0
+            ],
+            [
+              560,
+              324.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        },
+        {
+          "id": "w1",
+          "polygon": [
+            [
+              250,
+              876.0
+            ],
+            [
+              470,
+              876.0
+            ],
+            [
+              470,
+              924.0
+            ],
+            [
+              250,
+              924.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        },
+        {
+          "id": "w2",
+          "polygon": [
+            [
+              910,
+              876.0
+            ],
+            [
+              1120,
+              876.0
+            ],
+            [
+              1120,
+              924.0
+            ],
+            [
+              910,
+              924.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        }
+      ],
+      "targetCrystals": [
+        {
+          "id": "c1",
+          "position": [
+            830,
+            1560
+          ],
+          "hitRadius": 44,
+          "groupId": "g1"
+        }
+      ],
+      "crystalGroups": [
+        {
+          "groupId": "g1",
+          "requiredCount": 1
+        }
+      ],
+      "doorPortals": [],
+      "intendedSolution": {
+        "mirrorAngles": {
+          "m1": 45.0,
+          "m2": 45.0,
+          "m3": 45.0
+        },
+        "toleranceDegrees": 5.0
+      },
+      "starThresholds": {
+        "threeStarMoveCount": 4,
+        "threeStarTimeSeconds": 75
+      },
+      "metadata": {
+        "designer": "handcrafted_v2",
+        "difficultyBand": "ch1",
+        "newConceptsIntroduced": [
+          "triple_mirror"
+        ],
+        "objective": "Three stone posts pinch the corridor into a zigzag \u2014 plan every bounce before touching a mirror.",
+        "hints": [
+          "Each wall blocks the easy straight continuation.",
+          "Trace the zigzag in your head first: down, right, down.",
+          "One wrong angle sends the beam into stone, not the next post."
+        ],
+        "pillars": [
+          {
+            "position": [
+              480,
+              300
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              480,
+              900
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              830,
+              900
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          }
+        ],
+        "wallAssetNote": "obstacles render with renderAsset (wall_h_cut tiled horizontally, or 90-rotated for vertical); pillars render with wall_v_cut at each joint."
+      }
+    },
+    {
+      "levelId": "ch1_006",
+      "chapterId": "ch1",
+      "schemaVersion": 1,
+      "levelIndex": 6,
+      "title": "Square Route",
+      "roomBounds": {
+        "width": 1080,
+        "height": 1920
+      },
+      "lightSources": [
+        {
+          "id": "ls1",
+          "position": [
+            130,
+            600
+          ],
+          "direction": 0,
+          "locked": true
+        }
+      ],
+      "mirrors": [
+        {
+          "id": "m1",
+          "hingePosition": [
+            700,
+            600
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m2",
+          "hingePosition": [
+            700,
+            1500
+          ],
+          "length": 145,
+          "initialAngle": 155.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m3",
+          "hingePosition": [
+            200,
+            1500
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "w0",
+          "polygon": [
+            [
+              826.0,
+              600
+            ],
+            [
+              874.0,
+              600
+            ],
+            [
+              874.0,
+              850
+            ],
+            [
+              826.0,
+              850
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut_rotated",
+          "orientation": "vertical",
+          "thickness": 48
+        },
+        {
+          "id": "w1",
+          "polygon": [
+            [
+              426.0,
+              750
+            ],
+            [
+              474.0,
+              750
+            ],
+            [
+              474.0,
+              1300
+            ],
+            [
+              426.0,
+              1300
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut_rotated",
+          "orientation": "vertical",
+          "thickness": 48
+        }
+      ],
+      "targetCrystals": [
+        {
+          "id": "c1",
+          "position": [
+            200,
+            250
+          ],
+          "hitRadius": 44,
+          "groupId": "g1"
+        }
+      ],
+      "crystalGroups": [
+        {
+          "groupId": "g1",
+          "requiredCount": 1
+        }
+      ],
+      "doorPortals": [],
+      "intendedSolution": {
+        "mirrorAngles": {
+          "m1": 45.0,
+          "m2": 135.0,
+          "m3": 45.0
+        },
+        "toleranceDegrees": 5.0
+      },
+      "starThresholds": {
+        "threeStarMoveCount": 4,
+        "threeStarTimeSeconds": 85
+      },
+      "metadata": {
+        "designer": "handcrafted_v2",
+        "difficultyBand": "ch1",
+        "newConceptsIntroduced": [
+          "reverse_L"
+        ],
+        "objective": "The straight shortcut is walled off \u2014 the beam has to wrap the long way around the labyrinth to reach the crystal above.",
+        "hints": [
+          "You can't punch straight across the middle \u2014 stone blocks it.",
+          "Go down first, then left, then all the way back up.",
+          "The crystal waits almost directly above where you started."
+        ],
+        "pillars": [
+          {
+            "position": [
+              700,
+              600
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              700,
+              1500
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              200,
+              1500
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          }
+        ],
+        "wallAssetNote": "obstacles render with renderAsset (wall_h_cut tiled horizontally, or 90-rotated for vertical); pillars render with wall_v_cut at each joint."
+      }
+    },
+    {
+      "levelId": "ch1_007",
+      "chapterId": "ch1",
+      "schemaVersion": 1,
+      "levelIndex": 7,
+      "title": "Fixed Glass",
+      "roomBounds": {
+        "width": 1080,
+        "height": 1920
+      },
+      "lightSources": [
+        {
+          "id": "ls1",
+          "position": [
+            540,
+            130
+          ],
+          "direction": 90,
+          "locked": true
+        }
+      ],
+      "mirrors": [
+        {
+          "id": "m_locked",
+          "hingePosition": [
+            540,
+            760
+          ],
+          "length": 150,
+          "initialAngle": 45.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": true,
+          "type": "locked"
+        },
+        {
+          "id": "m2",
+          "hingePosition": [
+            900,
+            760
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "w0",
+          "polygon": [
+            [
+              626.0,
+              1000
+            ],
+            [
+              674.0,
+              1000
+            ],
+            [
+              674.0,
+              1400
+            ],
+            [
+              626.0,
+              1400
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut_rotated",
+          "orientation": "vertical",
+          "thickness": 48
+        }
+      ],
+      "targetCrystals": [
+        {
+          "id": "c1",
+          "position": [
+            900,
+            1560
+          ],
+          "hitRadius": 44,
+          "groupId": "g1"
+        }
+      ],
+      "crystalGroups": [
+        {
+          "groupId": "g1",
+          "requiredCount": 1
+        }
+      ],
+      "doorPortals": [],
+      "intendedSolution": {
+        "mirrorAngles": {
+          "m2": 45.0,
+          "m_locked": 45.0
+        },
+        "toleranceDegrees": 5.0
+      },
+      "starThresholds": {
+        "threeStarMoveCount": 3,
+        "threeStarTimeSeconds": 60
+      },
+      "metadata": {
+        "designer": "handcrafted_v2",
+        "difficultyBand": "ch1",
+        "newConceptsIntroduced": [
+          "locked_mirror"
+        ],
+        "objective": "One mirror is bolted at a fixed angle. Work out where its beam goes, then aim the free mirror around the wall.",
+        "hints": [
+          "The locked mirror always sends the beam the same way \u2014 check its angle.",
+          "A wall sits further down \u2014 the beam already clears it going right.",
+          "Angle the free mirror so the beam drops down past the wall's edge."
+        ],
+        "pillars": [
+          {
+            "position": [
+              900,
+              760
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          }
+        ],
+        "wallAssetNote": "obstacles render with renderAsset (wall_h_cut tiled horizontally, or 90-rotated for vertical); pillars render with wall_v_cut at each joint."
+      }
+    },
+    {
+      "levelId": "ch1_008",
+      "chapterId": "ch1",
+      "schemaVersion": 1,
+      "levelIndex": 8,
+      "title": "Rusty Hinge",
+      "roomBounds": {
+        "width": 1080,
+        "height": 1920
+      },
+      "lightSources": [
+        {
+          "id": "ls1",
+          "position": [
+            130,
+            960
+          ],
+          "direction": 0,
+          "locked": true
+        }
+      ],
+      "mirrors": [
+        {
+          "id": "m1",
+          "hingePosition": [
+            540,
+            960
+          ],
+          "length": 145,
+          "initialAngle": 38.0,
+          "minAngle": 35.0,
+          "maxAngle": 55.0,
+          "snapIncrement": 5.0,
+          "isLocked": false,
+          "type": "standard"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "w0",
+          "polygon": [
+            [
+              250,
+              836.0
+            ],
+            [
+              430,
+              836.0
+            ],
+            [
+              430,
+              884.0
+            ],
+            [
+              250,
+              884.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        },
+        {
+          "id": "w1",
+          "polygon": [
+            [
+              650,
+              1036.0
+            ],
+            [
+              830,
+              1036.0
+            ],
+            [
+              830,
+              1084.0
+            ],
+            [
+              650,
+              1084.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        }
+      ],
+      "targetCrystals": [
+        {
+          "id": "c1",
+          "position": [
+            540,
+            1650
+          ],
+          "hitRadius": 44,
+          "groupId": "g1"
+        }
+      ],
+      "crystalGroups": [
+        {
+          "groupId": "g1",
+          "requiredCount": 1
+        }
+      ],
+      "doorPortals": [],
+      "intendedSolution": {
+        "mirrorAngles": {
+          "m1": 45.0
+        },
+        "toleranceDegrees": 5.0
+      },
+      "starThresholds": {
+        "threeStarMoveCount": 2,
+        "threeStarTimeSeconds": 50
+      },
+      "metadata": {
+        "designer": "handcrafted_v2",
+        "difficultyBand": "ch1",
+        "newConceptsIntroduced": [
+          "angle_limits",
+          "snap"
+        ],
+        "objective": "This hinge is rusted and barely turns. Find the one angle in its narrow range that threads between both posts.",
+        "hints": [
+          "The mirror can only move a few degrees either way.",
+          "Too shallow or too steep clips a post.",
+          "The exact middle of its range, 45\u00b0, threads the needle."
+        ],
+        "pillars": [
+          {
+            "position": [
+              540,
+              960
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          }
+        ],
+        "wallAssetNote": "obstacles render with renderAsset (wall_h_cut tiled horizontally, or 90-rotated for vertical); pillars render with wall_v_cut at each joint."
+      }
+    },
+    {
+      "levelId": "ch1_009",
+      "chapterId": "ch1",
+      "schemaVersion": 1,
+      "levelIndex": 9,
+      "title": "Relay Point",
+      "roomBounds": {
+        "width": 1080,
+        "height": 1920
+      },
+      "lightSources": [
+        {
+          "id": "ls1",
+          "position": [
+            130,
+            400
+          ],
+          "direction": 0,
+          "locked": true
+        }
+      ],
+      "mirrors": [
+        {
+          "id": "m1",
+          "hingePosition": [
+            480,
+            400
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m2",
+          "hingePosition": [
+            480,
+            1150
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m3",
+          "hingePosition": [
+            830,
+            1150
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "w0",
+          "polygon": [
+            [
+              560,
+              376.0
+            ],
+            [
+              780,
+              376.0
+            ],
+            [
+              780,
+              424.0
+            ],
+            [
+              560,
+              424.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        },
+        {
+          "id": "w1",
+          "polygon": [
+            [
+              250,
+              1126.0
+            ],
+            [
+              470,
+              1126.0
+            ],
+            [
+              470,
+              1174.0
+            ],
+            [
+              250,
+              1174.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        }
+      ],
+      "targetCrystals": [
+        {
+          "id": "relay0",
+          "position": [
+            480,
+            780
+          ],
+          "hitRadius": 38,
+          "groupId": "relay0",
+          "relay": true,
+          "label": "Relay"
+        },
+        {
+          "id": "c1",
+          "position": [
+            830,
+            1750
+          ],
+          "hitRadius": 44,
+          "groupId": "g1"
+        }
+      ],
+      "crystalGroups": [
+        {
+          "groupId": "relay0",
+          "requiredCount": 1
+        },
+        {
+          "groupId": "g1",
+          "requiredCount": 1
+        }
+      ],
+      "doorPortals": [],
+      "intendedSolution": {
+        "mirrorAngles": {
+          "m1": 45.0,
+          "m2": 45.0,
+          "m3": 45.0
+        },
+        "toleranceDegrees": 5.0
+      },
+      "starThresholds": {
+        "threeStarMoveCount": 5,
+        "threeStarTimeSeconds": 100
+      },
+      "metadata": {
+        "designer": "handcrafted_v2",
+        "difficultyBand": "ch1",
+        "newConceptsIntroduced": [
+          "relay"
+        ],
+        "objective": "A relay crystal sits on the falling beam \u2014 it must be lit before the path continues to the goal.",
+        "hints": [
+          "The relay is directly on the vertical drop between the first two posts.",
+          "No shortcut around it \u2014 stone blocks that route.",
+          "Three mirrors, careful angles: down, right, down."
+        ],
+        "deviceLabels": {
+          "relay0": "Relay"
+        },
+        "pillars": [
+          {
+            "position": [
+              480,
+              400
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              480,
+              1150
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              830,
+              1150
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          }
+        ],
+        "wallAssetNote": "obstacles render with renderAsset (wall_h_cut tiled horizontally, or 90-rotated for vertical); pillars render with wall_v_cut at each joint."
+      }
+    },
+    {
+      "levelId": "ch1_010",
+      "chapterId": "ch1",
+      "schemaVersion": 1,
+      "levelIndex": 10,
+      "title": "The Labyrinth",
+      "roomBounds": {
+        "width": 1080,
+        "height": 1920
+      },
+      "lightSources": [
+        {
+          "id": "ls1",
+          "position": [
+            130,
+            960
+          ],
+          "direction": 0,
+          "locked": true
+        }
+      ],
+      "mirrors": [
+        {
+          "id": "m1",
+          "hingePosition": [
+            350,
+            960
+          ],
+          "length": 145,
+          "initialAngle": 155.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m2",
+          "hingePosition": [
+            350,
+            300
+          ],
+          "length": 145,
+          "initialAngle": 155.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m3",
+          "hingePosition": [
+            750,
+            300
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m4",
+          "hingePosition": [
+            750,
+            700
+          ],
+          "length": 145,
+          "initialAngle": 155.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m5",
+          "hingePosition": [
+            500,
+            700
+          ],
+          "length": 145,
+          "initialAngle": 155.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m6",
+          "hingePosition": [
+            500,
+            1300
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        },
+        {
+          "id": "m7",
+          "hingePosition": [
+            950,
+            1300
+          ],
+          "length": 145,
+          "initialAngle": 65.0,
+          "minAngle": 5.0,
+          "maxAngle": 175.0,
+          "snapIncrement": 0.0,
+          "isLocked": false,
+          "type": "standard"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "w0",
+          "polygon": [
+            [
+              420,
+              621.0
+            ],
+            [
+              620,
+              621.0
+            ],
+            [
+              620,
+              669.0
+            ],
+            [
+              420,
+              669.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        },
+        {
+          "id": "w1",
+          "polygon": [
+            [
+              826.0,
+              200
+            ],
+            [
+              874.0,
+              200
+            ],
+            [
+              874.0,
+              600
+            ],
+            [
+              826.0,
+              600
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut_rotated",
+          "orientation": "vertical",
+          "thickness": 48
+        },
+        {
+          "id": "w2",
+          "polygon": [
+            [
+              801.0,
+              800
+            ],
+            [
+              849.0,
+              800
+            ],
+            [
+              849.0,
+              1100
+            ],
+            [
+              801.0,
+              1100
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut_rotated",
+          "orientation": "vertical",
+          "thickness": 48
+        },
+        {
+          "id": "w3",
+          "polygon": [
+            [
+              380,
+              526.0
+            ],
+            [
+              600,
+              526.0
+            ],
+            [
+              600,
+              574.0
+            ],
+            [
+              380,
+              574.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        },
+        {
+          "id": "w4",
+          "polygon": [
+            [
+              576.0,
+              720
+            ],
+            [
+              624.0,
+              720
+            ],
+            [
+              624.0,
+              1200
+            ],
+            [
+              576.0,
+              1200
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut_rotated",
+          "orientation": "vertical",
+          "thickness": 48
+        },
+        {
+          "id": "w5",
+          "polygon": [
+            [
+              600,
+              1396.0
+            ],
+            [
+              850,
+              1396.0
+            ],
+            [
+              850,
+              1444.0
+            ],
+            [
+              600,
+              1444.0
+            ]
+          ],
+          "isDecorative": false,
+          "renderAsset": "wall_h_cut",
+          "orientation": "horizontal",
+          "thickness": 48
+        }
+      ],
+      "targetCrystals": [
+        {
+          "id": "c1",
+          "position": [
+            950,
+            1750
+          ],
+          "hitRadius": 44,
+          "groupId": "g1"
+        }
+      ],
+      "crystalGroups": [
+        {
+          "groupId": "g1",
+          "requiredCount": 1
+        }
+      ],
+      "doorPortals": [],
+      "intendedSolution": {
+        "mirrorAngles": {
+          "m1": 135.0,
+          "m2": 135.0,
+          "m3": 45.0,
+          "m4": 135.0,
+          "m5": 135.0,
+          "m6": 45.0,
+          "m7": 45.0
+        },
+        "toleranceDegrees": 5.0
+      },
+      "starThresholds": {
+        "threeStarMoveCount": 7,
+        "threeStarTimeSeconds": 180
+      },
+      "metadata": {
+        "designer": "handcrafted_v2",
+        "difficultyBand": "ch1",
+        "newConceptsIntroduced": [
+          "spiral_labyrinth",
+          "six_mirror"
+        ],
+        "objective": "A true spiral labyrinth \u2014 six posts, six bounces. Trace the whole winding path before you touch anything.",
+        "hints": [
+          "The beam winds in, then back out, then in again \u2014 like a real maze.",
+          "Work backward from the crystal if the forward route confuses you.",
+          "Every post redirects 90\u00b0 \u2014 up, right, down, left, down, right, down."
+        ],
+        "pillars": [
+          {
+            "position": [
+              350,
+              960
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              350,
+              300
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              750,
+              300
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              750,
+              700
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              500,
+              700
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              500,
+              1300
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          },
+          {
+            "position": [
+              950,
+              1300
+            ],
+            "asset": "wall_v_cut",
+            "size": 48
+          }
+        ],
+        "wallAssetNote": "obstacles render with renderAsset (wall_h_cut tiled horizontally, or 90-rotated for vertical); pillars render with wall_v_cut at each joint."
+      }
+    }
+  ]
+}

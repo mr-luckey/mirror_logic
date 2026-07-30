@@ -1,3 +1,4 @@
+import 'package:mirror_logic/domain/beam/beam_types.dart';
 import 'package:mirror_logic/domain/beam/beam_simulator.dart';
 import 'package:mirror_logic/domain/level/level_model.dart';
 
@@ -7,6 +8,7 @@ class WinConditionEvaluator {
   bool isSatisfied({
     required LevelModel level,
     required Set<String> litCrystalIds,
+    List<BeamSegment>? segments,
   }) {
     for (final group in level.crystalGroups) {
       final members = level.targetCrystals
@@ -16,9 +18,17 @@ class WinConditionEvaluator {
       final litCount = members.intersection(litCrystalIds).length;
       if (litCount < group.requiredCount) return false;
     }
-    // Fallback: if no groups, require all crystals.
     if (level.crystalGroups.isEmpty) {
-      return litCrystalIds.length >= level.targetCrystals.length;
+      if (litCrystalIds.length < level.targetCrystals.length) return false;
+    }
+
+    final required = level.requiredMirrorBounces;
+    if (required != null) {
+      final bounces = segments
+              ?.where((s) => s.hitKind == BeamHitKind.mirror)
+              .length ??
+          0;
+      if (bounces != required) return false;
     }
     return true;
   }
@@ -31,24 +41,18 @@ class LevelValidator {
   final BeamSimulator _simulator;
   final _win = const WinConditionEvaluator();
 
-  /// Returns true if intended solution lights all required crystals.
   bool isSolvable(LevelModel level) {
-    if (level.intendedSolution.mirrorAngles.isEmpty) {
-      // Allow levels that are already solved at initial angles.
-      final result = _simulator.simulate(
-        level: level,
-        mirrorAngles: {
-          for (final m in level.mirrors) m.id: m.initialAngle,
-        },
-      );
-      return _win.isSatisfied(level: level, litCrystalIds: result.litCrystalIds);
-    }
-
-    final angles = {
-      for (final m in level.mirrors) m.id: m.initialAngle,
-      ...level.intendedSolution.mirrorAngles,
-    };
+    final angles = level.intendedSolution.mirrorAngles.isEmpty
+        ? {for (final m in level.mirrors) m.id: m.initialAngle}
+        : {
+            for (final m in level.mirrors) m.id: m.initialAngle,
+            ...level.intendedSolution.mirrorAngles,
+          };
     final result = _simulator.simulate(level: level, mirrorAngles: angles);
-    return _win.isSatisfied(level: level, litCrystalIds: result.litCrystalIds);
+    return _win.isSatisfied(
+      level: level,
+      litCrystalIds: result.litCrystalIds,
+      segments: result.segments,
+    );
   }
 }

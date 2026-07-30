@@ -19,15 +19,18 @@ void main() {
     const win = WinConditionEvaluator();
     var failed = 0;
 
+    final catalogFile = File('assets/levels/levels.json');
+    final root =
+        jsonDecode(catalogFile.readAsStringSync()) as Map<String, dynamic>;
+    final allLevels = (root['levels'] as List).cast<Map<String, dynamic>>();
+
     for (final chapter in ['ch1', 'ch2']) {
-      final dir = Directory('assets/levels/$chapter');
-      final manifest = jsonDecode(
-        File('${dir.path}/manifest.json').readAsStringSync(),
-      ) as List<dynamic>;
-      for (final id in manifest.cast<String>()) {
-        final file = File('${dir.path}/$id.json');
-        final json =
-            jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final manifest = allLevels
+          .where((l) => l['chapterId'] == chapter)
+          .map((l) => l['levelId'] as String)
+          .toList();
+      for (final id in manifest) {
+        final json = allLevels.firstWhere((l) => l['levelId'] == id);
         var level = LevelModel.fromJson(json);
         final angles = {
           for (final m in level.mirrors) m.id: m.initialAngle,
@@ -54,9 +57,6 @@ void main() {
                 'groupId': c.groupId,
               }
             ];
-            file.writeAsStringSync(
-              const JsonEncoder.withIndent('  ').convert(json),
-            );
             level = LevelModel.fromJson(json);
             result = sim.simulate(level: level, mirrorAngles: angles);
           }
@@ -73,6 +73,10 @@ void main() {
         }
       }
     }
+
+    catalogFile.writeAsStringSync(
+      const JsonEncoder.withIndent('  ').convert(root),
+    );
     expect(failed, 0);
   });
 }

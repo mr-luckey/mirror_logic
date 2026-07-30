@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirror_logic/domain/level/level_model.dart';
 import 'package:mirror_logic/domain/level/win_condition_evaluator.dart';
@@ -9,38 +9,38 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Level pack solvability', () {
-    Future<List<String>> loadManifest(String chapter) async {
-      final raw =
-          await rootBundle.loadString('assets/levels/$chapter/manifest.json');
-      return (jsonDecode(raw) as List<dynamic>).cast<String>();
-    }
+    late List<LevelModel> ch1Levels;
+    late List<LevelModel> ch2Levels;
+    final validator = LevelValidator();
 
-    Future<LevelModel> loadLevel(String chapter, String id) async {
-      final raw =
-          await rootBundle.loadString('assets/levels/$chapter/$id.json');
-      return LevelModel.fromJson(jsonDecode(raw) as Map<String, dynamic>);
-    }
+    setUpAll(() {
+      final raw = File('assets/levels/levels.json').readAsStringSync();
+      final root = jsonDecode(raw) as Map<String, dynamic>;
+      final all = (root['levels'] as List)
+          .map((e) => LevelModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+      ch1Levels =
+          all.where((l) => l.chapterId == 'ch1').toList()
+            ..sort((a, b) => a.levelIndex.compareTo(b.levelIndex));
+      ch2Levels =
+          all.where((l) => l.chapterId == 'ch2').toList()
+            ..sort((a, b) => a.levelIndex.compareTo(b.levelIndex));
+    });
 
-    test('all chapter 1 intended solutions are solvable', () async {
-      final validator = LevelValidator();
-      final ids = await loadManifest('ch1');
-      expect(ids.length, 20);
+    test('all chapter 1 intended solutions are solvable', () {
+      expect(ch1Levels.length, 20);
       final failures = <String>[];
-      for (final id in ids) {
-        final level = await loadLevel('ch1', id);
-        if (!validator.isSolvable(level)) failures.add(id);
+      for (final level in ch1Levels) {
+        if (!validator.isSolvable(level)) failures.add(level.levelId);
       }
       expect(failures, isEmpty, reason: 'Unsolvable: $failures');
     });
 
-    test('all chapter 2 intended solutions are solvable', () async {
-      final validator = LevelValidator();
-      final ids = await loadManifest('ch2');
-      expect(ids.length, 30);
+    test('all chapter 2 intended solutions are solvable', () {
+      expect(ch2Levels.length, 30);
       final failures = <String>[];
-      for (final id in ids) {
-        final level = await loadLevel('ch2', id);
-        if (!validator.isSolvable(level)) failures.add(id);
+      for (final level in ch2Levels) {
+        if (!validator.isSolvable(level)) failures.add(level.levelId);
       }
       expect(failures, isEmpty, reason: 'Unsolvable: $failures');
     });

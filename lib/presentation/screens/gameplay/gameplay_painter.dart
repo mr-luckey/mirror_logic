@@ -2,17 +2,32 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:mirror_logic/app/theme/app_colors.dart';
+import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/domain/beam/beam_types.dart';
 import 'package:mirror_logic/domain/beam/reflection_math.dart';
 import 'package:mirror_logic/domain/beam/vec2.dart';
 import 'package:mirror_logic/domain/level/level_model.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_paint_snapshot.dart';
 
+/// Medieval stone-board painter: tiles, bronze frame, laser, entities.
 class GameplayPainter extends CustomPainter {
-  GameplayPainter({required this.snapshot});
+  GameplayPainter({
+    required this.snapshot,
+    required this.animTime,
+    this.crystalImage,
+    this.mirrorImage,
+    this.emitterImage,
+    this.wallHorizontalImage,
+    this.wallVerticalImage,
+  });
 
   final GameplayPaintSnapshot snapshot;
+  final double animTime;
+  final ui.Image? crystalImage;
+  final ui.Image? mirrorImage;
+  final ui.Image? emitterImage;
+  final ui.Image? wallHorizontalImage;
+  final ui.Image? wallVerticalImage;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -25,79 +40,400 @@ class GameplayPainter extends CustomPainter {
     final dx = (size.width - level.roomBounds.x * scale) / 2;
     final dy = (size.height - level.roomBounds.y * scale) / 2;
 
+    // Outer ornate frame in screen space
+    _drawOrnateFrame(canvas, size, dx, dy, scale, level);
+
     canvas.save();
     canvas.translate(dx, dy);
     canvas.scale(scale);
 
-    _drawRoom(canvas, level);
+    _drawStoneTiles(canvas, level);
     _drawObstacles(canvas, level);
-    _drawBeam(canvas, snapshot.beam);
+    // Floor stand first (below hinge) — never covers the reflection plane
+    _drawMirrorPedestals(canvas, level, snapshot);
     _drawLightSources(canvas, level);
-    _drawMirrors(canvas, level, snapshot);
+    // Beam travels at glass height, then glass paints over the impact
+    _drawBeam(canvas, snapshot.beam);
+    _drawMirrorGlass(canvas, level, snapshot);
     _drawCrystals(canvas, level, snapshot);
     canvas.restore();
   }
 
-  void _drawRoom(Canvas canvas, LevelModel level) {
-    final rect = Rect.fromLTWH(0, 0, level.roomBounds.x, level.roomBounds.y);
-    final bg = Paint()
-      ..shader = ui.Gradient.linear(
-        Offset.zero,
-        Offset(0, level.roomBounds.y),
-        [
-          const Color(0xFF0D0D1A),
-          const Color(0xFF080812),
-        ],
+  void _drawOrnateFrame(
+    Canvas canvas,
+    Size size,
+    double dx,
+    double dy,
+    double scale,
+    LevelModel level,
+  ) {
+    final room = Rect.fromLTWH(
+      dx,
+      dy,
+      level.roomBounds.x * scale,
+      level.roomBounds.y * scale,
+    );
+    final outer = room.inflate(18);
+
+    // Drop shadow under whole board (3D lift)
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        outer.inflate(8).shift(const Offset(0, 10)),
+        const Radius.circular(10),
+      ),
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.55)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16),
+    );
+
+    // Deep wood under-frame
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(outer.inflate(6), const Radius.circular(8)),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MedievalColors.woodLight,
+            MedievalColors.woodMid,
+            MedievalColors.woodDeep,
+          ],
+        ).createShader(outer.inflate(6)),
+    );
+
+    // Outer bright bevel edge
+    final stepped = _steppedRRect(outer, 14);
+    canvas.drawPath(
+      stepped,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MedievalColors.bronzeHighlight,
+            MedievalColors.bronzeMid,
+            MedievalColors.bronzeDark,
+            const Color(0xFF3A2412),
+          ],
+          stops: const [0.0, 0.28, 0.65, 1.0],
+        ).createShader(outer),
+    );
+
+    // Mid metal ridge
+    final mid = _steppedRRect(outer.deflate(5), 11);
+    canvas.drawPath(
+      mid,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            MedievalColors.bronzeLight.withValues(alpha: 0.9),
+            MedievalColors.bronzeDark,
+          ],
+        ).createShader(outer),
+    );
+
+    // Inner dark recess before tiles
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(room.inflate(4), const Radius.circular(4)),
+      Paint()..color = const Color(0xFF1A1008),
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(room.inflate(2), const Radius.circular(3)),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MedievalColors.bronzeHighlight.withValues(alpha: 0.55),
+            MedievalColors.bronzeDark,
+          ],
+        ).createShader(room)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3.5,
+    );
+
+    // Highlight rim stroke
+    canvas.drawPath(
+      stepped,
+      Paint()
+        ..color = MedievalColors.bronzeHighlight.withValues(alpha: 0.75)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.2,
+    );
+
+    // Rivets with 3D sphere look
+    for (final p in [
+      outer.topLeft + const Offset(12, 12),
+      outer.topRight + const Offset(-12, 12),
+      outer.bottomLeft + const Offset(12, -12),
+      outer.bottomRight + const Offset(-12, -12),
+      Offset(outer.center.dx, outer.top + 10),
+      Offset(outer.center.dx, outer.bottom - 10),
+      Offset(outer.left + 10, outer.center.dy),
+      Offset(outer.right - 10, outer.center.dy),
+    ]) {
+      canvas.drawCircle(
+        p.translate(1.2, 1.5),
+        4.2,
+        Paint()..color = Colors.black.withValues(alpha: 0.45),
       );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect, const Radius.circular(24)),
-      bg,
-    );
-
-    final grid = Paint()
-      ..color = AppColors.accent.withValues(alpha: 0.04)
-      ..strokeWidth = 1.5;
-    const step = 60.0;
-    for (var x = 0.0; x <= level.roomBounds.x; x += step) {
-      canvas.drawLine(Offset(x, 0), Offset(x, level.roomBounds.y), grid);
+      canvas.drawCircle(
+        p,
+        4.5,
+        Paint()
+          ..shader = RadialGradient(
+            center: const Alignment(-0.35, -0.4),
+            colors: [
+              MedievalColors.bronzeHighlight,
+              MedievalColors.bronze,
+              MedievalColors.bronzeDark,
+            ],
+          ).createShader(Rect.fromCircle(center: p, radius: 4.5)),
+      );
+      canvas.drawCircle(
+        p.translate(-1.2, -1.4),
+        1.3,
+        Paint()..color = Colors.white.withValues(alpha: 0.55),
+      );
     }
-    for (var y = 0.0; y <= level.roomBounds.y; y += step) {
-      canvas.drawLine(Offset(0, y), Offset(level.roomBounds.x, y), grid);
+  }
+
+  Path _steppedRRect(Rect r, double step) {
+    final path = Path();
+    path.moveTo(r.left + step, r.top);
+    path.lineTo(r.right - step, r.top);
+    path.lineTo(r.right - step, r.top + step * 0.45);
+    path.lineTo(r.right, r.top + step * 0.45);
+    path.lineTo(r.right, r.bottom - step);
+    path.lineTo(r.right - step * 0.45, r.bottom - step);
+    path.lineTo(r.right - step * 0.45, r.bottom);
+    path.lineTo(r.left + step, r.bottom);
+    path.lineTo(r.left + step, r.bottom - step * 0.45);
+    path.lineTo(r.left, r.bottom - step * 0.45);
+    path.lineTo(r.left, r.top + step);
+    path.lineTo(r.left + step * 0.45, r.top + step);
+    path.lineTo(r.left + step * 0.45, r.top);
+    path.close();
+    return path;
+  }
+
+  void _drawStoneTiles(Canvas canvas, LevelModel level) {
+    final w = level.roomBounds.x;
+    final h = level.roomBounds.y;
+    const cols = 10;
+    const rows = 10;
+    final tileW = w / cols;
+    final tileH = h / rows;
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(0, 0, w, h));
+
+    for (var row = 0; row < rows; row++) {
+      for (var col = 0; col < cols; col++) {
+        final rect = Rect.fromLTWH(col * tileW, row * tileH, tileW, tileH);
+        final base = ((row + col) % 2 == 0)
+            ? MedievalColors.stone
+            : MedievalColors.stoneLight;
+
+        // Beveled stone face
+        canvas.drawRect(
+          rect,
+          Paint()
+            ..shader = LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.lerp(base, Colors.white, 0.12)!,
+                base,
+                Color.lerp(base, Colors.black, 0.22)!,
+              ],
+            ).createShader(rect),
+        );
+
+        // Top/left highlight edge
+        canvas.drawLine(
+          rect.topLeft + const Offset(3, 3),
+          rect.topRight + const Offset(-3, 3),
+          Paint()
+            ..color = Colors.white.withValues(alpha: 0.08)
+            ..strokeWidth = 2,
+        );
+        canvas.drawLine(
+          rect.topLeft + const Offset(3, 3),
+          rect.bottomLeft + const Offset(3, -3),
+          Paint()
+            ..color = Colors.white.withValues(alpha: 0.06)
+            ..strokeWidth = 2,
+        );
+
+        // Bottom/right shadow edge
+        canvas.drawLine(
+          rect.bottomLeft + const Offset(3, -3),
+          rect.bottomRight + const Offset(-3, -3),
+          Paint()
+            ..color = Colors.black.withValues(alpha: 0.35)
+            ..strokeWidth = 2.5,
+        );
+
+        canvas.drawRect(
+          rect,
+          Paint()
+            ..color = MedievalColors.stoneGrout
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 4,
+        );
+      }
     }
 
-    final border = Paint()
-      ..color = AppColors.accent.withValues(alpha: 0.25)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 5;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect, const Radius.circular(24)),
-      border,
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..shader = RadialGradient(
+          center: Alignment.center,
+          radius: 0.9,
+          colors: [
+            Colors.transparent,
+            Colors.black.withValues(alpha: 0.4),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
     );
+    canvas.restore();
   }
 
   void _drawObstacles(Canvas canvas, LevelModel level) {
-    final fill = Paint()..color = const Color(0xFF1A1A30);
-    final stroke = Paint()
-      ..color = AppColors.muted.withValues(alpha: 0.4)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
-
     for (final o in level.obstacles) {
       if (o.polygon.length < 3) continue;
-      final path = Path()
-        ..moveTo(o.polygon.first.x, o.polygon.first.y);
-      for (var i = 1; i < o.polygon.length; i++) {
-        path.lineTo(o.polygon[i].x, o.polygon[i].y);
+      final bounds = _polygonBounds(o.polygon);
+      final isHorizontal = bounds.width >= bounds.height * 1.12;
+      final isVertical = bounds.height >= bounds.width * 1.12;
+
+      if (isHorizontal && wallHorizontalImage != null) {
+        _drawTiledWallStrip(
+          canvas,
+          bounds,
+          wallHorizontalImage!,
+          horizontal: true,
+        );
+        continue;
       }
-      path.close();
-      canvas.drawPath(path, fill);
-      canvas.drawPath(path, stroke);
+      if (isVertical && wallVerticalImage != null) {
+        _drawTiledWallStrip(
+          canvas,
+          bounds,
+          wallVerticalImage!,
+          horizontal: false,
+        );
+        continue;
+      }
+
+      _drawStoneWallFallback(canvas, o.polygon, bounds);
     }
+  }
+
+  void _drawTiledWallStrip(
+    Canvas canvas,
+    Rect bounds,
+    ui.Image image, {
+    required bool horizontal,
+  }) {
+    final paint = Paint()..filterQuality = FilterQuality.high;
+    final iw = image.width.toDouble();
+    final ih = image.height.toDouble();
+    if (iw < 1 || ih < 1) return;
+
+    if (horizontal) {
+      final tileWidth = bounds.height * (iw / ih);
+      if (tileWidth < 1) return;
+      var x = bounds.left;
+      while (x < bounds.right - 0.5) {
+        final w = math.min(tileWidth, bounds.right - x);
+        final srcW = iw * (w / tileWidth);
+        canvas.drawImageRect(
+          image,
+          Rect.fromLTWH(0, 0, srcW, ih),
+          Rect.fromLTWH(x, bounds.top, w, bounds.height),
+          paint,
+        );
+        x += w;
+      }
+      canvas.drawRect(
+        Rect.fromLTWH(bounds.left, bounds.top, bounds.width, 2),
+        Paint()..color = Colors.white.withValues(alpha: 0.12),
+      );
+      return;
+    }
+
+    final tileHeight = bounds.width * (ih / iw);
+    if (tileHeight < 1) return;
+    var y = bounds.top;
+    while (y < bounds.bottom - 0.5) {
+      final h = math.min(tileHeight, bounds.bottom - y);
+      final srcH = ih * (h / tileHeight);
+      canvas.drawImageRect(
+        image,
+        Rect.fromLTWH(0, 0, iw, srcH),
+        Rect.fromLTWH(bounds.left, y, bounds.width, h),
+        paint,
+      );
+      y += h;
+    }
+    canvas.drawRect(
+      Rect.fromLTWH(bounds.left, bounds.top, 2, bounds.height),
+      Paint()..color = Colors.white.withValues(alpha: 0.1),
+    );
+  }
+
+  void _drawStoneWallFallback(Canvas canvas, List<Vec2> polygon, Rect bounds) {
+    final path = Path()..moveTo(polygon.first.x, polygon.first.y);
+    for (var i = 1; i < polygon.length; i++) {
+      path.lineTo(polygon[i].x, polygon[i].y);
+    }
+    path.close();
+
+    canvas.drawPath(
+      path,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MedievalColors.stoneLight,
+            MedievalColors.stoneDark,
+          ],
+        ).createShader(bounds),
+    );
+    canvas.drawPath(
+      path,
+      Paint()
+        ..shader = LinearGradient(
+          colors: [
+            MedievalColors.bronzeHighlight.withValues(alpha: 0.55),
+            MedievalColors.bronzeDark,
+          ],
+        ).createShader(bounds)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6,
+    );
+  }
+
+  Rect _polygonBounds(List<Vec2> poly) {
+    var minX = poly.first.x, maxX = poly.first.x;
+    var minY = poly.first.y, maxY = poly.first.y;
+    for (final p in poly) {
+      minX = math.min(minX, p.x);
+      maxX = math.max(maxX, p.x);
+      minY = math.min(minY, p.y);
+      maxY = math.max(maxY, p.y);
+    }
+    return Rect.fromLTRB(minX, minY, maxX, maxY);
   }
 
   void _drawBeam(Canvas canvas, BeamSimulationResult beam) {
     if (beam.segments.isEmpty || snapshot.powerOnProgress <= 0) return;
 
+    final pulse = 0.85 + 0.15 * math.sin(animTime * 6);
     final visibleCount =
         math.max(1, (beam.segments.length * snapshot.powerOnProgress).ceil());
 
@@ -113,115 +449,354 @@ class GameplayPainter extends CustomPainter {
         seg.start.y + (seg.end.y - seg.start.y) * t,
       );
 
+      final a = Offset(seg.start.x, seg.start.y);
+      final b = Offset(end.x, end.y);
+
       final glow = Paint()
-        ..color = AppColors.hotPink.withValues(alpha: 0.3)
-        ..strokeWidth = 20
+        ..color = MedievalColors.laserGlow.withValues(alpha: 0.35 * pulse)
+        ..strokeWidth = 28
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14);
       final mid = Paint()
-        ..color = AppColors.hotPink.withValues(alpha: 0.6)
-        ..strokeWidth = 8
+        ..color = MedievalColors.laserMid.withValues(alpha: 0.75)
+        ..strokeWidth = 10
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
       final core = Paint()
-        ..color = const Color(0xFFFFE0F0)
-        ..strokeWidth = 3
+        ..color = MedievalColors.laserCore
+        ..strokeWidth = 3.5
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
 
-      final a = Offset(seg.start.x, seg.start.y);
-      final b = Offset(end.x, end.y);
       canvas.drawLine(a, b, glow);
       canvas.drawLine(a, b, mid);
       canvas.drawLine(a, b, core);
+
+      // Impact spark at segment end
+      if (t >= 0.99) {
+        canvas.drawCircle(
+          b,
+          10 + 3 * pulse,
+          Paint()
+            ..color = MedievalColors.laserCore.withValues(alpha: 0.55)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+        );
+      }
     }
   }
 
   void _drawLightSources(Canvas canvas, LevelModel level) {
     for (final ls in level.lightSources) {
-      final center = Offset(ls.position.x, ls.position.y);
+      final tip = ls.mountedOrigin(level.roomBounds);
+      final center = Offset(tip.x, tip.y);
+      final dir = ReflectionMath.directionFromDegrees(ls.directionDegrees);
+      final angle = math.atan2(dir.y, dir.x);
+
+      // Wall mounting plate behind the nozzle
+      _drawEmitterWallMount(canvas, level, tip, dir);
+
+      // Soft cyan bloom at nozzle tip (beam start)
       canvas.drawCircle(
         center,
-        30,
+        36,
         Paint()
-          ..color = AppColors.hotPink.withValues(alpha: 0.2)
+          ..color = MedievalColors.laserMid.withValues(alpha: 0.32)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
       );
-      canvas.drawCircle(center, 18, Paint()..color = AppColors.hotPink);
-      canvas.drawCircle(center, 7, Paint()..color = Colors.white);
 
-      final dir = ReflectionMath.directionFromDegrees(ls.directionDegrees);
-      final tip = Offset(
-        ls.position.x + dir.x * 42,
-        ls.position.y + dir.y * 42,
-      );
-      canvas.drawLine(
-        center,
-        tip,
+      if (emitterImage != null) {
+        canvas.save();
+        canvas.translate(center.dx, center.dy);
+        // Sprite faces +X; tip of nozzle at local origin = beam start
+        canvas.rotate(angle);
+        const spriteW = 120.0;
+        const spriteH = 72.0;
+        const tipPad = 6.0; // nozzle lip just past beam origin
+        final rect = Rect.fromLTWH(
+          -spriteW + tipPad,
+          -spriteH / 2,
+          spriteW,
+          spriteH,
+        );
+        paintImage(
+          canvas: canvas,
+          rect: rect,
+          image: emitterImage!,
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.high,
+        );
+        // Bright tip marker where beam leaves the source
+        canvas.drawCircle(
+          Offset.zero,
+          7,
+          Paint()
+            ..color = MedievalColors.laserCore.withValues(alpha: 0.85)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+        );
+        canvas.drawCircle(
+          Offset.zero,
+          3,
+          Paint()..color = Colors.white.withValues(alpha: 0.9),
+        );
+        canvas.restore();
+      } else {
+        canvas.save();
+        canvas.translate(center.dx, center.dy);
+        canvas.rotate(angle);
+        final body = RRect.fromRectAndRadius(
+          Rect.fromLTWH(-64, -18, 64, 36),
+          const Radius.circular(8),
+        );
+        canvas.drawRRect(
+          body,
+          Paint()
+            ..shader = const LinearGradient(
+              colors: [
+                MedievalColors.bronzeDark,
+                MedievalColors.bronzeHighlight,
+              ],
+            ).createShader(body.outerRect),
+        );
+        canvas.drawCircle(
+          Offset.zero,
+          11,
+          Paint()..color = MedievalColors.laserMid,
+        );
+        canvas.restore();
+      }
+    }
+  }
+
+  void _drawEmitterWallMount(
+    Canvas canvas,
+    LevelModel level,
+    Vec2 tip,
+    Vec2 dir,
+  ) {
+    final w = level.roomBounds.x;
+    final h = level.roomBounds.y;
+    final useX = dir.x.abs() >= dir.y.abs();
+
+    late Rect plate;
+    if (useX) {
+      if (dir.x >= 0) {
+        // Mounted on left wall
+        plate = Rect.fromCenter(
+          center: Offset(6, tip.y),
+          width: 28,
+          height: 88,
+        );
+      } else {
+        plate = Rect.fromCenter(
+          center: Offset(w - 6, tip.y),
+          width: 28,
+          height: 88,
+        );
+      }
+    } else {
+      if (dir.y >= 0) {
+        plate = Rect.fromCenter(
+          center: Offset(tip.x, 6),
+          width: 88,
+          height: 28,
+        );
+      } else {
+        plate = Rect.fromCenter(
+          center: Offset(tip.x, h - 6),
+          width: 88,
+          height: 28,
+        );
+      }
+    }
+
+    final rrect = RRect.fromRectAndRadius(plate, const Radius.circular(5));
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            MedievalColors.bronzeHighlight,
+            MedievalColors.bronzeMid,
+            MedievalColors.bronzeDark,
+          ],
+        ).createShader(plate),
+    );
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..color = MedievalColors.bronzeHighlight.withValues(alpha: 0.7)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
+
+    // Rivets on plate
+    final rivets = useX
+        ? [
+            Offset(plate.center.dx, plate.top + 14),
+            Offset(plate.center.dx, plate.bottom - 14),
+          ]
+        : [
+            Offset(plate.left + 14, plate.center.dy),
+            Offset(plate.right - 14, plate.center.dy),
+          ];
+    for (final p in rivets) {
+      canvas.drawCircle(
+        p,
+        3.5,
         Paint()
-          ..color = AppColors.hotPink
-          ..strokeWidth = 5
-          ..strokeCap = StrokeCap.round,
+          ..shader = RadialGradient(
+            center: const Alignment(-0.3, -0.4),
+            colors: [
+              MedievalColors.bronzeHighlight,
+              MedievalColors.bronzeDark,
+            ],
+          ).createShader(Rect.fromCircle(center: p, radius: 3.5)),
       );
     }
   }
 
-  void _drawMirrors(
+  void _drawMirrorPedestals(
     Canvas canvas,
     LevelModel level,
     GameplayPaintSnapshot snapshot,
   ) {
     for (final m in level.mirrors) {
+      final hinge = Offset(m.hingePosition.x, m.hingePosition.y);
+      _drawFixedMirrorPedestal(canvas, hinge, m.length);
+    }
+  }
+
+  void _drawMirrorGlass(
+    Canvas canvas,
+    LevelModel level,
+    GameplayPaintSnapshot snapshot,
+  ) {
+    final glint = (animTime * 0.85) % 1.0;
+
+    for (final m in level.mirrors) {
       final angle = snapshot.mirrorAngles[m.id] ?? m.initialAngle;
-      final (a, b) = ReflectionMath.mirrorEndpoints(
-        hinge: m.hingePosition,
-        length: m.length,
-        angleDegrees: angle,
-      );
       final highlighted = snapshot.highlightedMirrorId == m.id;
       final active = snapshot.activeMirrorId == m.id;
+      final hinge = Offset(m.hingePosition.x, m.hingePosition.y);
+      final rad = angle * math.pi / 180.0;
 
-      final glowColor =
-          highlighted ? AppColors.gold : AppColors.accent;
-      final glow = Paint()
-        ..color = glowColor.withValues(alpha: active || highlighted ? 0.5 : 0.2)
-        ..strokeWidth = 22
-        ..strokeCap = StrokeCap.round
-        ..style = PaintingStyle.stroke
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+      if (highlighted || active) {
+        canvas.drawCircle(
+          hinge,
+          m.length * 0.38,
+          Paint()
+            ..color = MedievalColors.bronzeHighlight.withValues(alpha: 0.28)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
+        );
+      }
 
-      final frame = Paint()
-        ..color = highlighted ? AppColors.gold : AppColors.accent
-        ..strokeWidth = 10
-        ..strokeCap = StrokeCap.round
-        ..style = PaintingStyle.stroke;
+      // Reflective plate at hinge — ABOVE stand; beam strikes this face
+      canvas.save();
+      canvas.translate(hinge.dx, hinge.dy);
+      canvas.rotate(rad);
 
-      final glass = Paint()
-        ..color = Colors.white.withValues(alpha: 0.8)
-        ..strokeWidth = 3.5
-        ..strokeCap = StrokeCap.round
-        ..style = PaintingStyle.stroke;
-
-      final p1 = Offset(a.x, a.y);
-      final p2 = Offset(b.x, b.y);
-      canvas.drawLine(p1, p2, glow);
-      canvas.drawLine(p1, p2, frame);
-      canvas.drawLine(p1, p2, glass);
-
-      // Hinge
-      canvas.drawCircle(
-        Offset(m.hingePosition.x, m.hingePosition.y),
-        10,
-        Paint()..color = AppColors.accentBright,
-      );
-      canvas.drawCircle(
-        Offset(m.hingePosition.x, m.hingePosition.y),
-        4,
-        Paint()..color = AppColors.primaryDark,
+      final half = m.length * 0.5;
+      const thickness = 18.0;
+      final plate = RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset.zero,
+          width: m.length,
+          height: thickness,
+        ),
+        const Radius.circular(3),
       );
 
-      // Ghost angle hint
+      // Soft shadow toward floor stand (plate sits on top of post)
+      canvas.drawRRect(
+        plate.shift(const Offset(0, 6)),
+        Paint()
+          ..color = Colors.black.withValues(alpha: 0.32)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+      );
+
+      canvas.drawRRect(
+        plate.inflate(5),
+        Paint()
+          ..shader = const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              MedievalColors.bronzeHighlight,
+              MedievalColors.bronze,
+              MedievalColors.bronzeDark,
+            ],
+          ).createShader(plate.outerRect.inflate(5)),
+      );
+      canvas.drawRRect(
+        plate.inflate(2),
+        Paint()..color = const Color(0xFF2A180C),
+      );
+      canvas.drawRRect(
+        plate,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: const [
+              Color(0xFFE8FFFF),
+              Color(0xFF7AD8FF),
+              Color(0xFF2A6A90),
+              Color(0xFFA8ECFF),
+            ],
+            stops: const [0.0, 0.35, 0.7, 1.0],
+          ).createShader(plate.outerRect),
+      );
+
+      final streakX = -half + glint * m.length;
+      canvas.drawLine(
+        Offset(streakX - 10, -thickness * 0.25),
+        Offset(streakX + 10, thickness * 0.25),
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.7)
+          ..strokeWidth = 2.5
+          ..strokeCap = StrokeCap.round
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5),
+      );
+      canvas.drawLine(
+        Offset(-half + 4, -thickness * 0.5),
+        Offset(half - 4, -thickness * 0.5),
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.45)
+          ..strokeWidth = 1.5,
+      );
+      canvas.restore();
+
+      // Hinge pin on top of glass
+      canvas.drawCircle(
+        hinge.translate(1, 1.5),
+        8,
+        Paint()..color = Colors.black.withValues(alpha: 0.4),
+      );
+      canvas.drawCircle(
+        hinge,
+        8,
+        Paint()
+          ..shader = RadialGradient(
+            center: const Alignment(-0.4, -0.45),
+            colors: [
+              MedievalColors.bronzeHighlight,
+              MedievalColors.bronze,
+              MedievalColors.bronzeDark,
+            ],
+          ).createShader(Rect.fromCircle(center: hinge, radius: 8)),
+      );
+      canvas.drawCircle(
+        hinge.translate(-2, -2),
+        2,
+        Paint()..color = Colors.white.withValues(alpha: 0.55),
+      );
+
+      // Beam impact spark on glass when lit by a segment end near hinge
+      _drawBeamImpactOnMirror(canvas, snapshot, hinge, m.length);
+
       final ghost = snapshot.ghostAngles[m.id];
       if (ghost != null) {
         final (ga, gb) = ReflectionMath.mirrorEndpoints(
@@ -233,12 +808,186 @@ class GameplayPainter extends CustomPainter {
           Offset(ga.x, ga.y),
           Offset(gb.x, gb.y),
           Paint()
-            ..color = AppColors.gold.withValues(alpha: 0.45)
+            ..color = MedievalColors.bronzeHighlight.withValues(alpha: 0.45)
             ..strokeWidth = 6
-            ..strokeCap = StrokeCap.round
-            ..style = PaintingStyle.stroke,
+            ..strokeCap = StrokeCap.round,
         );
       }
+    }
+  }
+
+  void _drawBeamImpactOnMirror(
+    Canvas canvas,
+    GameplayPaintSnapshot snapshot,
+    Offset hinge,
+    double length,
+  ) {
+    final pulse = 0.85 + 0.15 * math.sin(animTime * 8);
+    for (final seg in snapshot.beam.segments) {
+      if (seg.hitKind != BeamHitKind.mirror) continue;
+      final hit = Offset(seg.end.x, seg.end.y);
+      if ((hit - hinge).distance > length * 0.55) continue;
+      // Bright strike on the glass face (not on the floor base)
+      canvas.drawCircle(
+        hit,
+        14 * pulse,
+        Paint()
+          ..color = MedievalColors.laserGlow.withValues(alpha: 0.4)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+      );
+      canvas.drawCircle(
+        hit,
+        8,
+        Paint()
+          ..color = MedievalColors.laserCore.withValues(alpha: 0.7)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+      );
+      canvas.drawCircle(hit, 3.2, Paint()..color = Colors.white);
+    }
+  }
+
+  /// Floor pedestal BELOW the hinge — beam hits glass above, not the base.
+  void _drawFixedMirrorPedestal(Canvas canvas, Offset hinge, double length) {
+    final rOuter = length * 0.2;
+    final rMid = length * 0.14;
+    final rInner = length * 0.08;
+    // Push base well below hinge so disk never overlaps the glass plane
+    final base = hinge.translate(0, rOuter * 1.35);
+
+    // Contact shadow on floor
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: base.translate(0, rOuter * 0.35),
+        width: rOuter * 2.6,
+        height: rOuter * 0.55,
+      ),
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.42)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7),
+    );
+
+    // Flattened bronze base (perspective oval — reads as floor stand)
+    final baseOval = Rect.fromCenter(
+      center: base,
+      width: rOuter * 2.15,
+      height: rOuter * 1.15,
+    );
+    canvas.drawOval(
+      baseOval,
+      Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(-0.2, -0.45),
+          colors: [
+            MedievalColors.bronzeHighlight,
+            MedievalColors.bronzeMid,
+            MedievalColors.bronzeDark,
+          ],
+        ).createShader(baseOval),
+    );
+    canvas.drawOval(
+      baseOval,
+      Paint()
+        ..color = MedievalColors.bronzeHighlight.withValues(alpha: 0.65)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
+
+    final midOval = Rect.fromCenter(
+      center: base.translate(0, -1),
+      width: rMid * 2.1,
+      height: rMid * 1.1,
+    );
+    canvas.drawOval(
+      midOval,
+      Paint()..color = const Color(0xFF2A180C).withValues(alpha: 0.7),
+    );
+    canvas.drawOval(
+      midOval,
+      Paint()
+        ..color = MedievalColors.bronzeLight.withValues(alpha: 0.85)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3.5,
+    );
+
+    // Rivets around base rim
+    for (var i = 0; i < 6; i++) {
+      final ang = i * math.pi / 3;
+      final rp = Offset(
+        base.dx + math.cos(ang) * (rOuter * 0.82),
+        base.dy + math.sin(ang) * (rOuter * 0.42),
+      );
+      canvas.drawCircle(
+        rp,
+        2.6,
+        Paint()
+          ..shader = RadialGradient(
+            center: const Alignment(-0.3, -0.4),
+            colors: [
+              MedievalColors.bronzeHighlight,
+              MedievalColors.bronzeDark,
+            ],
+          ).createShader(Rect.fromCircle(center: rp, radius: 2.6)),
+      );
+    }
+
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: base.translate(0, -2),
+        width: rInner * 2,
+        height: rInner * 1.1,
+      ),
+      Paint()
+        ..shader = RadialGradient(
+          colors: [
+            MedievalColors.woodLight.withValues(alpha: 0.45),
+            MedievalColors.woodDeep,
+          ],
+        ).createShader(Rect.fromCircle(center: base, radius: rInner)),
+    );
+
+    // Tall thin post: glass mounts clearly ABOVE the floor base
+    final postTop = hinge.dy + 6;
+    final postBottom = base.dy - rOuter * 0.15;
+    final postH = (postBottom - postTop).abs();
+    if (postH > 4) {
+      final post = RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(hinge.dx, (postTop + postBottom) * 0.5),
+          width: rInner * 1.35,
+          height: postH,
+        ),
+        const Radius.circular(3),
+      );
+      canvas.drawRRect(
+        post,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              MedievalColors.bronzeDark,
+              MedievalColors.bronzeHighlight,
+              MedievalColors.bronzeDark,
+            ],
+          ).createShader(post.outerRect),
+      );
+      // Cap under hinge
+      canvas.drawCircle(
+        Offset(hinge.dx, postTop),
+        rInner * 0.95,
+        Paint()
+          ..shader = RadialGradient(
+            colors: [
+              MedievalColors.bronzeLight,
+              MedievalColors.bronzeDark,
+            ],
+          ).createShader(
+            Rect.fromCircle(
+              center: Offset(hinge.dx, postTop),
+              radius: rInner,
+            ),
+          ),
+      );
     }
   }
 
@@ -247,72 +996,173 @@ class GameplayPainter extends CustomPainter {
     LevelModel level,
     GameplayPaintSnapshot snapshot,
   ) {
+    final pulse = 0.5 + 0.5 * math.sin(animTime * 2.4);
+
     for (final c in level.targetCrystals) {
       final lit = snapshot.beam.litCrystalIds.contains(c.id);
       final center = Offset(c.position.x, c.position.y);
       final charge = lit ? snapshot.chargeProgress : 0.0;
+      final aura = c.hitRadius * (1.6 + 0.3 * pulse) * (lit ? 1.2 : 0.9);
 
+      // Magical bloom
       canvas.drawCircle(
         center,
-        c.hitRadius + 20,
+        aura,
         Paint()
-          ..color = AppColors.cyan.withValues(alpha: lit ? 0.35 : 0.1)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
+          ..color = MedievalColors.laserMid
+              .withValues(alpha: lit ? 0.4 * pulse : 0.14)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
       );
 
-      final path = Path();
-      const sides = 6;
-      for (var i = 0; i < sides; i++) {
-        final ang = -math.pi / 2 + i * 2 * math.pi / sides;
-        final r = c.hitRadius * (lit ? 1.05 : 0.95);
-        final p = Offset(
-          center.dx + math.cos(ang) * r,
-          center.dy + math.sin(ang) * r,
-        );
-        if (i == 0) {
-          path.moveTo(p.dx, p.dy);
-        } else {
-          path.lineTo(p.dx, p.dy);
-        }
-      }
-      path.close();
-
-      canvas.drawPath(
-        path,
+      // Contact shadow under pedestal
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: center.translate(0, c.hitRadius * 1.05),
+          width: c.hitRadius * 2.2,
+          height: c.hitRadius * 0.55,
+        ),
         Paint()
-          ..shader = ui.Gradient.radial(
-            center,
-            c.hitRadius,
-            [
-              lit ? const Color(0xFFB8FFFF) : const Color(0xFF1A2A4A),
-              lit ? AppColors.cyan : const Color(0xFF0E1A35),
-            ],
+          ..color = Colors.black.withValues(alpha: 0.45)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7),
+      );
+
+      if (crystalImage != null) {
+        final h = c.hitRadius * 3.6;
+        final w = c.hitRadius * 2.4;
+        // Sit pedestal slightly below hit center so crystal tip is target.
+        paintImage(
+          canvas: canvas,
+          rect: Rect.fromCenter(
+            center: center.translate(0, c.hitRadius * 0.15),
+            width: w,
+            height: h,
           ),
-      );
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = AppColors.cyan
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 3.5,
-      );
+          image: crystalImage!,
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.high,
+        );
+      } else {
+        _drawFallbackCrystal(canvas, center, c.hitRadius, lit);
+      }
 
       if (charge > 0) {
         canvas.drawCircle(
           center,
-          c.hitRadius * charge,
+          c.hitRadius * (0.6 + charge * 0.8),
           Paint()
-            ..color = Colors.white.withValues(alpha: 0.4)
+            ..color = Colors.white.withValues(alpha: 0.35 * charge)
             ..style = PaintingStyle.stroke
-            ..strokeWidth = 5,
+            ..strokeWidth = 6,
+        );
+      }
+
+      if (lit) {
+        for (var i = 0; i < 4; i++) {
+          final ang = animTime * 1.5 + i * math.pi / 2;
+          final spark = Offset(
+            center.dx + math.cos(ang) * c.hitRadius * 1.3,
+            center.dy + math.sin(ang) * c.hitRadius * 0.9,
+          );
+          canvas.drawCircle(
+            spark,
+            3 + pulse * 2,
+            Paint()..color = Colors.white.withValues(alpha: 0.7),
+          );
+        }
+      }
+
+      final label = c.label.isNotEmpty
+          ? c.label
+          : level.metadata.deviceLabels[c.id];
+      if (label != null && label.isNotEmpty) {
+        final tp = TextPainter(
+          text: TextSpan(
+            text: label,
+            style: TextStyle(
+              color: lit
+                  ? MedievalColors.laserCore
+                  : MedievalColors.textCream.withValues(alpha: 0.85),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+        )..layout();
+        tp.paint(
+          canvas,
+          center.translate(-tp.width / 2, c.hitRadius * 1.1),
         );
       }
     }
   }
 
+  void _drawFallbackCrystal(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    bool lit,
+  ) {
+    // Pedestal
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: center.translate(0, radius * 0.85),
+        width: radius * 1.8,
+        height: radius * 0.55,
+      ),
+      Paint()
+        ..shader = RadialGradient(
+          colors: [
+            MedievalColors.bronzeHighlight,
+            MedievalColors.bronzeDark,
+          ],
+        ).createShader(Rect.fromCircle(center: center, radius: radius)),
+    );
+
+    final path = Path();
+    final tip = center.translate(0, -radius * 1.35);
+    path.moveTo(tip.dx, tip.dy);
+    path.lineTo(center.dx + radius * 0.7, center.dy + radius * 0.3);
+    path.lineTo(center.dx, center.dy + radius * 0.85);
+    path.lineTo(center.dx - radius * 0.7, center.dy + radius * 0.3);
+    path.close();
+
+    canvas.drawPath(
+      path,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: lit
+              ? [
+                  MedievalColors.laserCore,
+                  MedievalColors.laserMid,
+                  MedievalColors.crystalDeep,
+                ]
+              : [
+                  const Color(0xFF4A6A80),
+                  MedievalColors.crystalDeep,
+                  const Color(0xFF102030),
+                ],
+        ).createShader(Rect.fromCircle(center: center, radius: radius * 1.4)),
+    );
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = MedievalColors.laserCore.withValues(alpha: 0.8)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5,
+    );
+  }
+
   @override
   bool shouldRepaint(covariant GameplayPainter oldDelegate) {
-    return oldDelegate.snapshot != snapshot;
+    return oldDelegate.snapshot != snapshot ||
+        oldDelegate.animTime != animTime ||
+        oldDelegate.crystalImage != crystalImage ||
+        oldDelegate.mirrorImage != mirrorImage ||
+        oldDelegate.emitterImage != emitterImage ||
+        oldDelegate.wallHorizontalImage != wallHorizontalImage ||
+        oldDelegate.wallVerticalImage != wallVerticalImage;
   }
 }
 
@@ -343,7 +1193,7 @@ String? hitTestMirror({
   required Vec2 world,
   required LevelModel level,
   required Map<String, double> angles,
-  double padding = 36,
+  double padding = 42,
 }) {
   String? best;
   var bestDist = double.infinity;
@@ -356,8 +1206,11 @@ String? hitTestMirror({
       angleDegrees: angle,
     );
     final dist = _distToSegment(world, a, b);
-    if (dist < padding && dist < bestDist) {
-      bestDist = dist;
+    // Also allow hitting near hinge base
+    final hingeDist = world.distanceTo(m.hingePosition);
+    final d = math.min(dist, hingeDist - 20);
+    if (d < padding && d < bestDist) {
+      bestDist = d;
       best = m.id;
     }
   }

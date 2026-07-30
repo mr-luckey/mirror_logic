@@ -14,6 +14,7 @@ class GameplayPaintSnapshot extends Equatable {
     required this.ghostAngles,
     required this.highlightedMirrorId,
     this.activeMirrorId,
+    this.elapsedSeconds = 0,
   });
 
   final LevelModel level;
@@ -24,6 +25,7 @@ class GameplayPaintSnapshot extends Equatable {
   final Map<String, double> ghostAngles;
   final String? highlightedMirrorId;
   final String? activeMirrorId;
+  final double elapsedSeconds;
 
   factory GameplayPaintSnapshot.fromState(GameplayState state) {
     return GameplayPaintSnapshot(
@@ -35,6 +37,7 @@ class GameplayPaintSnapshot extends Equatable {
       ghostAngles: state.ghostAngles,
       highlightedMirrorId: state.highlightedMirrorId,
       activeMirrorId: state.activeMirrorId,
+      elapsedSeconds: state.elapsedSeconds,
     );
   }
 
@@ -48,5 +51,8 @@ class GameplayPaintSnapshot extends Equatable {
         ghostAngles,
         highlightedMirrorId,
         activeMirrorId,
+        // Quantize time so we don't repaint every microsecond unnecessarily
+        // while still driving crystal/laser animations (~20fps visual).
+        (elapsedSeconds * 20).floor(),
       ];
 }

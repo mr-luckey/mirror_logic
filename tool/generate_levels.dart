@@ -2,39 +2,30 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'levels_catalog.dart';
+
 /// Standalone level generator — crystals placed on the reflected ray so
 /// intended mirror angles are solvable by construction.
 /// Run from project root: dart run tool/generate_levels.dart
 void main() {
-  final root = Directory.current;
-  final ch1Dir = Directory('${root.path}/assets/levels/ch1')
-    ..createSync(recursive: true);
-  final ch2Dir = Directory('${root.path}/assets/levels/ch2')
-    ..createSync(recursive: true);
-
-  final ch1 = <String>[];
+  final ch1Levels = <Map<String, dynamic>>[];
   for (var i = 1; i <= 20; i++) {
     final id = 'ch1_${i.toString().padLeft(3, '0')}';
-    ch1.add(id);
-    File('${ch1Dir.path}/$id.json').writeAsStringSync(
-      const JsonEncoder.withIndent('  ').convert(_ch1(i, id)),
-    );
+    ch1Levels.add(_ch1(i, id));
   }
-  File('${ch1Dir.path}/manifest.json').writeAsStringSync(jsonEncode(ch1));
 
-  final ch2 = <String>[];
+  final ch2Levels = <Map<String, dynamic>>[];
   for (var i = 1; i <= 30; i++) {
     final id = 'ch2_${i.toString().padLeft(3, '0')}';
-    ch2.add(id);
-    File('${ch2Dir.path}/$id.json').writeAsStringSync(
-      const JsonEncoder.withIndent('  ').convert(_ch2(i, id)),
-    );
+    ch2Levels.add(_ch2(i, id));
   }
-  File('${ch2Dir.path}/manifest.json').writeAsStringSync(jsonEncode(ch2));
-  File('${root.path}/assets/levels/index.json').writeAsStringSync(
-    jsonEncode({'chapters': ['ch1', 'ch2']}),
+
+  writeChapterLevels('ch1', ch1Levels);
+  writeChapterLevels('ch2', ch2Levels);
+  stdout.writeln(
+    'OK: wrote ${ch1Levels.length} + ${ch2Levels.length} levels to '
+    'assets/levels/levels.json',
   );
-  stdout.writeln('OK: ${ch1.length} + ${ch2.length} levels');
 }
 
 Map<String, dynamic> _ch1(int index, String id) {

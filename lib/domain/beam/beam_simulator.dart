@@ -25,7 +25,7 @@ class BeamSimulator {
       _traceSource(
         level: level,
         mirrorAngles: mirrorAngles,
-        origin: source.position,
+        origin: source.mountedOrigin(level.roomBounds),
         direction: ReflectionMath.directionFromDegrees(source.directionDegrees),
         segments: segments,
         lit: lit,
@@ -75,6 +75,10 @@ class BeamSimulator {
 
       if (hit.kind == BeamHitKind.crystal) {
         lit.add(hit.id!);
+        if (hit.relay) {
+          pos = hit.point + dir * 0.5;
+          continue;
+        }
         return;
       }
 
@@ -182,6 +186,7 @@ class BeamSimulator {
             distance: hit.distance,
             kind: BeamHitKind.crystal,
             id: crystal.id,
+            relay: crystal.relay,
           ),
         );
       }
@@ -241,6 +246,7 @@ class _Hit {
     required this.kind,
     this.id,
     this.normal,
+    this.relay = false,
   });
 
   final Vec2 point;
@@ -248,4 +254,5 @@ class _Hit {
   final BeamHitKind kind;
   final String? id;
   final Vec2? normal;
+  final bool relay;
 }
