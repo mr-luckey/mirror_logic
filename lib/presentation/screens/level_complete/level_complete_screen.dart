@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mirror_logic/app/audio_scope.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
+import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
@@ -31,12 +35,57 @@ class LevelCompleteArgs {
   final String? nextLevelId;
 }
 
-class LevelCompleteScreen extends StatelessWidget {
+class LevelCompleteScreen extends StatefulWidget {
   const LevelCompleteScreen({super.key, required this.args});
 
   final LevelCompleteArgs args;
 
+  @override
+  State<LevelCompleteScreen> createState() => _LevelCompleteScreenState();
+}
+
+class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
   static const _rank = ['Cleared', 'Well Struck', 'Masterful', 'Flawless'];
+
+  /// Matches the wreath and stat-panel entrance animations.
+  static const _firstStarDelay = Duration(milliseconds: 620);
+  static const _starGap = Duration(milliseconds: 230);
+  static const _coinDelay = Duration(milliseconds: 900);
+
+  final List<Timer> _fanfare = [];
+
+  LevelCompleteArgs get args => widget.args;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleFanfare();
+  }
+
+  /// Each star chimes as it lands, then the coin reward lands on top.
+  void _scheduleFanfare() {
+    for (var i = 0; i < args.stars; i++) {
+      _fanfare.add(
+        Timer(_firstStarDelay + _starGap * i, () => _play(Sfx.star)),
+      );
+    }
+    if (args.coinsEarned > 0) {
+      _fanfare.add(Timer(_coinDelay, () => _play(Sfx.coin)));
+    }
+  }
+
+  void _play(Sfx sfx) {
+    if (!mounted) return;
+    context.playSfx(sfx);
+  }
+
+  @override
+  void dispose() {
+    for (final timer in _fanfare) {
+      timer.cancel();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +96,18 @@ class LevelCompleteScreen extends StatelessWidget {
     final short = Responsive.isShort(context);
     final wreath = Responsive.wp(context, short ? 0.5 : 0.6).clamp(180.0, 300.0);
 
-    return MedievalWoodBackground(
-      child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(gutter, 12, gutter, 16),
+    // The board behind this screen is frozen in its solved state, so back has
+    // to go somewhere useful instead of returning to it.
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        context.go('/levels/${args.chapterId}');
+      },
+      child: MedievalWoodBackground(
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(gutter, 12, gutter, 16),
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
@@ -144,17 +201,19 @@ class LevelCompleteScreen extends StatelessWidget {
                             child: MedievalButton(
                               label: 'Levels',
                               icon: Icons.grid_view_rounded,
+                              sfx: Sfx.back,
                               onPressed: () =>
                                   context.go('/levels/${args.chapterId}'),
                             ),
                           ),
                         ],
                       ).animate().fadeIn(delay: 1000.ms),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),

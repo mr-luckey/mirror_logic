@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mirror_logic/app/nav.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
+import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
@@ -42,7 +44,7 @@ class _ChapterSelectScreenState extends State<ChapterSelectScreen> {
               child: MedievalScreenHeader(
                 title: 'Chapters',
                 subtitle: 'Choose your trial',
-                onBack: () => context.go('/menu'),
+                onBack: () => context.backTo('/menu'),
               ),
             ),
             Expanded(
@@ -140,6 +142,8 @@ class _ChapterCard extends StatelessWidget {
     return MedievalPressable(
       onPressed: onTap,
       enabled: unlocked,
+      // A chapter opening is a heavier moment than a button press.
+      sfx: Sfx.unlock,
       child: Opacity(
         opacity: unlocked ? 1 : 0.62,
         child: MedievalPanel(

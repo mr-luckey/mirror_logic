@@ -848,23 +848,58 @@ class GameplayPainter extends CustomPainter {
       // Beam impact spark on glass when lit by a segment end near hinge
       _drawBeamImpactOnMirror(canvas, snapshot, hinge, m.length);
 
-      final ghost = snapshot.ghostAngles[m.id];
-      if (ghost != null) {
-        final (ga, gb) = ReflectionMath.mirrorEndpoints(
-          hinge: m.hingePosition,
-          length: m.length,
-          angleDegrees: ghost,
-        );
-        canvas.drawLine(
-          Offset(ga.x, ga.y),
-          Offset(gb.x, gb.y),
-          Paint()
-            ..color = MedievalColors.bronzeHighlight.withValues(alpha: 0.45)
-            ..strokeWidth = 6
-            ..strokeCap = StrokeCap.round,
-        );
-      }
+      _drawGhostMirror(canvas, snapshot, m, angle);
     }
+  }
+
+  /// The hint's gold outline of where this mirror has to end up.
+  ///
+  /// It fades out as the real mirror closes on it, so a board being solved
+  /// clears itself of ghosts one mirror at a time and the player can see at a
+  /// glance which posts they still owe.
+  void _drawGhostMirror(
+    Canvas canvas,
+    GameplayPaintSnapshot snapshot,
+    MirrorDef mirror,
+    double currentAngle,
+  ) {
+    final target = snapshot.ghostAngles[mirror.id];
+    if (target == null) return;
+
+    const vanishDegrees = 3.0;
+    const fullDegrees = 14.0;
+    var offBy = (currentAngle - target).abs() % 180.0;
+    if (offBy > 90) offBy = 180 - offBy;
+    if (offBy <= vanishDegrees) return;
+
+    final strength = ((offBy - vanishDegrees) / (fullDegrees - vanishDegrees))
+        .clamp(0.0, 1.0);
+
+    final (a, b) = ReflectionMath.mirrorEndpoints(
+      hinge: mirror.hingePosition,
+      length: mirror.length,
+      angleDegrees: target,
+    );
+    final start = Offset(a.x, a.y);
+    final end = Offset(b.x, b.y);
+
+    canvas.drawLine(
+      start,
+      end,
+      Paint()
+        ..color = MedievalColors.bronzeHighlight.withValues(alpha: 0.2 * strength)
+        ..strokeWidth = 11
+        ..strokeCap = StrokeCap.round
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
+    canvas.drawLine(
+      start,
+      end,
+      Paint()
+        ..color = MedievalColors.textGold.withValues(alpha: 0.62 * strength)
+        ..strokeWidth = 3.5
+        ..strokeCap = StrokeCap.round,
+    );
   }
 
   void _drawBeamImpactOnMirror(

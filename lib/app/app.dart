@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mirror_logic/app/audio_scope.dart';
 import 'package:mirror_logic/app/router.dart';
 import 'package:mirror_logic/app/theme/app_theme.dart';
+import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 
@@ -18,7 +20,10 @@ class MirrorLogicApp extends StatelessWidget {
       listener: (context, state) => context
           .read<EconomyBloc>()
           .add(EconomyCoinsChanged(state.save.coins)),
-      child: _Router(),
+      child: AudioScope(
+        audio: context.read<AudioService>(),
+        child: _Router(),
+      ),
     );
   }
 }

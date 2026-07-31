@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
+import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
 
 /// Circular bronze control with optional label underneath.
@@ -12,6 +13,7 @@ class MedievalBronzeButton extends StatelessWidget {
     this.label,
     this.size = 48,
     this.badge,
+    this.sfx = Sfx.tap,
   });
 
   final IconData icon;
@@ -19,11 +21,13 @@ class MedievalBronzeButton extends StatelessWidget {
   final String? label;
   final double size;
   final String? badge;
+  final Sfx? sfx;
 
   @override
   Widget build(BuildContext context) {
     return MedievalPressable(
       onPressed: onPressed,
+      sfx: sfx,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

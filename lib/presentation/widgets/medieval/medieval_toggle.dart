@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
+import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/press_feedback.dart';
 
 /// A bronze stud sliding in a carved channel, standing in for Material's
 /// Switch so the settings screen keeps the same metal vocabulary.
@@ -23,7 +25,12 @@ class MedievalToggle extends StatelessWidget {
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: onChanged == null ? null : () => onChanged!(!value),
+      onTap: onChanged == null
+          ? null
+          : () {
+              PressFeedback.fire(context, Sfx.tap);
+              onChanged!(!value);
+            },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,

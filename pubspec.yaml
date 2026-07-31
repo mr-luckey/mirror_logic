@@ -32,3 +32,5 @@ flutter:
     - assets/levels/levels.json
     - assets/images/medieval/
     - assets/images/ui/
+    - assets/audio/sfx/
+    - assets/audio/music/

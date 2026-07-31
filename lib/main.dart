@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,7 @@ import 'package:mirror_logic/core/di/injection.dart';
 import 'package:mirror_logic/data/repositories/economy_repository.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/data/repositories/save_repository.dart';
+import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/settings/settings_cubit.dart';
@@ -23,7 +26,9 @@ Future<void> main() async {
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Color(0xFF0B132B),
+      // Matches the darkest wood in MedievalColors so the system bar reads as
+      // part of the frame rather than a strip of someone else's app.
+      systemNavigationBarColor: Color(0xFF1A1008),
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
@@ -37,12 +42,20 @@ Future<void> main() async {
   final settingsCubit = SettingsCubit(saveRepository: saveRepository);
   await settingsCubit.load();
 
+  final audioService = sl<AudioService>();
+  // Never block first paint on the audio stack; a device with no route just
+  // leaves the service disabled.
+  unawaited(
+    audioService.init().then((_) => audioService.applySettings(settingsCubit.state)),
+  );
+
   runApp(
     MultiRepositoryProvider(
       providers: [
         RepositoryProvider<SaveRepository>.value(value: saveRepository),
         RepositoryProvider<EconomyRepository>.value(value: economyRepository),
         RepositoryProvider<LevelRepository>.value(value: levelRepository),
+        RepositoryProvider<AudioService>.value(value: audioService),
       ],
       child: MultiBlocProvider(
         providers: [

@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
+import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
 
 enum MedievalButtonStyle {
@@ -23,6 +24,7 @@ class MedievalButton extends StatelessWidget {
     this.icon,
     this.expand = true,
     this.shimmer = false,
+    this.sfx = Sfx.tap,
   });
 
   final String label;
@@ -30,6 +32,7 @@ class MedievalButton extends StatelessWidget {
   final MedievalButtonStyle style;
   final IconData? icon;
   final bool expand;
+  final Sfx? sfx;
 
   /// Sweeps a highlight across the face to pull the eye to the main CTA.
   final bool shimmer;
@@ -119,6 +122,7 @@ class MedievalButton extends StatelessWidget {
       child: MedievalPressable(
         onPressed: onPressed,
         enabled: enabled,
+        sfx: sfx,
         child: face,
       ),
     );

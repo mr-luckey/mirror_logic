@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mirror_logic/app/audio_scope.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/data/repositories/save_repository.dart';
 import 'package:mirror_logic/domain/economy/player_save.dart';
+import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/settings/settings_cubit.dart';
-import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_exit_scope.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_screen_header.dart';
@@ -66,6 +68,8 @@ class SettingsScreen extends StatelessWidget {
                             label: 'Sound Effects',
                             value: settings.sfxVolume,
                             onChanged: cubit.setSfxVolume,
+                            // Let the player hear what they just set.
+                            onChangeEnd: (_) => context.playSfx(Sfx.coin),
                           ),
                           const MedievalDivider(),
                           _ToggleRow(
@@ -127,69 +131,16 @@ class SettingsScreen extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.7),
-      builder: (dialogContext) => Material(
-        type: MaterialType.transparency,
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: Responsive.pageGutter(dialogContext),
-            ),
-            child: MedievalPanel(
-              glow: MedievalColors.rejectMid,
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.warning_amber_rounded,
-                    color: MedievalColors.rejectMid,
-                    size: 32,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'RESET PROGRESS?',
-                    style: MedievalTextStyles.cinzel(
-                      size: Responsive.sp(dialogContext, 17),
-                      weight: FontWeight.w700,
-                      letterSpacing: 1.8,
-                      color: MedievalColors.textGold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Every star, coin and unlocked hall is lost. '
-                    'This cannot be undone.',
-                    textAlign: TextAlign.center,
-                    style: MedievalTextStyles.cinzel(
-                      size: Responsive.sp(dialogContext, 12.5),
-                      height: 1.4,
-                      color: MedievalColors.textCream.withValues(alpha: 0.85),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: MedievalButton(
-                          label: 'Cancel',
-                          onPressed: () => Navigator.pop(dialogContext, false),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: MedievalButton(
-                          label: 'Reset',
-                          style: MedievalButtonStyle.primary,
-                          onPressed: () => Navigator.pop(dialogContext, true),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+      builder: (dialogContext) => MedievalConfirmDialog(
+        danger: true,
+        icon: Icons.warning_amber_rounded,
+        title: 'Reset Progress?',
+        body: 'Every star, coin and unlocked hall is lost. '
+            'This cannot be undone.',
+        cancelLabel: 'Cancel',
+        confirmLabel: 'Reset',
+        onCancel: () => Navigator.pop(dialogContext, false),
+        onConfirm: () => Navigator.pop(dialogContext, true),
       ),
     );
     if (ok != true || !context.mounted) return;
@@ -318,11 +269,13 @@ class _SliderRow extends StatelessWidget {
     required this.label,
     required this.value,
     required this.onChanged,
+    this.onChangeEnd,
   });
 
   final String label;
   final double value;
   final ValueChanged<double> onChanged;
+  final ValueChanged<double>? onChangeEnd;
 
   @override
   Widget build(BuildContext context) {
@@ -352,7 +305,11 @@ class _SliderRow extends StatelessWidget {
               inactiveTrackColor: Colors.black.withValues(alpha: 0.5),
               thumbColor: MedievalColors.bronzeHighlight,
             ),
-            child: Slider(value: value, onChanged: onChanged),
+            child: Slider(
+              value: value,
+              onChanged: onChanged,
+              onChangeEnd: onChangeEnd,
+            ),
           ),
         ],
       ),

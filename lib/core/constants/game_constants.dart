@@ -10,9 +10,10 @@ abstract final class GameConstants {
   static const int coinsPerTwoStar = 10;
   static const int coinsPerThreeStar = 20;
 
-  static const int hintTier1Cost = 10;
-  static const int hintTier2Cost = 20;
-  static const int hintTier3Cost = 30;
+  /// Price of revealing the solved board. One hint, one price.
+  static const int hintCost = 25;
+
+  /// Hints are free while the player is still learning the rules.
   static const int freeHintLevels = 10;
 
   static const double chapterUnlockRatio = 0.8;

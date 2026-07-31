@@ -157,58 +157,75 @@ void main() {
     });
   });
 
-  group('hint dismissal', () {
-    Future<GameplayBloc> hintingBloc() async {
+  group('solution hint', () {
+    Map<String, dynamic> mirror(
+      String id,
+      double x, {
+      bool locked = false,
+    }) =>
+        {
+          'id': id,
+          'hingePosition': [x, 800.0],
+          'length': 160.0,
+          'initialAngle': 10.0,
+          'minAngle': 5.0,
+          'maxAngle': 175.0,
+          'isLocked': locked,
+        };
+
+    Future<GameplayBloc> hintingBloc({bool lockSecond = false}) async {
       final level = _level(
-        mirrors: const [
-          {
-            'id': 'm1',
-            'hingePosition': [500.0, 800.0],
-            'length': 160.0,
-            'initialAngle': 10.0,
-            'minAngle': 5.0,
-            'maxAngle': 175.0,
-          },
-        ],
+        mirrors: [mirror('m1', 400), mirror('m2', 600, locked: lockSecond)],
         solution: const {
-          'mirrorAngles': {'m1': 45.0},
+          'mirrorAngles': {'m1': 45.0, 'm2': 135.0},
           'toleranceDegrees': 4.0,
         },
       );
       final bloc = GameplayBloc(levelRepository: LevelRepository())
         ..add(GameplayStarted(level));
       await Future<void>.delayed(Duration.zero);
-      // Tier 2 buys both a highlight and a ghost angle.
-      bloc.add(const GameplayHintRequested(2));
+      bloc.add(const GameplayHintRequested());
       await Future<void>.delayed(Duration.zero);
       return bloc;
     }
 
-    test('timing out hides the panel but keeps what the player paid for',
-        () async {
+    test('ghosts every mirror the player still has to turn', () async {
       final bloc = await hintingBloc();
+
       expect(bloc.state.phase, GameplayPhase.hint);
-      expect(bloc.state.highlightedMirrorId, 'm1');
-      expect(bloc.state.ghostAngles, isNotEmpty);
-
-      bloc.add(const GameplayHintDismissed(keepGuides: true));
-      await Future<void>.delayed(Duration.zero);
-
-      expect(bloc.state.phase, GameplayPhase.playing);
-      expect(bloc.state.highlightedMirrorId, 'm1');
-      expect(bloc.state.ghostAngles, isNotEmpty);
+      expect(bloc.state.ghostAngles, {'m1': 45.0, 'm2': 135.0});
+      expect(bloc.state.solutionRevealed, isTrue);
       await bloc.close();
     });
 
-    test('dismissing it by hand clears the guides too', () async {
+    test('leaves out mirrors the player cannot move', () async {
+      final bloc = await hintingBloc(lockSecond: true);
+
+      expect(bloc.state.ghostAngles.keys, ['m1']);
+      await bloc.close();
+    });
+
+    test('closing the panel keeps the ghosts on the board', () async {
       final bloc = await hintingBloc();
 
       bloc.add(const GameplayHintDismissed());
       await Future<void>.delayed(Duration.zero);
 
       expect(bloc.state.phase, GameplayPhase.playing);
-      expect(bloc.state.highlightedMirrorId, isNull);
-      expect(bloc.state.ghostAngles, isEmpty);
+      expect(bloc.state.ghostAngles, isNotEmpty);
+      await bloc.close();
+    });
+
+    test('a restart cannot wash the revealed solution away', () async {
+      final bloc = await hintingBloc();
+
+      bloc.add(const GameplayHintDismissed());
+      bloc.add(const GameplayRestarted());
+      await Future<void>.delayed(Duration.zero);
+
+      expect(bloc.state.solutionRevealed, isTrue);
+      expect(bloc.state.ghostAngles, isNotEmpty);
+      expect(bloc.state.computeStars(), 1);
       await bloc.close();
     });
   });
@@ -287,7 +304,7 @@ void main() {
       int moves = 0,
       double seconds = 0,
       int hintsUsed = 0,
-      int maxHintTierUsed = 0,
+      bool solutionRevealed = false,
     }) {
       return GameplayState(
         phase: GameplayPhase.playing,
@@ -295,16 +312,19 @@ void main() {
         moves: moves,
         elapsedSeconds: seconds,
         hintsUsed: hintsUsed,
-        maxHintTierUsed: maxHintTierUsed,
+        solutionRevealed: solutionRevealed,
       );
     }
 
-    test('the free tier-0 hint does not cost stars', () {
+    test('opening the hint panel alone does not cost stars', () {
       expect(stateWith(hintsUsed: 1).computeStars(), 3);
     });
 
-    test('a paid hint drops the player to one star', () {
-      expect(stateWith(hintsUsed: 1, maxHintTierUsed: 1).computeStars(), 1);
+    test('seeing the solution drops the player to one star', () {
+      expect(
+        stateWith(hintsUsed: 1, solutionRevealed: true).computeStars(),
+        1,
+      );
     });
 
     test('going over the move budget drops to two stars', () {

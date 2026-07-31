@@ -94,23 +94,15 @@ class GameplayUndoRequested extends GameplayEvent {
   const GameplayUndoRequested();
 }
 
+/// Lays the solved board over the current one as gold ghost mirrors.
 class GameplayHintRequested extends GameplayEvent {
-  const GameplayHintRequested(this.tier);
-  final int tier;
-  @override
-  List<Object?> get props => [tier];
+  const GameplayHintRequested();
 }
 
+/// Closes the hint panel. The ghost solution stays on the board: the player
+/// paid for it, and it is the only record of what the hint said.
 class GameplayHintDismissed extends GameplayEvent {
-  const GameplayHintDismissed({this.keepGuides = false});
-
-  /// Leave the highlight and ghost angle on the board. Set when the panel
-  /// times out on its own: the player paid for those marks and has not said
-  /// they are finished with them.
-  final bool keepGuides;
-
-  @override
-  List<Object?> get props => [keepGuides];
+  const GameplayHintDismissed();
 }
 
 class GameplayState extends Equatable {
@@ -124,7 +116,7 @@ class GameplayState extends Equatable {
     this.moves = 0,
     this.elapsedSeconds = 0,
     this.hintsUsed = 0,
-    this.maxHintTierUsed = 0,
+    this.solutionRevealed = false,
     this.activeMirrorId,
     this.highlightedMirrorId,
     this.ghostAngles = const {},
@@ -144,7 +136,10 @@ class GameplayState extends Equatable {
   final int moves;
   final double elapsedSeconds;
   final int hintsUsed;
-  final int maxHintTierUsed;
+
+  /// Whether the player has seen the solved board for this level.
+  final bool solutionRevealed;
+
   final String? activeMirrorId;
   final String? highlightedMirrorId;
   final Map<String, double> ghostAngles;
@@ -174,7 +169,7 @@ class GameplayState extends Equatable {
     int? moves,
     double? elapsedSeconds,
     int? hintsUsed,
-    int? maxHintTierUsed,
+    bool? solutionRevealed,
     String? activeMirrorId,
     String? highlightedMirrorId,
     Map<String, double>? ghostAngles,
@@ -197,7 +192,7 @@ class GameplayState extends Equatable {
       moves: moves ?? this.moves,
       elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
       hintsUsed: hintsUsed ?? this.hintsUsed,
-      maxHintTierUsed: maxHintTierUsed ?? this.maxHintTierUsed,
+      solutionRevealed: solutionRevealed ?? this.solutionRevealed,
       activeMirrorId:
           clearActiveMirror ? null : (activeMirrorId ?? this.activeMirrorId),
       highlightedMirrorId: clearHighlight
@@ -216,9 +211,8 @@ class GameplayState extends Equatable {
   }
 
   int computeStars() {
-    // Tier 0 is the free objective reminder and never sets a tier, so only
-    // paid hints cost stars.
-    if (maxHintTierUsed > 0) return 1;
+    // Being shown the answer caps the reward, however fast the finish was.
+    if (solutionRevealed) return 1;
     final thresholds = level?.starThresholds;
     if (thresholds != null &&
         moves <= thresholds.threeStarMoveCount &&
@@ -239,7 +233,7 @@ class GameplayState extends Equatable {
         moves,
         elapsedSeconds,
         hintsUsed,
-        maxHintTierUsed,
+        solutionRevealed,
         activeMirrorId,
         highlightedMirrorId,
         ghostAngles,
@@ -619,10 +613,12 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
         mirrorAngles: angles,
         beam: beam,
         powerOnProgress: 0,
-        // Hints already spent stay spent — otherwise the auto-solve hint could
-        // be bought, memorised, and restarted away for a free three stars.
+        // Hints already spent stay spent — otherwise the solution could be
+        // bought, memorised, and restarted away for a free three stars.
         hintsUsed: state.hintsUsed,
-        maxHintTierUsed: state.maxHintTierUsed,
+        solutionRevealed: state.solutionRevealed,
+        // The ghosts are the answer to this board, so a restart keeps them.
+        ghostAngles: state.ghostAngles,
         rejectedCrystalIds: _rejectedFor(level, beam),
       ),
     );
@@ -645,8 +641,6 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
         // The move being undone shouldn't keep counting against the star budget.
         moves: math.max(0, state.moves - 1),
         rejectedCrystalIds: _rejectedFor(state.level!, beam),
-        clearHighlight: true,
-        ghostAngles: const {},
       ),
     );
   }
@@ -657,55 +651,28 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     final solution = level.intendedSolution.mirrorAngles;
     if (solution.isEmpty) return;
 
-    // Point the hint at a mirror the player can actually turn.
-    final firstId = solution.keys.firstWhere(
-      (id) => !level.mirrors.any((m) => m.id == id && m.isLocked),
-      orElse: () => solution.keys.first,
-    );
-    if (event.tier < 3) _stopTicker();
-
-    switch (event.tier) {
-      case 0:
-        // Free objective reminder — costs neither coins nor stars.
-        emit(state.copyWith(phase: GameplayPhase.hint));
-      case 1:
-        emit(
-          state.copyWith(
-            phase: GameplayPhase.hint,
-            highlightedMirrorId: firstId,
-            hintsUsed: state.hintsUsed + 1,
-            maxHintTierUsed: state.maxHintTierUsed < 1 ? 1 : state.maxHintTierUsed,
-          ),
-        );
-      case 2:
-        emit(
-          state.copyWith(
-            phase: GameplayPhase.hint,
-            highlightedMirrorId: firstId,
-            ghostAngles: {firstId: solution[firstId]!},
-            hintsUsed: state.hintsUsed + 1,
-            maxHintTierUsed: state.maxHintTierUsed < 2 ? 2 : state.maxHintTierUsed,
-          ),
-        );
-      case 3:
-        final angles = Map<String, double>.from(state.mirrorAngles)
-          ..[firstId] = solution[firstId]!;
-        final beam = _simulator.simulate(level: level, mirrorAngles: angles);
-        emit(
-          state.copyWith(
-            phase: GameplayPhase.playing,
-            mirrorAngles: angles,
-            beam: beam,
-            hintsUsed: state.hintsUsed + 1,
-            maxHintTierUsed: 3,
-            rejectedCrystalIds: _rejectedFor(level, beam),
-            clearHighlight: true,
-            ghostAngles: const {},
-          ),
-        );
-      default:
-        break;
+    // The whole solved board at once. Anything less had the player buying
+    // three separate nudges to work out one answer.
+    final ghosts = <String, double>{};
+    for (final mirror in level.mirrors) {
+      final angle = solution[mirror.id];
+      // A locked mirror is already where the solution wants it; ghosting it
+      // just clutters the board.
+      if (angle == null || mirror.isLocked) continue;
+      ghosts[mirror.id] = angle;
     }
+    if (ghosts.isEmpty) return;
+
+    _stopTicker();
+    emit(
+      state.copyWith(
+        phase: GameplayPhase.hint,
+        ghostAngles: ghosts,
+        hintsUsed: state.hintsUsed + 1,
+        solutionRevealed: true,
+        clearHighlight: true,
+      ),
+    );
   }
 
   void _onHintDismissed(
@@ -713,20 +680,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     Emitter<GameplayState> emit,
   ) {
     if (state.phase != GameplayPhase.hint) return;
-    if (event.keepGuides) {
-      emit(state.copyWith(phase: GameplayPhase.playing));
-      _startTicker();
-      return;
-    }
-    // Clear the tier-2 ghost angle and highlight, which otherwise stay painted
-    // on the board for the rest of the level.
-    emit(
-      state.copyWith(
-        phase: GameplayPhase.playing,
-        clearHighlight: true,
-        ghostAngles: const {},
-      ),
-    );
+    emit(state.copyWith(phase: GameplayPhase.playing));
     _startTicker();
   }
 }

@@ -4,12 +4,10 @@ import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_bronze_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_resource_chip.dart';
 
-/// Top carved-wood HUD: pause, chapter, level shield, coins, hints.
+/// Top carved-wood HUD: pause, level shield, coins, hints.
 class MedievalGameplayHud extends StatelessWidget {
   const MedievalGameplayHud({
     super.key,
-    required this.chapterLabel,
-    required this.chapterTitle,
     required this.levelIndex,
     required this.stars,
     required this.coins,
@@ -19,8 +17,6 @@ class MedievalGameplayHud extends StatelessWidget {
     required this.onAddCoins,
   });
 
-  final String chapterLabel;
-  final String chapterTitle;
   final int levelIndex;
   final int stars;
   final int coins;
@@ -28,6 +24,10 @@ class MedievalGameplayHud extends StatelessWidget {
   final VoidCallback onPause;
   final VoidCallback onHint;
   final VoidCallback onAddCoins;
+
+  /// The coin and hint chips are the only controls the player reaches for
+  /// mid-puzzle, so they get the room the chapter plate used to take.
+  static const double _chipScale = 1.32;
 
   @override
   Widget build(BuildContext context) {
@@ -71,52 +71,8 @@ class MedievalGameplayHud extends StatelessWidget {
             onPressed: onPause,
           ),
           const SizedBox(width: 8),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                gradient: LinearGradient(
-                  colors: [
-                    MedievalColors.bronzeDark.withValues(alpha: 0.55),
-                    Colors.black.withValues(alpha: 0.35),
-                  ],
-                ),
-                border: Border.all(
-                  color: MedievalColors.bronze.withValues(alpha: 0.55),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    chapterLabel.toUpperCase(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: MedievalTextStyles.cinzel(
-                      size: 9,
-                      letterSpacing: 1.2,
-                      color: MedievalColors.textGold,
-                    ),
-                  ),
-                  Text(
-                    chapterTitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: MedievalTextStyles.cinzel(
-                      size: 13,
-                      weight: FontWeight.w700,
-                      color: MedievalColors.textCream,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 6),
           _LevelShield(levelIndex: levelIndex, stars: stars),
-          const SizedBox(width: 6),
+          const Spacer(),
           Flexible(
             child: FittedBox(
               fit: BoxFit.scaleDown,
@@ -128,14 +84,16 @@ class MedievalGameplayHud extends StatelessWidget {
                     icon: Icons.monetization_on,
                     label: '$coins',
                     glowColor: MedievalColors.bronzeHighlight,
-                    onAdd: onAddCoins,
+                    scale: _chipScale,
+                    onTap: onAddCoins,
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 8),
                   MedievalResourceChip(
                     icon: Icons.lightbulb,
                     label: hintsLabel,
                     glowColor: MedievalColors.laserMid,
-                    onAdd: onHint,
+                    scale: _chipScale,
+                    onTap: onHint,
                   ),
                 ],
               ),

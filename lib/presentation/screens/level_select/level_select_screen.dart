@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mirror_logic/app/nav.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
@@ -29,6 +30,26 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
   late final Future<List<String>> _levelIds =
       context.read<LevelRepository>().levelIdsForChapter(widget.chapterId);
 
+  /// Resolved so the header names the hall rather than showing a raw id.
+  late final Future<String> _chapterTitle = context
+      .read<LevelRepository>()
+      .chapters()
+      .then(
+        (all) => all
+            .firstWhere(
+              (c) => c.id == widget.chapterId,
+              orElse: () => ChapterInfo(
+                id: widget.chapterId,
+                title: widget.chapterId.toUpperCase(),
+                subtitle: '',
+                levelIds: const [],
+                levelCount: 0,
+                maxStars: 0,
+              ),
+            )
+            .title,
+      );
+
   String get chapterId => widget.chapterId;
 
   @override
@@ -41,10 +62,13 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: gutter),
-              child: MedievalScreenHeader(
-                title: 'Levels',
-                subtitle: chapterId.toUpperCase(),
-                onBack: () => context.go('/chapters'),
+              child: FutureBuilder<String>(
+                future: _chapterTitle,
+                builder: (context, snapshot) => MedievalScreenHeader(
+                  title: snapshot.data ?? 'Levels',
+                  subtitle: 'Chapter ${chapterId.replaceFirst('ch', '')}',
+                  onBack: () => context.backTo('/chapters'),
+                ),
               ),
             ),
             Expanded(

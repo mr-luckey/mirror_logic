@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
+import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_bronze_button.dart';
 
 /// Carved title bar with a bronze back button, used at the top of every
@@ -34,6 +35,7 @@ class MedievalScreenHeader extends StatelessWidget {
               icon: Icons.arrow_back_rounded,
               onPressed: back,
               size: 42 * scale,
+              sfx: Sfx.back,
             )
           else
             SizedBox(width: 42 * scale),

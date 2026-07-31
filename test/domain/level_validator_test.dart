@@ -31,6 +31,31 @@ void main() {
       expect(ids, hasLength(levels.length));
     });
 
+    test('chapters are bite-sized and their ids match their levels', () {
+      final byChapter = <String, List<LevelModel>>{};
+      for (final level in levels) {
+        byChapter.putIfAbsent(level.chapterId, () => []).add(level);
+      }
+
+      // One giant chapter turns level select into an endless scroll and makes
+      // the chapter screen pointless.
+      expect(byChapter.length, greaterThan(1));
+      for (final entry in byChapter.entries) {
+        expect(
+          entry.value.length,
+          lessThanOrEqualTo(100),
+          reason: '${entry.key} holds ${entry.value.length} levels',
+        );
+        for (final level in entry.value) {
+          expect(
+            level.levelId,
+            startsWith('${entry.key}_'),
+            reason: '${level.levelId} is filed under ${entry.key}',
+          );
+        }
+      }
+    });
+
     test('level indices run 1..n within each chapter', () {
       final byChapter = <String, List<LevelModel>>{};
       for (final level in levels) {

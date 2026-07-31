@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:mirror_logic/core/constants/game_constants.dart';
 import 'package:mirror_logic/domain/level/level_model.dart';
 
 class LevelRepository {
@@ -88,8 +87,16 @@ class LevelRepository {
   }
 
   static const _chapterMeta = <String, (String, String)>{
-    GameConstants.chapter1Id: ('Mirror Hall', 'Optical puzzles'),
-    GameConstants.chapter2Id: ('Modern House', 'Multi-bounce mastery'),
+    'ch1': ('Mirror Hall', 'First light, first bounce'),
+    'ch2': ('Stone Corridors', 'Walls close the easy turns'),
+    'ch3': ('The Long Gallery', 'Longer chains, tighter angles'),
+    'ch4': ('Vaulted Cellars', 'Cramped rooms, sharp reflections'),
+    'ch5': ('Torchlit Keep', 'Every mirror earns its place'),
+    'ch6': ('Prism Workshop', 'Split beams and stubborn posts'),
+    'ch7': ('The Labyrinth', 'Corridors that fold back on you'),
+    'ch8': ('Obsidian Halls', 'Dark stone, unforgiving tilts'),
+    'ch9': ('Astral Observatory', 'Precision above all'),
+    'ch10': ('The Final Beacon', 'Everything the keep taught you'),
   };
 
   Future<List<ChapterInfo>> chapters() async {

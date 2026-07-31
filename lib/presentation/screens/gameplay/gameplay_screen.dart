@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mirror_logic/app/audio_scope.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
@@ -12,6 +13,8 @@ import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/data/repositories/economy_repository.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/domain/beam/beam_alignment.dart';
+import 'package:mirror_logic/domain/beam/beam_types.dart';
+import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/gameplay/gameplay_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
@@ -24,6 +27,7 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart'
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_objective_banner.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_toast.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 
 /// Fantasy-medieval gameplay screen matching the production art reference.
@@ -50,24 +54,48 @@ class _GameplayBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        // One tick per lock: the drag settling onto a mirror centre or a
-        // crystal is the moment worth feeling.
+        // One cue per lock: the drag settling onto a mirror centre or a
+        // crystal is the moment worth hearing and feeling.
         BlocListener<GameplayBloc, GameplayState>(
           listenWhen: (p, c) => p.alignmentPulse != c.alignmentPulse,
-          listener: (context, state) {
-            if (!context.read<SettingsCubit>().state.haptics) return;
-            if (state.alignedTargetKind == AlignmentTargetKind.crystal) {
-              HapticFeedback.mediumImpact();
-            } else {
-              HapticFeedback.selectionClick();
-            }
-          },
+          listener: (context, state) => context.playSfx(
+            state.alignedTargetKind == AlignmentTargetKind.crystal
+                ? Sfx.mirrorLock
+                : Sfx.mirrorDetent,
+          ),
+        ),
+        // The beam picking up another mirror is the clearest sign of progress
+        // on the board, so it gets its own tick.
+        BlocListener<GameplayBloc, GameplayState>(
+          listenWhen: (p, c) => _mirrorsInBeam(c) > _mirrorsInBeam(p),
+          listener: (context, _) => context.playSfx(Sfx.beamHit),
+        ),
+        // Reaching a crystal the wrong way should sound wrong immediately.
+        BlocListener<GameplayBloc, GameplayState>(
+          listenWhen: (p, c) =>
+              c.rejectedCrystalIds.difference(p.rejectedCrystalIds).isNotEmpty,
+          listener: (context, _) => context.playSfx(Sfx.reject),
+        ),
+        BlocListener<GameplayBloc, GameplayState>(
+          listenWhen: (p, c) =>
+              c.beam.litCrystalIds.difference(p.beam.litCrystalIds).isNotEmpty,
+          listener: (context, _) => context.playSfx(Sfx.crystalLit),
         ),
         BlocListener<GameplayBloc, GameplayState>(
           listenWhen: (p, c) =>
               p.phase != GameplayPhase.solved &&
               c.phase == GameplayPhase.solved,
-          listener: _onSolved,
+          listener: (context, state) {
+            context.playSfx(Sfx.win);
+            _onSolved(context, state);
+          },
+        ),
+        // Pull the music back while an overlay is up so the panel reads as
+        // being in front of the game rather than part of it.
+        BlocListener<GameplayBloc, GameplayState>(
+          listenWhen: (p, c) => _overlayUp(p) != _overlayUp(c),
+          listener: (context, state) =>
+              context.audio?.duckMusic(_overlayUp(state)),
         ),
       ],
       child: BlocBuilder<GameplayBloc, GameplayState>(
@@ -76,6 +104,20 @@ class _GameplayBody extends StatelessWidget {
         builder: _buildBody,
       ),
     );
+  }
+
+  static bool _overlayUp(GameplayState state) =>
+      state.phase == GameplayPhase.paused || state.phase == GameplayPhase.hint;
+
+  /// How many distinct mirrors the beam currently bounces off.
+  static int _mirrorsInBeam(GameplayState state) {
+    final ids = <String>{};
+    for (final segment in state.beam.segments) {
+      if (segment.hitKind == BeamHitKind.mirror && segment.hitId != null) {
+        ids.add(segment.hitId!);
+      }
+    }
+    return ids.length;
   }
 
   Future<void> _onSolved(BuildContext context, GameplayState state) async {
@@ -164,20 +206,34 @@ class _GameplayBody extends StatelessWidget {
             );
           }
 
-          return MedievalWoodBackground(
-            child: SafeArea(
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      const _TopHud(),
-                      const Expanded(child: _BoardArea()),
-                    ],
-                  ),
-                  if (state.phase == GameplayPhase.paused)
-                    const _PauseOverlay(),
-                  if (state.phase == GameplayPhase.hint) const _HintOverlay(),
-                ],
+          // Back mid-puzzle opens the pause menu rather than dumping the
+          // player out of the level they are halfway through.
+          return PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, _) {
+              if (didPop) return;
+              final bloc = context.read<GameplayBloc>();
+              if (bloc.state.phase == GameplayPhase.playing) {
+                bloc.add(const GameplayPaused());
+              } else if (bloc.state.phase == GameplayPhase.paused) {
+                bloc.add(const GameplayResumed());
+              }
+            },
+            child: MedievalWoodBackground(
+              child: SafeArea(
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        const _TopHud(),
+                        const Expanded(child: _BoardArea()),
+                      ],
+                    ),
+                    if (state.phase == GameplayPhase.paused)
+                      const _PauseOverlay(),
+                    if (state.phase == GameplayPhase.hint) const _HintOverlay(),
+                  ],
+                ),
               ),
             ),
           );
@@ -187,60 +243,73 @@ class _GameplayBody extends StatelessWidget {
 class _TopHud extends StatelessWidget {
   const _TopHud();
 
-  static const _chapterTitles = {
-    'ch1': 'Mirror Hall',
-    'ch2': 'Hall of Reflections',
-  };
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GameplayBloc, GameplayState>(
       buildWhen: (p, c) =>
           p.level?.levelId != c.level?.levelId ||
           p.isSolved != c.isSolved ||
-          p.hintsUsed != c.hintsUsed,
+          p.solutionRevealed != c.solutionRevealed,
       builder: (context, gameplay) {
         final level = gameplay.level;
-        final chapterId = level?.chapterId ?? GameConstants.chapter1Id;
-        final chapterNum =
-            int.tryParse(chapterId.replaceFirst('ch', '')) ?? 1;
-        final chapterLabel = 'Chapter $chapterNum';
-        final levelTitle = (level?.title.isNotEmpty ?? false)
-            ? level!.title
-            : (_chapterTitles[chapterId] ?? 'Mirror Hall');
         final stars = gameplay.isSolved ? gameplay.computeStars() : 0;
         final coins = context.watch<EconomyBloc>().state.coins;
         final progress = context.watch<ProgressBloc>().state.save;
         final completed = progress.levelProgress.values
             .where((p) => p.completed)
             .length;
-        final freeHint = completed < GameConstants.freeHintLevels;
+        final free = gameplay.solutionRevealed ||
+            completed < GameConstants.freeHintLevels;
 
         return MedievalGameplayHud(
-          chapterLabel: chapterLabel,
-          chapterTitle: levelTitle,
           levelIndex: level?.levelIndex ?? 1,
           stars: stars,
           coins: coins,
-          hintsLabel: freeHint ? 'FREE' : 'HINT',
+          hintsLabel: free ? 'FREE' : '${GameConstants.hintCost}',
           onPause: () =>
               context.read<GameplayBloc>().add(const GameplayPaused()),
-          onHint: () => _showHintSheet(context, freeHint),
+          onHint: () => _requestHint(context, free: free),
           onAddCoins: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Earn coins by clearing levels',
-                  style: MedievalTextStyles.cinzel(size: 13),
-                ),
-                backgroundColor: MedievalColors.woodDeep,
-              ),
+            MedievalToast.show(
+              context,
+              'Earn coin by clearing levels',
+              icon: Icons.monetization_on_rounded,
             );
           },
         );
       },
     );
   }
+}
+
+/// Buys and shows the solved board.
+///
+/// The tiered counsel sheet is gone: the player wanted the answer, and making
+/// them pick which fragment of it to buy only added a step.
+Future<void> _requestHint(BuildContext context, {required bool free}) async {
+  final gameplay = context.read<GameplayBloc>();
+  if (gameplay.state.phase == GameplayPhase.hint) return;
+
+  if (!free) {
+    final economy = context.read<EconomyBloc>();
+    final progress = context.read<ProgressBloc>();
+    final spent =
+        await context.read<EconomyRepository>().spendCoins(GameConstants.hintCost);
+    if (!context.mounted) return;
+    if (spent == null) {
+      MedievalToast.show(
+        context,
+        'Not enough coin — clear a level to earn more',
+        icon: Icons.lock_rounded,
+      );
+      return;
+    }
+    economy.add(EconomyCoinsChanged(spent.coins));
+    progress.add(const ProgressRefresh());
+  }
+
+  context.playSfx(Sfx.hint);
+  gameplay.add(const GameplayHintRequested());
 }
 
 class _BoardArea extends StatelessWidget {
@@ -485,9 +554,7 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
                       padding: settings.assistMode ? 72 : 42,
                     );
                     if (id == null) return;
-                    if (settings.haptics) {
-                      HapticFeedback.selectionClick();
-                    }
+                    context.playSfx(Sfx.mirrorGrab);
                     bloc.add(
                       GameplayMirrorDragStarted(
                         mirrorId: id,
@@ -539,153 +606,6 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
       },
     );
   }
-}
-
-void _showHintSheet(BuildContext context, bool freeHint) {
-  final gameplay = context.read<GameplayBloc>();
-  final economy = context.read<EconomyBloc>();
-  final coins = economy.state.coins;
-
-  showModalBottomSheet<void>(
-    context: context,
-    backgroundColor: Colors.transparent,
-    builder: (sheetContext) {
-      Widget tile(IconData icon, String title, String cost, int tier, int price) {
-        final canAfford =
-            freeHint && tier == 1 || coins >= price || tier == 0;
-        final free = tier == 0 || (freeHint && tier == 1);
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 9),
-          child: Opacity(
-            opacity: canAfford ? 1 : 0.5,
-            child: MedievalPressable(
-              enabled: canAfford,
-              onPressed: !canAfford
-                  ? null
-                  : () async {
-                      final progress = context.read<ProgressBloc>();
-                      final ecoRepo = context.read<EconomyRepository>();
-                      if (tier > 0 && !(freeHint && tier == 1)) {
-                        final spent = await ecoRepo.spendCoins(price);
-                        if (spent == null) return;
-                        economy.add(EconomyCoinsChanged(spent.coins));
-                        progress.add(const ProgressRefresh());
-                      }
-                      gameplay.add(GameplayHintRequested(tier));
-                      if (sheetContext.mounted) Navigator.pop(sheetContext);
-                    },
-              child: MedievalPanel(
-                style: MedievalPanelStyle.inset,
-                radius: 10,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ),
-                child: Row(
-                  children: [
-                    Icon(icon, size: 18, color: MedievalColors.textGold),
-                    const SizedBox(width: 11),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: MedievalTextStyles.cinzel(
-                              size: 13.5,
-                              weight: FontWeight.w600,
-                              color: MedievalColors.textCream,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            cost,
-                            style: MedievalTextStyles.cinzel(
-                              size: 10.5,
-                              letterSpacing: 0.8,
-                              color: free
-                                  ? MedievalColors.greenPlus
-                                  : MedievalColors.textMuted,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(
-                      canAfford ? Icons.chevron_right_rounded : Icons.lock,
-                      size: 19,
-                      color: MedievalColors.bronzeHighlight,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      }
-
-      return SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            Responsive.pageGutter(sheetContext),
-            0,
-            Responsive.pageGutter(sheetContext),
-            12,
-          ),
-          child: MedievalPanel(
-            radius: 16,
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'COUNSEL',
-                  style: MedievalTextStyles.cinzel(
-                    size: 15,
-                    weight: FontWeight.w700,
-                    letterSpacing: 2.4,
-                    color: MedievalColors.textGold,
-                  ),
-                ),
-                const MedievalDivider(height: 16),
-                tile(
-                  Icons.flag_rounded,
-                  'Objective reminder',
-                  'Free',
-                  0,
-                  0,
-                ),
-                tile(
-                  Icons.highlight_rounded,
-                  'Highlight a key mirror',
-                  freeHint
-                      ? 'Free (early levels)'
-                      : '${GameConstants.hintTier1Cost} coins',
-                  1,
-                  GameConstants.hintTier1Cost,
-                ),
-                tile(
-                  Icons.blur_on_rounded,
-                  'Show ghost target angle',
-                  '${GameConstants.hintTier2Cost} coins',
-                  2,
-                  GameConstants.hintTier2Cost,
-                ),
-                tile(
-                  Icons.auto_fix_high_rounded,
-                  'Auto-set one mirror',
-                  '${GameConstants.hintTier3Cost} coins',
-                  3,
-                  GameConstants.hintTier3Cost,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
-  );
 }
 
 class _PauseOverlay extends StatelessWidget {
@@ -755,19 +675,18 @@ class _PauseOverlay extends StatelessWidget {
                   MedievalButton(
                     label: 'Undo Move',
                     icon: Icons.undo_rounded,
+                    sfx: Sfx.undo,
                     onPressed: () {
-                      context
-                          .read<GameplayBloc>()
-                          .add(const GameplayUndoRequested());
-                      context
-                          .read<GameplayBloc>()
-                          .add(const GameplayResumed());
+                      final bloc = context.read<GameplayBloc>();
+                      bloc.add(const GameplayUndoRequested());
+                      bloc.add(const GameplayResumed());
                     },
                   ),
                   const SizedBox(height: 9),
                   MedievalButton(
                     label: 'Level Select',
                     icon: Icons.grid_view_rounded,
+                    sfx: Sfx.back,
                     onPressed: () {
                       final chapter = context
                               .read<GameplayBloc>()
@@ -794,6 +713,10 @@ class _PauseOverlay extends StatelessWidget {
   }
 }
 
+/// Parchment note explaining the gold ghost board the hint just laid down.
+///
+/// It sits over the board, so it retires itself after a few seconds rather
+/// than waiting for a tap the player has no reason to give.
 class _HintOverlay extends StatefulWidget {
   const _HintOverlay();
 
@@ -802,23 +725,14 @@ class _HintOverlay extends StatefulWidget {
 }
 
 class _HintOverlayState extends State<_HintOverlay> {
-  /// Long enough to read a sentence, short enough that it stops covering the
-  /// board before the player wants to look at it again.
-  static const _hold = Duration(seconds: 6);
+  static const _hold = Duration(seconds: 5);
 
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer(_hold, () {
-      if (!mounted) return;
-      // Guides stay: a timeout is not the player saying they are done with a
-      // highlight they spent coins on.
-      context
-          .read<GameplayBloc>()
-          .add(const GameplayHintDismissed(keepGuides: true));
-    });
+    _timer = Timer(_hold, _dismiss);
   }
 
   @override
@@ -827,92 +741,82 @@ class _HintOverlayState extends State<_HintOverlay> {
     super.dispose();
   }
 
+  void _dismiss() {
+    if (!mounted) return;
+    context.read<GameplayBloc>().add(const GameplayHintDismissed());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<GameplayBloc, GameplayState, (String?, bool, int, List<String>)>(
-      selector: (state) => (
-        state.highlightedMirrorId,
-        state.ghostAngles.isNotEmpty,
-        state.maxHintTierUsed,
-        state.level?.metadata.hints ?? const [],
-      ),
-      builder: (context, hint) {
-        final highlighted = hint.$1;
-        final hasGhost = hint.$2;
-        final hints = hint.$4;
+    final gutter = Responsive.pageGutter(context);
 
-        String message;
-        if (hasGhost && hints.length > 2) {
-          message = hints[2];
-        } else if (highlighted != null && hints.length > 1) {
-          message = hints[1];
-        } else if (hints.isNotEmpty) {
-          message = hints[0];
-        } else if (highlighted == null) {
-          message = 'Guide the laser into the glowing crystal.';
-        } else if (hasGhost) {
-          message = 'Align the highlighted mirror with the gold ghost.';
-        } else {
-          message = 'Try rotating the highlighted mirror.';
-        }
-
-        return Align(
-          alignment: Alignment.topCenter,
-          child: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                Responsive.pageGutter(context),
-                90,
-                Responsive.pageGutter(context),
-                0,
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: MedievalColors.parchment,
-                  border: Border.all(
-                    color: MedievalColors.bronze,
-                    width: 2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.4),
-                      blurRadius: 10,
-                    ),
-                  ],
+    return Align(
+      alignment: Alignment.topCenter,
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(gutter, 90, gutter, 0),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: MedievalColors.parchment,
+              border: Border.all(color: MedievalColors.bronze, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.4),
+                  blurRadius: 10,
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      message,
-                      textAlign: TextAlign.center,
-                      style: MedievalTextStyles.imFell(
-                        size: Responsive.sp(context, 14),
-                        height: 1.35,
-                      ),
+                    const Icon(
+                      Icons.auto_fix_high_rounded,
+                      size: 17,
+                      color: MedievalColors.bronzeDark,
                     ),
-                    TextButton(
-                      onPressed: () => context
-                          .read<GameplayBloc>()
-                          .add(const GameplayHintDismissed()),
-                      child: Text(
-                        'Got it',
-                        style: MedievalTextStyles.cinzel(
-                          size: 13,
-                          color: MedievalColors.bronzeDark,
-                          weight: FontWeight.w700,
-                        ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'THE SOLVED BOARD',
+                      style: MedievalTextStyles.cinzel(
+                        size: Responsive.sp(context, 12),
+                        weight: FontWeight.w700,
+                        letterSpacing: 1.8,
+                        color: MedievalColors.bronzeDark,
                       ),
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: 8),
+                Text(
+                  'Every mirror now shows a gold ghost at its finished angle. '
+                  'Turn each one until it sits inside its ghost.',
+                  textAlign: TextAlign.center,
+                  style: MedievalTextStyles.imFell(
+                    size: Responsive.sp(context, 13.5),
+                    height: 1.35,
+                  ),
+                ),
+                TextButton(
+                  onPressed: _dismiss,
+                  child: Text(
+                    'Got it',
+                    style: MedievalTextStyles.cinzel(
+                      size: 13,
+                      color: MedievalColors.bronzeDark,
+                      weight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
