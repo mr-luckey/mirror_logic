@@ -176,9 +176,10 @@ class _TopHud extends StatelessWidget {
           p.hintsUsed != c.hintsUsed,
       builder: (context, gameplay) {
         final level = gameplay.level;
-        final chapterId = level?.chapterId ?? 'ch1';
+        final chapterId = level?.chapterId ?? GameConstants.chapter1Id;
         final chapterNum =
             int.tryParse(chapterId.replaceFirst('ch', '')) ?? 1;
+        final chapterLabel = 'Chapter $chapterNum';
         final levelTitle = (level?.title.isNotEmpty ?? false)
             ? level!.title
             : (_chapterTitles[chapterId] ?? 'Mirror Hall');
@@ -191,7 +192,7 @@ class _TopHud extends StatelessWidget {
         final freeHint = completed < GameConstants.freeHintLevels;
 
         return MedievalGameplayHud(
-          chapterLabel: 'Chapter $chapterNum',
+          chapterLabel: chapterLabel,
           chapterTitle: levelTitle,
           levelIndex: level?.levelIndex ?? 1,
           stars: stars,
@@ -402,7 +403,12 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
                     if (context.read<SettingsCubit>().state.haptics) {
                       HapticFeedback.selectionClick();
                     }
-                    bloc.add(GameplayMirrorDragStarted(id));
+                    bloc.add(
+                      GameplayMirrorDragStarted(
+                        mirrorId: id,
+                        grabPoint: world,
+                      ),
+                    );
                   },
                   onPanUpdate: (details) {
                     final bloc = context.read<GameplayBloc>();
@@ -625,7 +631,7 @@ class _PauseOverlay extends StatelessWidget {
                               .state
                               .level
                               ?.chapterId ??
-                          'ch1';
+                          GameConstants.chapter1Id;
                       context.go('/levels/$chapter');
                     },
                   ),

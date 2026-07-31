@@ -58,6 +58,19 @@ abstract final class ReflectionMath {
     return degreesFromDirection(point - hinge);
   }
 
+  /// Folds a mirror angle into [0, 180).
+  ///
+  /// A mirror is a line, not a direction: 135° and −45° describe the same
+  /// surface, so raw `atan2` output must be folded before it is clamped into a
+  /// level's [min, max] band.
+  static double normalizeMirrorAngle(double degrees) => degrees % 180;
+
+  /// Shortest signed rotation from [from] to [to], in (−180, 180].
+  static double signedAngleDelta(double from, double to) {
+    final delta = (to - from) % 360;
+    return delta > 180 ? delta - 360 : delta;
+  }
+
   /// Shortest absolute angular distance in degrees.
   static double angularDistance(double a, double b) {
     var d = (a - b).abs() % 360;

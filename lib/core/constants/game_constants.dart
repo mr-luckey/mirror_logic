@@ -22,4 +22,7 @@ abstract final class GameConstants {
 
   static const String chapter1Id = 'ch1';
   static const String chapter2Id = 'ch2';
+
+  /// Seed level for a fresh save.
+  static const String firstLevelId = 'ch1_001';
 }

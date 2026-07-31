@@ -306,6 +306,14 @@ class GameplayPainter extends CustomPainter {
     for (final o in level.obstacles) {
       if (o.polygon.length < 3) continue;
       final bounds = _polygonBounds(o.polygon);
+
+      if (o.shape == ObstacleShape.pillar && wallVerticalImage != null) {
+        _drawPillar(canvas, bounds, wallVerticalImage!);
+        continue;
+      }
+
+      // Walls (and any level authored before `shape` existed) pick their strip
+      // sprite from the bounding box.
       final isHorizontal = bounds.width >= bounds.height * 1.12;
       final isVertical = bounds.height >= bounds.width * 1.12;
 
@@ -330,6 +338,30 @@ class GameplayPainter extends CustomPainter {
 
       _drawStoneWallFallback(canvas, o.polygon, bounds);
     }
+  }
+
+  /// A post is one sprite fitted to a square, never tiled into a strip.
+  void _drawPillar(Canvas canvas, Rect bounds, ui.Image image) {
+    final iw = image.width.toDouble();
+    final ih = image.height.toDouble();
+    if (iw < 1 || ih < 1 || bounds.width < 1 || bounds.height < 1) return;
+
+    final long = math.max(bounds.width, bounds.height);
+    final short = math.min(bounds.width, bounds.height);
+    assert(
+      long <= short * 1.5,
+      'Pillar bounds should be square-ish, got $bounds',
+    );
+
+    // Cap the drawn square so a mis-tagged strip degrades to a post instead of
+    // covering the whole run.
+    final side = math.min(long, short * 1.25);
+    canvas.drawImageRect(
+      image,
+      Rect.fromLTWH(0, 0, iw, ih),
+      Rect.fromCenter(center: bounds.center, width: side, height: side),
+      Paint()..filterQuality = FilterQuality.high,
+    );
   }
 
   void _drawTiledWallStrip(

@@ -114,16 +114,35 @@ class MirrorDef extends Equatable {
       ];
 }
 
+/// How an obstacle should be drawn. Collision is unaffected — the beam always
+/// tests the raw polygon edges.
+enum ObstacleShape {
+  /// A long run of stone, tiled along its dominant axis.
+  wall,
+
+  /// A square post where walls meet or a mirror hinge sits.
+  pillar,
+}
+
 class ObstacleDef extends Equatable {
   const ObstacleDef({
     required this.id,
     required this.polygon,
     this.isDecorative = false,
+    this.shape = ObstacleShape.wall,
   });
 
   final String id;
   final List<Vec2> polygon;
   final bool isDecorative;
+  final ObstacleShape shape;
+
+  static ObstacleShape _parseShape(String? raw) {
+    return switch (raw) {
+      'pillar' => ObstacleShape.pillar,
+      _ => ObstacleShape.wall,
+    };
+  }
 
   factory ObstacleDef.fromJson(Map<String, dynamic> json) {
     final raw = json['polygon'] as List<dynamic>;
@@ -135,11 +154,12 @@ class ObstacleDef extends Equatable {
       id: json['id'] as String,
       polygon: polygon,
       isDecorative: json['isDecorative'] as bool? ?? false,
+      shape: _parseShape(json['shape'] as String?),
     );
   }
 
   @override
-  List<Object?> get props => [id, polygon, isDecorative];
+  List<Object?> get props => [id, polygon, isDecorative, shape];
 }
 
 class TargetCrystalDef extends Equatable {

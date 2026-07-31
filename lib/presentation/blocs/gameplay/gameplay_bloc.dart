@@ -43,10 +43,16 @@ class GameplayStarted extends GameplayEvent {
 }
 
 class GameplayMirrorDragStarted extends GameplayEvent {
-  const GameplayMirrorDragStarted(this.mirrorId);
+  const GameplayMirrorDragStarted({
+    required this.mirrorId,
+    required this.grabPoint,
+  });
   final String mirrorId;
+
+  /// Where the finger landed, used as the zero reference for the rotation.
+  final Vec2 grabPoint;
   @override
-  List<Object?> get props => [mirrorId];
+  List<Object?> get props => [mirrorId, grabPoint];
 }
 
 class GameplayMirrorDragged extends GameplayEvent {
@@ -228,11 +234,26 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
   static const int _tickMs = 16;
   static const double _powerOnSeconds = 0.4;
 
+  /// Inside this radius `atan2` around the hinge is mostly noise.
+  static const double _dragDeadRadius = 26;
+
+  /// Radius at which the mirror tracks the finger one to one.
+  static const double _dragFullRadius = 90;
+
+  /// A larger jump between two updates means the finger crossed the post
+  /// rather than swept around it.
+  static const double _dragMaxStep = 60;
+
   final LevelRepository _levelRepository;
   final BeamSimulator _simulator;
   final WinConditionEvaluator _win;
   Timer? _tickTimer;
   double _elapsedSeconds = 0;
+
+  double _dragPointerAngle = 0;
+  double _dragAngle = 0;
+  double _dragStartAngle = 0;
+  Map<String, double>? _dragUndoSnapshot;
 
   Future<void> _onLoadLevel(
     GameplayLoadLevel event,
@@ -295,18 +316,24 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     if (state.phase != GameplayPhase.playing) return;
     final level = state.level;
     if (level == null) return;
-    final mirror = level.mirrors.where((m) => m.id == event.mirrorId);
-    if (mirror.isEmpty || mirror.first.isLocked) return;
+    final matches = level.mirrors.where((m) => m.id == event.mirrorId);
+    if (matches.isEmpty || matches.first.isLocked) return;
+    final mirror = matches.first;
 
-    final stack = List<Map<String, double>>.from(state.undoStack)
-      ..add(Map<String, double>.from(state.mirrorAngles));
-    emit(
-      state.copyWith(
-        activeMirrorId: event.mirrorId,
-        undoStack: stack,
-        moves: state.moves + 1,
-      ),
+    _dragStartAngle =
+        state.mirrorAngles[event.mirrorId] ?? mirror.initialAngle;
+    _dragAngle = ReflectionMath.clampAngle(
+      ReflectionMath.normalizeMirrorAngle(_dragStartAngle),
+      mirror.minAngle,
+      mirror.maxAngle,
     );
+    _dragPointerAngle = ReflectionMath.angleFromHingeToPoint(
+      mirror.hingePosition,
+      event.grabPoint,
+    );
+    _dragUndoSnapshot = Map<String, double>.from(state.mirrorAngles);
+
+    emit(state.copyWith(activeMirrorId: event.mirrorId));
   }
 
   void _onDragged(
@@ -321,15 +348,35 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     final mirror = mirrorList.first;
     if (mirror.isLocked) return;
 
-    var angle = ReflectionMath.angleFromHingeToPoint(
-      mirror.hingePosition,
-      event.worldPoint,
+    final offset = event.worldPoint - mirror.hingePosition;
+    final pointer = ReflectionMath.degreesFromDirection(offset);
+    final step = ReflectionMath.signedAngleDelta(_dragPointerAngle, pointer);
+    _dragPointerAngle = pointer;
+
+    // Keep following the finger through the noisy zone and across the post, but
+    // don't turn either of those into rotation.
+    final radius = offset.length;
+    if (radius < _dragDeadRadius || step.abs() > _dragMaxStep) return;
+
+    // Damping near the hinge keeps a small finger move a small rotation.
+    final gain = math.min(1.0, radius / _dragFullRadius);
+    _dragAngle = ReflectionMath.clampAngle(
+      _dragAngle + step * gain,
+      mirror.minAngle,
+      mirror.maxAngle,
     );
-    angle = ReflectionMath.clampAngle(angle, mirror.minAngle, mirror.maxAngle);
+
+    // Snap the reported angle only — the accumulator stays continuous so the
+    // mirror doesn't stick when the finger reverses inside one detent.
+    var angle = _dragAngle;
     if (mirror.snapIncrement > 0) {
-      angle = (angle / mirror.snapIncrement).round() * mirror.snapIncrement;
-      angle = ReflectionMath.clampAngle(angle, mirror.minAngle, mirror.maxAngle);
+      angle = ReflectionMath.clampAngle(
+        (angle / mirror.snapIncrement).round() * mirror.snapIncrement,
+        mirror.minAngle,
+        mirror.maxAngle,
+      );
     }
+    if (angle == state.mirrorAngles[event.mirrorId]) return;
 
     final angles = Map<String, double>.from(state.mirrorAngles)
       ..[event.mirrorId] = angle;
@@ -341,7 +388,26 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     GameplayMirrorDragEnded event,
     Emitter<GameplayState> emit,
   ) {
-    emit(state.copyWith(clearActiveMirror: true));
+    final active = state.activeMirrorId;
+    final snapshot = _dragUndoSnapshot;
+    _dragUndoSnapshot = null;
+
+    // Grabbing a mirror and letting go without turning it costs nothing.
+    if (active == null ||
+        snapshot == null ||
+        state.mirrorAngles[active] == _dragStartAngle) {
+      emit(state.copyWith(clearActiveMirror: true));
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        clearActiveMirror: true,
+        moves: state.moves + 1,
+        undoStack: List<Map<String, double>>.from(state.undoStack)
+          ..add(snapshot),
+      ),
+    );
   }
 
   void _onTick(GameplayTick event, Emitter<GameplayState> emit) {
@@ -413,6 +479,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     final level = state.level;
     if (level == null) return;
     _elapsedSeconds = 0;
+    _dragUndoSnapshot = null;
     final angles = {
       for (final m in level.mirrors) m.id: m.initialAngle,
     };

@@ -61,10 +61,15 @@ class ChapterSelectScreen extends StatelessWidget {
                             const SizedBox(height: 14),
                         itemBuilder: (context, index) {
                           final ch = chapters[index];
-                          final stars =
-                              progress.save.starsForChapter(ch.id);
+                          final stars = progress.save.starsForChapter(
+                            ch.id,
+                            levelIds: ch.levelIds,
+                          );
                           final completed =
-                              progress.save.completedCountForChapter(ch.id);
+                              progress.save.completedCountForChapter(
+                            ch.id,
+                            levelIds: ch.levelIds,
+                          );
                           final unlocked =
                               GameConstants.unlockAllLevelsForTesting ||
                                   progress.save.isChapterUnlocked(

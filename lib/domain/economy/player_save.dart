@@ -52,7 +52,7 @@ class PlayerSave extends Equatable {
     this.saveSchemaVersion = 1,
     this.onboardingComplete = false,
     this.coins = 50,
-    this.unlockedLevelIds = const ['ch1_001'],
+    this.unlockedLevelIds = const [GameConstants.firstLevelId],
     this.levelProgress = const {},
     this.lastPlayedLevelId,
     this.hintsUsedTotal = 0,
@@ -85,15 +85,30 @@ class PlayerSave extends Equatable {
     );
   }
 
-  int starsForChapter(String chapterId) {
+  int starsForChapter(String chapterId, {Iterable<String>? levelIds}) {
+    final ids = levelIds?.toSet();
     return levelProgress.values
-        .where((p) => p.levelId.startsWith(chapterId))
+        .where(
+          (p) => ids != null
+              ? ids.contains(p.levelId)
+              : p.levelId.startsWith(chapterId),
+        )
         .fold<int>(0, (sum, p) => sum + p.stars);
   }
 
-  int completedCountForChapter(String chapterId) {
+  int completedCountForChapter(
+    String chapterId, {
+    Iterable<String>? levelIds,
+  }) {
+    final ids = levelIds?.toSet();
     return levelProgress.values
-        .where((p) => p.levelId.startsWith(chapterId) && p.completed)
+        .where(
+          (p) =>
+              (ids != null
+                  ? ids.contains(p.levelId)
+                  : p.levelId.startsWith(chapterId)) &&
+              p.completed,
+        )
         .length;
   }
 
@@ -127,7 +142,7 @@ class PlayerSave extends Equatable {
       onboardingComplete: json['onboardingComplete'] as bool? ?? false,
       coins: json['coins'] as int? ?? 50,
       unlockedLevelIds: (json['unlockedLevelIds'] as List<dynamic>? ??
-              ['ch1_001'])
+              [GameConstants.firstLevelId])
           .cast<String>(),
       levelProgress: progressRaw.map(
         (k, v) => MapEntry(k, LevelProgress.fromJson(v as Map<String, dynamic>)),

@@ -82,7 +82,7 @@ class LevelRepository {
   }
 
   static const _chapterMeta = <String, (String, String)>{
-    GameConstants.chapter1Id: ('Mirror Hall', '1000 optical puzzles'),
+    GameConstants.chapter1Id: ('Mirror Hall', 'Optical puzzles'),
     GameConstants.chapter2Id: ('Modern House', 'Multi-bounce mastery'),
   };
 
@@ -102,6 +102,7 @@ class LevelRepository {
           title: _chapterMeta[id]?.$1 ?? 'Chapter ${id.replaceFirst('ch', '')}',
           subtitle: _chapterMeta[id]?.$2 ??
               '${_chapterIds![id]!.length} reflection puzzles',
+          levelIds: List<String>.from(_chapterIds![id]!),
           levelCount: _chapterIds![id]!.length,
           maxStars: _chapterIds![id]!.length * 3,
         ),
@@ -114,6 +115,7 @@ class ChapterInfo {
     required this.id,
     required this.title,
     required this.subtitle,
+    required this.levelIds,
     required this.levelCount,
     required this.maxStars,
   });
@@ -121,6 +123,7 @@ class ChapterInfo {
   final String id;
   final String title;
   final String subtitle;
+  final List<String> levelIds;
   final int levelCount;
   final int maxStars;
 }
