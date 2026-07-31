@@ -1,4 +1,4 @@
-package com.example.mirror_logic
+package com.appwaretech.mirrorLogic
 
 import io.flutter.embedding.android.FlutterActivity
 
