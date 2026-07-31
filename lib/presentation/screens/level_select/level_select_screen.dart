@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mirror_logic/app/theme/app_colors.dart';
 import 'package:mirror_logic/app/theme/app_text_styles.dart';
+import 'package:mirror_logic/core/constants/game_constants.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
@@ -71,7 +72,9 @@ class LevelSelectScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final id = ids[index];
                           final unlocked =
-                              progress.save.unlockedLevelIds.contains(id) ||
+                              GameConstants.unlockAllLevelsForTesting ||
+                                  progress.save.unlockedLevelIds
+                                      .contains(id) ||
                                   index == 0;
                           final stars =
                               progress.save.levelProgress[id]?.stars ?? 0;

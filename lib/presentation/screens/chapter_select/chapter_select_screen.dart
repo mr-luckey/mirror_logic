@@ -66,11 +66,11 @@ class ChapterSelectScreen extends StatelessWidget {
                           final completed =
                               progress.save.completedCountForChapter(ch.id);
                           final unlocked =
-                              ch.id == GameConstants.chapter1Id ||
-                                  progress.save.completedCountForChapter(
-                                        GameConstants.chapter1Id,
-                                      ) >=
-                                      16;
+                              GameConstants.unlockAllLevelsForTesting ||
+                                  progress.save.isChapterUnlocked(
+                                    ch.id,
+                                    ch.levelCount,
+                                  );
 
                           return _ChapterCard(
                             chapter: ch,

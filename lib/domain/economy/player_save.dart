@@ -98,12 +98,15 @@ class PlayerSave extends Equatable {
   }
 
   bool isChapterUnlocked(String chapterId, int chapterLevelCount) {
+    if (GameConstants.unlockAllLevelsForTesting) return true;
     if (chapterId == GameConstants.chapter1Id) return true;
-    if (chapterId == GameConstants.chapter2Id) {
-      final completed = completedCountForChapter(GameConstants.chapter1Id);
-      return completed >= (chapterLevelCount * GameConstants.chapterUnlockRatio).ceil();
-    }
-    return false;
+    // Later chapters unlock after 80% of the previous chapter is complete.
+    final n = int.tryParse(chapterId.replaceFirst('ch', '')) ?? 0;
+    if (n <= 1) return true;
+    final prevId = 'ch${n - 1}';
+    final completed = completedCountForChapter(prevId);
+    final need = (chapterLevelCount * GameConstants.chapterUnlockRatio).ceil();
+    return completed >= need;
   }
 
   Map<String, dynamic> toJson() => {

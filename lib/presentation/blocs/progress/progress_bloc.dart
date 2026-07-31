@@ -126,15 +126,6 @@ class ProgressBloc extends Bloc<ProgressEvent, ProgressState> {
       if (!unlocked.contains(nextId)) {
         unlocked.add(nextId);
       }
-      // Chapter 2 unlock when 80% of ch1 complete.
-      if (chapter == GameConstants.chapter1Id) {
-        final completed = progress.values
-            .where((p) => p.levelId.startsWith('ch1') && p.completed)
-            .length;
-        if (completed >= 16 && !unlocked.contains('ch2_001')) {
-          unlocked.add('ch2_001');
-        }
-      }
     }
 
     final next = save.copyWith(

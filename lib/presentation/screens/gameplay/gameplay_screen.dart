@@ -163,7 +163,7 @@ class _TopHud extends StatelessWidget {
   const _TopHud();
 
   static const _chapterTitles = {
-    'ch1': 'Apprentice Workshop',
+    'ch1': 'Mirror Hall',
     'ch2': 'Hall of Reflections',
   };
 
@@ -177,7 +177,8 @@ class _TopHud extends StatelessWidget {
       builder: (context, gameplay) {
         final level = gameplay.level;
         final chapterId = level?.chapterId ?? 'ch1';
-        final chapterNum = chapterId == 'ch2' ? 2 : 1;
+        final chapterNum =
+            int.tryParse(chapterId.replaceFirst('ch', '')) ?? 1;
         final levelTitle = (level?.title.isNotEmpty ?? false)
             ? level!.title
             : (_chapterTitles[chapterId] ?? 'Mirror Hall');

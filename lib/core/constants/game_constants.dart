@@ -17,6 +17,9 @@ abstract final class GameConstants {
 
   static const double chapterUnlockRatio = 0.8;
 
+  /// Set to false before shipping. When true, all chapters/levels are playable.
+  static const bool unlockAllLevelsForTesting = true;
+
   static const String chapter1Id = 'ch1';
   static const String chapter2Id = 'ch2';
 }
