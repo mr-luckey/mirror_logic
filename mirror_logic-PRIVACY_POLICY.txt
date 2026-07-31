@@ -1,0 +1,257 @@
+
+PRIVACY POLICY FOR MIRROR LOGIC
+
+Last updated: 31 July 2026
+
+Mirror Logic ("the Game", "the App", "we", "us", or "our") is a single-player
+optical puzzle game developed and published by Appware Tech. This Privacy Policy
+explains what information the Game handles, how it is used, and the choices you
+have. By downloading, installing, or playing Mirror Logic, you agree to the
+practices described in this policy.
+
+If you do not agree with this policy, please do not install or use the Game.
+
+
+1. SUMMARY (PLAIN LANGUAGE)
+
+- We do not ask you to create an account, and we do not ask for your name,
+  email address, phone number, or any other directly identifying information.
+- Your game progress, coins, hints, and settings are stored only on your own
+  device.
+- The Game shows advertisements supplied by third-party advertising networks
+  (Google AdMob). These networks may collect device and advertising identifiers
+  in order to serve and measure ads.
+- You can reset advertising identifiers or opt out of personalised advertising
+  from your device settings at any time.
+- You can delete everything the Game has stored by uninstalling the Game or by
+  clearing its data from your device settings.
+
+
+2. INFORMATION WE DO NOT COLLECT
+
+We do not collect, request, store, or transmit to our own servers any of the
+following:
+
+- Your name, email address, postal address, or telephone number
+- Photographs, contacts, calendar entries, SMS messages, or call logs
+- Precise GPS location
+- Microphone or camera input
+- Payment card numbers or bank details
+
+Mirror Logic does not operate its own user accounts, does not run its own
+analytics backend, and does not maintain a server-side profile about you.
+
+
+3. INFORMATION STORED ON YOUR DEVICE
+
+To let you continue playing where you left off, the Game saves the following
+data locally on your device using the device's own storage:
+
+- Level progress, completed levels, star ratings, and best move counts
+- In-game currency balances (coins) and hint or booster counts
+- Game settings such as sound effects volume, music volume, vibration, and
+  other preferences
+- An anonymous, randomly generated local save identifier used only to keep your
+  save file consistent on your device
+
+This information never leaves your device unless you deliberately export or
+share it, and it is not readable by us. If you uninstall the Game or clear its
+storage, this data is permanently deleted and cannot be recovered by us or by
+you.
+
+
+4. ADVERTISING
+
+Mirror Logic is offered free of charge and is supported by advertising. The Game
+displays advertisements, which may include banner ads, full-screen
+(interstitial) ads, and optional rewarded video ads that you may choose to watch
+in exchange for in-game rewards such as coins or hints.
+
+Advertising is delivered through third-party advertising partners, primarily:
+
+- Google AdMob (Google LLC and its affiliates)
+
+To serve, cap, and measure advertisements, and to detect invalid traffic and
+fraud, these advertising partners may collect and process information such as:
+
+- Your device's advertising identifier (Google Advertising ID on Android, or
+  Identifier for Advertisers on iOS)
+- Device information such as device model, operating system version, language,
+  country, screen size, and mobile network or carrier
+- IP address, which may be used to derive an approximate (city or region level)
+  location
+- Ad interaction data such as ad impressions, clicks, video completions, and
+  the time spent viewing an ad
+
+This information is collected directly by the advertising partner through the
+advertising software development kit embedded in the Game, and its use is
+governed by that partner's own privacy policy rather than ours. We do not
+receive your advertising identifier or IP address in a form that identifies you
+personally; we receive only aggregated, non-identifying reports such as total
+impressions and revenue.
+
+Google's privacy policy and information about how Google uses data from apps
+that use its services are available at:
+
+- https://policies.google.com/privacy
+- https://policies.google.com/technologies/partner-sites
+
+Google AdMob's own policies are available at:
+
+- https://support.google.com/admob/answer/6128543
+
+
+5. YOUR ADVERTISING CHOICES
+
+You are in control of personalised advertising on your device:
+
+- Android: open Settings, then Google, then Ads, where you can delete or reset
+  your advertising ID and turn off ad personalisation.
+- iOS: open Settings, then Privacy & Security, then Tracking, where you can
+  disable "Allow Apps to Request to Track". On iOS the Game will also ask for
+  your permission before any tracking for advertising purposes takes place, and
+  you may decline.
+
+If you opt out of personalised advertising, you will still see advertisements in
+the Game, but they will be selected on a non-personalised basis and will
+generally be less relevant to you.
+
+You can also learn more about interest-based advertising and available opt-outs
+at http://www.aboutads.info/choices and http://www.youronlinechoices.eu.
+
+
+6. PERMISSIONS USED BY THE GAME
+
+Mirror Logic requests only the permissions necessary for it to function:
+
+- Internet access and network state: required to load and display
+  advertisements. The core puzzle gameplay works offline; only advertising and
+  related functionality require a connection.
+- Vibration: used, if enabled in the Game's settings, to provide haptic
+  feedback during play. You can disable it at any time from the settings screen.
+- Advertising identifier: used by our advertising partners as described in
+  Section 4.
+
+The Game does not request access to your camera, microphone, contacts,
+photographs, precise location, or files outside of its own private storage.
+
+
+7. CHILDREN'S PRIVACY
+
+Mirror Logic is a puzzle game suitable for a general audience, and we understand
+that children may play it. We do not knowingly collect personal information
+from children in violation of the Children's Online Privacy Protection Act
+(COPPA), the EU General Data Protection Regulation (GDPR), or any other
+applicable law.
+
+Where the Game is distributed to audiences that include children, we configure
+our advertising partners to serve only advertisements appropriate for a general
+or family audience and to treat requests as child-directed where required, which
+disables personalised (interest-based) advertising and limits the data the
+advertising partner may collect.
+
+If you are a parent or guardian and you believe that a child has provided
+personal information through the Game, please contact us at
+contact@appwaretech.com and we will take reasonable steps to investigate and
+delete such information.
+
+
+8. LEGAL BASES FOR PROCESSING (EEA, UK, AND SWITZERLAND)
+
+If you are located in the European Economic Area, the United Kingdom, or
+Switzerland, the legal bases on which data described in this policy is processed
+are:
+
+- Consent: for personalised advertising and any related tracking. Where consent
+  is required, a consent request is shown to you before such processing begins,
+  and you may withdraw your consent at any time through your device settings or
+  by using the privacy options offered inside the Game.
+- Legitimate interests: for the display of non-personalised advertisements,
+  frequency capping, aggregated reporting, security, and the prevention of fraud
+  and invalid traffic.
+- Performance of a contract: for storing your game progress and settings on
+  your device so that the Game functions as you expect.
+
+
+9. YOUR RIGHTS
+
+Depending on where you live, you may have the right to request access to,
+correction of, deletion of, or restriction of the processing of your personal
+data, the right to data portability, the right to object to processing, and the
+right not to be discriminated against for exercising these rights.
+
+Because Mirror Logic stores its data only on your own device and does not
+maintain a user account or server-side profile, you can exercise the most
+important of these rights directly and immediately:
+
+- To delete all data the Game has stored, uninstall the Game, or clear the
+  Game's data from your device's application settings.
+- To limit advertising data, follow the steps in Section 5.
+
+For requests relating to data held by our advertising partners, please refer to
+that partner's privacy policy, or contact us at contact@appwaretech.com and we
+will assist you where we are able to.
+
+Residents of California may additionally note that we do not sell personal
+information for money. Certain disclosures of advertising identifiers to
+advertising partners may be considered "sharing" for cross-context behavioural
+advertising under California law; you may opt out of this at any time using the
+device controls described in Section 5.
+
+
+10. DATA RETENTION
+
+Data stored locally on your device is retained until you delete the Game or
+clear its data. Data collected by our advertising partners is retained according
+to those partners' own retention policies, which are described in their privacy
+policies.
+
+
+11. INTERNATIONAL DATA TRANSFERS
+
+Our advertising partners are global companies and may process data on servers
+located outside your country of residence, including in the United States. These
+partners rely on legally recognised transfer mechanisms, such as the European
+Commission's Standard Contractual Clauses, to protect data transferred across
+borders. Details are available in each partner's privacy policy.
+
+
+12. SECURITY
+
+We take reasonable technical and organisational measures to protect the limited
+information involved in the Game. Because your save data resides only on your
+device, its security also depends on the security of your device itself. We
+recommend that you keep your device's operating system up to date and protect it
+with a screen lock. Please be aware that no method of electronic storage or
+transmission is completely secure.
+
+
+13. THIRD-PARTY LINKS AND STORES
+
+The Game may contain links to third-party websites or store pages, such as the
+Google Play Store or the Apple App Store, or to advertisers' destinations when
+you interact with an advertisement. We are not responsible for the privacy
+practices or the content of those third parties, and we encourage you to review
+their privacy policies before providing them with any information.
+
+
+14. CHANGES TO THIS PRIVACY POLICY
+
+We may update this Privacy Policy from time to time, for example when we add new
+features to the Game or change advertising partners. When we do, we will revise
+the "Last updated" date at the top of this document and publish the new version
+at the same location where you found this one. Material changes may additionally
+be announced inside the Game. We encourage you to review this policy
+periodically. Your continued use of the Game after an update takes effect
+constitutes your acceptance of the revised policy.
+
+
+15. CONTACT US
+
+If you have any questions, concerns, or requests regarding this Privacy Policy
+or your data, please contact us:
+
+Appware Tech
+Email: contact@appwaretech.com
+
+We aim to respond to all legitimate enquiries within thirty (30) days.
