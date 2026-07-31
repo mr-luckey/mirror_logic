@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mirror_logic/app/ad_banner_host.dart';
+import 'package:mirror_logic/app/ads_scope.dart';
 import 'package:mirror_logic/app/audio_scope.dart';
 import 'package:mirror_logic/app/router.dart';
 import 'package:mirror_logic/app/theme/app_theme.dart';
+import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
@@ -20,9 +23,12 @@ class MirrorLogicApp extends StatelessWidget {
       listener: (context, state) => context
           .read<EconomyBloc>()
           .add(EconomyCoinsChanged(state.save.coins)),
-      child: AudioScope(
-        audio: context.read<AudioService>(),
-        child: _Router(),
+      child: AdsScope(
+        ads: context.read<AdsService>(),
+        child: AudioScope(
+          audio: context.read<AudioService>(),
+          child: _Router(),
+        ),
       ),
     );
   }
@@ -45,7 +51,7 @@ class _Router extends StatelessWidget {
         );
         return MediaQuery(
           data: media.copyWith(textScaler: clamped),
-          child: child ?? const SizedBox.shrink(),
+          child: AdBannerHost(child: child ?? const SizedBox.shrink()),
         );
       },
     );

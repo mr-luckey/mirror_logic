@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mirror_logic/data/repositories/economy_repository.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/data/repositories/save_repository.dart';
+import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/infrastructure/storage/local_storage_service.dart';
 
@@ -22,10 +23,12 @@ Future<void> configureDependencies() async {
   final economyRepository = EconomyRepository(saveRepository);
   final levelRepository = LevelRepository();
   final audioService = AudioService();
+  final adsService = AdsService();
 
   _services[LocalStorageService] = storage;
   _services[SaveRepository] = saveRepository;
   _services[EconomyRepository] = economyRepository;
   _services[LevelRepository] = levelRepository;
   _services[AudioService] = audioService;
+  _services[AdsService] = adsService;
 }

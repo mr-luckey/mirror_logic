@@ -13,10 +13,11 @@ abstract final class GameConstants {
   /// so coin always has somewhere to go.
   static const int hintCost = 25;
 
-  /// Height reserved under the board for the bottom ad banner.
+  /// Height of the banner strip along the bottom of the app.
   ///
-  /// Kept as layout even before ads are wired up, so turning them on never
-  /// moves the board out from under the player's finger.
+  /// Held open whether or not an ad is serving, so a fill that arrives mid-drag
+  /// never moves the board out from under the player's finger. Comfortably
+  /// clears the 50pt standard banner the strip asks for.
   static const double adBannerHeight = 56;
 
   /// Stars the player must hold in a chapter before the next one opens.

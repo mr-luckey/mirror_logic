@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mirror_logic/app/ads_scope.dart';
 import 'package:mirror_logic/app/audio_scope.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
@@ -13,6 +14,7 @@ import 'package:mirror_logic/data/repositories/economy_repository.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/domain/beam/beam_alignment.dart';
 import 'package:mirror_logic/domain/beam/beam_types.dart';
+import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 import 'package:mirror_logic/infrastructure/art/game_art.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
@@ -228,13 +230,13 @@ class _GameplayBody extends StatelessWidget {
               child: SafeArea(
                 child: Stack(
                   children: [
+                    // The banner strip is laid out for the whole app by
+                    // AdBannerHost, so the board no longer reserves room for
+                    // one itself.
                     const Column(
                       children: [
                         _TopHud(),
                         Expanded(child: _BoardArea()),
-                        // Held open now so the board keeps the same size and
-                        // position once the banner is actually serving.
-                        SizedBox(height: GameConstants.adBannerHeight),
                       ],
                     ),
                     if (state.phase == GameplayPhase.paused)
@@ -285,36 +287,190 @@ class _TopHud extends StatelessWidget {
   }
 }
 
+/// How the player is paying for the solved board.
+enum _HintPayment { video, coin }
+
 /// Buys and shows the solved board.
 ///
 /// The tiered counsel sheet is gone: the player wanted the answer, and making
-/// them pick which fragment of it to buy only added a step.
+/// them pick which fragment of it to buy only added a step. Picking *how* to pay
+/// is a different question — one option costs the purse and the other costs
+/// thirty seconds — so that one is worth asking.
 Future<void> _requestHint(BuildContext context) async {
   final gameplay = context.read<GameplayBloc>();
   if (gameplay.state.phase == GameplayPhase.hint) return;
 
   // Charge once per board. Showing the same answer again costs nothing.
-  if (!gameplay.state.solutionRevealed) {
-    final economy = context.read<EconomyBloc>();
-    final progress = context.read<ProgressBloc>();
-    final spent = await context
-        .read<EconomyRepository>()
-        .spendCoins(GameConstants.hintCost);
-    if (!context.mounted) return;
-    if (spent == null) {
-      MedievalToast.show(
-        context,
-        'Not enough coin — clear levels to earn more',
-        icon: Icons.lock_rounded,
-      );
-      return;
-    }
-    economy.add(EconomyCoinsChanged(spent.coins));
-    progress.add(const ProgressRefresh());
-  }
+  if (!gameplay.state.solutionRevealed && !await _payForHint(context)) return;
+  if (!context.mounted) return;
 
   context.playSfx(Sfx.hint);
   gameplay.add(const GameplayHintRequested());
+}
+
+/// Takes payment for the hint, and reports whether it was paid.
+Future<bool> _payForHint(BuildContext context) async {
+  final ads = context.ads;
+  // Only offer the video when one is already cached and starts on the tap. A
+  // button that has to go and fetch thirty megabytes first sits dead long
+  // enough to read as broken — so if nothing is ready, ask for one and let this
+  // board be paid for in coin.
+  final canWatch = ads != null && ads.hasRewardedAd;
+  if (ads != null && !canWatch) ads.warmUp();
+  if (!canWatch) return _spendCoinOnHint(context);
+
+  final coins = context.read<EconomyBloc>().state.coins;
+  final choice = await _askHowToPay(
+    context,
+    canAffordCoin: coins >= GameConstants.hintCost,
+  );
+  if (choice == null || !context.mounted) return false;
+
+  switch (choice) {
+    case _HintPayment.coin:
+      return _spendCoinOnHint(context);
+    case _HintPayment.video:
+      return _watchForHint(context, ads);
+  }
+}
+
+Future<bool> _spendCoinOnHint(BuildContext context) async {
+  final economy = context.read<EconomyBloc>();
+  final progress = context.read<ProgressBloc>();
+  final spent = await context
+      .read<EconomyRepository>()
+      .spendCoins(GameConstants.hintCost);
+  if (!context.mounted) return false;
+  if (spent == null) {
+    MedievalToast.show(
+      context,
+      'Not enough coin — clear levels to earn more',
+      icon: Icons.lock_rounded,
+    );
+    return false;
+  }
+  economy.add(EconomyCoinsChanged(spent.coins));
+  progress.add(const ProgressRefresh());
+  return true;
+}
+
+/// Plays a rewarded video and pays out only if the player sat through it.
+Future<bool> _watchForHint(BuildContext context, AdsService ads) async {
+  final outcome = await ads.showRewarded();
+  if (!context.mounted) return false;
+
+  switch (outcome) {
+    case RewardedAdOutcome.earned:
+      return true;
+    case RewardedAdOutcome.skipped:
+      MedievalToast.show(
+        context,
+        'Video closed early — no hint given',
+        icon: Icons.visibility_off_rounded,
+      );
+      return false;
+    case RewardedAdOutcome.unavailable:
+      MedievalToast.show(
+        context,
+        'No video ready — try again in a moment',
+        icon: Icons.cloud_off_rounded,
+      );
+      return false;
+  }
+}
+
+Future<_HintPayment?> _askHowToPay(
+  BuildContext context, {
+  required bool canAffordCoin,
+}) {
+  return showDialog<_HintPayment>(
+    context: context,
+    barrierColor: Colors.black.withValues(alpha: 0.72),
+    builder: (_) => _HintPaymentSheet(canAffordCoin: canAffordCoin),
+  );
+}
+
+/// Asks whether the solved board is being paid for in coin or in patience.
+class _HintPaymentSheet extends StatelessWidget {
+  const _HintPaymentSheet({required this.canAffordCoin});
+
+  final bool canAffordCoin;
+
+  @override
+  Widget build(BuildContext context) {
+    final maxWidth = (Responsive.widthOf(context) * 0.86).clamp(240.0, 340.0);
+
+    return Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(
+          horizontal: Responsive.pageGutter(context),
+          vertical: 16,
+        ),
+        child: Container(
+          width: maxWidth,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: MedievalColors.woodPanel,
+            border: Border.all(color: MedievalColors.bronzeLight, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 16,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'REVEAL THE BOARD',
+                style: MedievalTextStyles.cinzel(
+                  size: Responsive.sp(context, 18),
+                  weight: FontWeight.w700,
+                  letterSpacing: 2,
+                  color: MedievalColors.textGold,
+                ),
+              ),
+              const MedievalDivider(height: 18),
+              Text(
+                'Every mirror will show its finished angle. '
+                'A board you were shown clears for one star.',
+                textAlign: TextAlign.center,
+                style: MedievalTextStyles.imFell(
+                  size: Responsive.sp(context, 13.5),
+                  height: 1.35,
+                ),
+              ),
+              const SizedBox(height: 16),
+              MedievalButton(
+                label: 'Watch a Video',
+                style: MedievalButtonStyle.primary,
+                icon: Icons.play_circle_outline_rounded,
+                onPressed: () =>
+                    Navigator.of(context).pop(_HintPayment.video),
+              ),
+              const SizedBox(height: 9),
+              MedievalButton(
+                label: 'Spend ${GameConstants.hintCost} Coin',
+                icon: Icons.monetization_on_rounded,
+                onPressed: canAffordCoin
+                    ? () => Navigator.of(context).pop(_HintPayment.coin)
+                    : null,
+              ),
+              const SizedBox(height: 9),
+              MedievalButton(
+                label: 'Not Yet',
+                icon: Icons.close_rounded,
+                sfx: Sfx.back,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _BoardArea extends StatelessWidget {
@@ -556,6 +712,22 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
   }
 }
 
+/// Runs a pause-menu action with an interstitial in front of it.
+///
+/// Every button in that menu except Resume is the player stepping away from the
+/// board, which is the cheapest moment in the game to charge them: the puzzle is
+/// already stopped and its clock with it, so the ad interrupts nothing they were
+/// in the middle of. Resume stays clean — an ad standing between deciding to keep
+/// playing and being allowed to is a toll on the wrong door.
+///
+/// The level cadence is waived here because none of these are level breaks; the
+/// service's quiet period is the only thing between two ads on this menu.
+Future<void> _leavePause(BuildContext context, VoidCallback action) async {
+  await context.ads?.showInterstitial(respectLevelCadence: false);
+  if (!context.mounted) return;
+  action();
+}
+
 class _PauseOverlay extends StatelessWidget {
   const _PauseOverlay();
 
@@ -613,11 +785,11 @@ class _PauseOverlay extends StatelessWidget {
                   MedievalButton(
                     label: 'Restart',
                     icon: Icons.refresh_rounded,
-                    onPressed: () {
+                    onPressed: () => _leavePause(context, () {
                       context
                           .read<GameplayBloc>()
                           .add(const GameplayRestarted());
-                    },
+                    }),
                   ),
                   const SizedBox(height: 9),
                   MedievalButton(
@@ -631,21 +803,28 @@ class _PauseOverlay extends StatelessWidget {
                               .level
                               ?.chapterId ??
                           GameConstants.chapter1Id;
-                      context.go('/levels/$chapter');
+                      unawaited(
+                        _leavePause(
+                          context,
+                          () => context.go('/levels/$chapter'),
+                        ),
+                      );
                     },
                   ),
                   const SizedBox(height: 9),
                   MedievalButton(
                     label: 'Settings',
                     icon: Icons.settings_rounded,
-                    onPressed: () => context.push('/settings'),
+                    onPressed: () =>
+                        _leavePause(context, () => context.push('/settings')),
                   ),
                   const SizedBox(height: 9),
                   MedievalButton(
                     label: 'Home',
                     icon: Icons.home_rounded,
                     sfx: Sfx.back,
-                    onPressed: () => context.go('/menu'),
+                    onPressed: () =>
+                        _leavePause(context, () => context.go('/menu')),
                   ),
                 ],
               ),

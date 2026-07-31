@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mirror_logic/app/ads_scope.dart';
 import 'package:mirror_logic/app/audio_scope.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
@@ -56,10 +57,40 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
 
   LevelCompleteArgs get args => widget.args;
 
+  bool _clearCounted = false;
+
   @override
   void initState() {
     super.initState();
     _scheduleFanfare();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // The clear counts towards the next interstitial here rather than on the
+    // board, because this screen is the only place every finished level lands.
+    // It waits for didChangeDependencies because reading a scope in initState
+    // is not allowed.
+    if (_clearCounted) return;
+    _clearCounted = true;
+    context.ads?.registerLevelCleared();
+  }
+
+  /// Leaves the results screen, giving an interstitial the gap on the way out.
+  ///
+  /// Between two levels is the one moment in this game where a full-screen ad
+  /// interrupts nothing: the board is finished, the reward is already written to
+  /// the save, and the player has not started thinking about the next puzzle
+  /// yet. The ad decides for itself whether it is due — see [AdsService].
+  Future<void> _leave(String route, {required bool replace}) async {
+    await context.ads?.showInterstitial();
+    if (!mounted) return;
+    if (replace) {
+      context.pushReplacement(route);
+    } else {
+      context.go(route);
+    }
   }
 
   /// Each star chimes as it lands, then the coin reward lands on top.
@@ -97,7 +128,9 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
     final wreath = Responsive.wp(context, short ? 0.5 : 0.6).clamp(180.0, 300.0);
 
     // The board behind this screen is frozen in its solved state, so back has
-    // to go somewhere useful instead of returning to it.
+    // to go somewhere useful instead of returning to it. Deliberately ad-free:
+    // a player reaching for the system back button is trying to get out, and
+    // the cadence counter keeps its place for whenever they next tap through.
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -181,8 +214,10 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
                           style: MedievalButtonStyle.primary,
                           icon: Icons.arrow_forward_rounded,
                           shimmer: true,
-                          onPressed: () => context
-                              .pushReplacement('/play/${args.nextLevelId}'),
+                          onPressed: () => _leave(
+                            '/play/${args.nextLevelId}',
+                            replace: true,
+                          ),
                         ).animate().fadeIn(delay: 900.ms),
                         const SizedBox(height: 10),
                       ],
@@ -192,8 +227,8 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
                             child: MedievalButton(
                               label: 'Replay',
                               icon: Icons.refresh_rounded,
-                              onPressed: () => context
-                                  .pushReplacement('/play/${args.levelId}'),
+                              onPressed: () =>
+                                  _leave('/play/${args.levelId}', replace: true),
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -202,8 +237,10 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
                               label: 'Levels',
                               icon: Icons.grid_view_rounded,
                               sfx: Sfx.back,
-                              onPressed: () =>
-                                  context.go('/levels/${args.chapterId}'),
+                              onPressed: () => _leave(
+                                '/levels/${args.chapterId}',
+                                replace: false,
+                              ),
                             ),
                           ),
                         ],
