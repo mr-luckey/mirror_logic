@@ -28,13 +28,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- AdMob app id. Currently Google's test app id: the SDK refuses to
-             initialise without this entry, and a wrong one crashes on launch.
-             Replace with the real app id from the AdMob console at the same
-             time as the unit ids in lib/core/constants/ad_unit_ids.dart. -->
+        <!-- AdMob app id. The SDK refuses to initialise without this entry, and
+             a wrong one crashes on launch. Must stay in step with the unit ids
+             in lib/core/constants/ad_unit_ids.dart. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-5561438827097019~9645651189" />
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
