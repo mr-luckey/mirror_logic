@@ -19,6 +19,7 @@ import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/gameplay/gameplay_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/settings/settings_cubit.dart';
+import 'package:mirror_logic/presentation/screens/gameplay/gameplay_fx_layer.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_paint_snapshot.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_painter.dart';
 import 'package:mirror_logic/presentation/screens/level_complete/level_complete_screen.dart';
@@ -123,7 +124,7 @@ class _GameplayBody extends StatelessWidget {
   Future<void> _onSolved(BuildContext context, GameplayState state) async {
         final level = state.level!;
         final stars = state.computeStars();
-        final coins = context.read<EconomyRepository>().coinsForStars(stars);
+        final coins = context.read<EconomyRepository>().coinsForClear();
         final nextId =
             await context.read<LevelRepository>().nextLevelId(level.levelId);
 
@@ -147,7 +148,10 @@ class _GameplayBody extends StatelessWidget {
           extra: LevelCompleteArgs(
             levelId: level.levelId,
             chapterId: level.chapterId,
-            levelIndex: level.levelIndex,
+            levelIndex: GameConstants.displayLevelNumber(
+              level.chapterId,
+              level.levelIndex,
+            ),
             stars: stars,
             moves: state.moves,
             timeSeconds: state.elapsedSeconds,
@@ -262,7 +266,12 @@ class _TopHud extends StatelessWidget {
             completed < GameConstants.freeHintLevels;
 
         return MedievalGameplayHud(
-          levelIndex: level?.levelIndex ?? 1,
+          levelIndex: level == null
+              ? 1
+              : GameConstants.displayLevelNumber(
+                  level.chapterId,
+                  level.levelIndex,
+                ),
           stars: stars,
           coins: coins,
           hintsLabel: free ? 'FREE' : '${GameConstants.hintCost}',
@@ -585,18 +594,24 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
                         .read<GameplayBloc>()
                         .add(const GameplayMirrorDragEnded());
                   },
-                  child: RepaintBoundary(
-                    child: CustomPaint(
-                      size: size,
-                      painter: GameplayPainter(
-                        snapshot: snapshot,
-                        animTime: _anim.value * 8 * 3.14159,
-                        crystalImage: _crystal,
-                        emitterImage: _emitter,
-                        wallHorizontalImage: _wallH,
-                        wallVerticalImage: _wallV,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      RepaintBoundary(
+                        child: CustomPaint(
+                          size: size,
+                          painter: GameplayPainter(
+                            snapshot: snapshot,
+                            animTime: _anim.value * 8 * 3.14159,
+                            crystalImage: _crystal,
+                            emitterImage: _emitter,
+                            wallHorizontalImage: _wallH,
+                            wallVerticalImage: _wallV,
+                          ),
+                        ),
                       ),
-                    ),
+                      GameplayFxLayer(canvasSize: size),
+                    ],
                   ),
                 );
               },
@@ -673,17 +688,6 @@ class _PauseOverlay extends StatelessWidget {
                   ),
                   const SizedBox(height: 9),
                   MedievalButton(
-                    label: 'Undo Move',
-                    icon: Icons.undo_rounded,
-                    sfx: Sfx.undo,
-                    onPressed: () {
-                      final bloc = context.read<GameplayBloc>();
-                      bloc.add(const GameplayUndoRequested());
-                      bloc.add(const GameplayResumed());
-                    },
-                  ),
-                  const SizedBox(height: 9),
-                  MedievalButton(
                     label: 'Level Select',
                     icon: Icons.grid_view_rounded,
                     sfx: Sfx.back,
@@ -702,6 +706,13 @@ class _PauseOverlay extends StatelessWidget {
                     label: 'Settings',
                     icon: Icons.settings_rounded,
                     onPressed: () => context.push('/settings'),
+                  ),
+                  const SizedBox(height: 9),
+                  MedievalButton(
+                    label: 'Home',
+                    icon: Icons.home_rounded,
+                    sfx: Sfx.back,
+                    onPressed: () => context.go('/menu'),
                   ),
                 ],
               ),

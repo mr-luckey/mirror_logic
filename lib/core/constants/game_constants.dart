@@ -6,9 +6,8 @@ abstract final class GameConstants {
   static const double roomHeight = 1920;
   static const double angleToleranceDegrees = 4;
 
-  static const int coinsPerOneStar = 5;
-  static const int coinsPerTwoStar = 10;
-  static const int coinsPerThreeStar = 20;
+  /// Flat reward for clearing a level, regardless of stars.
+  static const int coinsPerLevel = 5;
 
   /// Price of revealing the solved board. One hint, one price.
   static const int hintCost = 25;
@@ -26,4 +25,10 @@ abstract final class GameConstants {
 
   /// Seed level for a fresh save.
   static const String firstLevelId = 'ch1_001';
+
+  /// Continuous display number: ch2 level 1 is 101, ch3 level 1 is 201…
+  static int displayLevelNumber(String chapterId, int levelIndex) {
+    final n = int.tryParse(chapterId.replaceFirst('ch', '')) ?? 1;
+    return (n - 1) * 100 + levelIndex;
+  }
 }

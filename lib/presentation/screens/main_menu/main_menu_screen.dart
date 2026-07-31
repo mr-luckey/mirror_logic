@@ -15,7 +15,6 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart'
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_exit_scope.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_resource_chip.dart';
-import 'package:mirror_logic/presentation/widgets/medieval/medieval_star_row.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_torch.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 
@@ -165,65 +164,41 @@ class _TopStatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ProgressBloc, ProgressState>(
       builder: (context, progress) {
-        final stars = progress.save.levelProgress.values
-            .fold<int>(0, (s, p) => s + p.stars);
+        final last = progress.save.lastPlayedLevelId;
+        final continueLabel = last == null
+            ? 'Begin at Level 1'
+            : 'Continue Level ${_labelFor(last)}';
 
         return MedievalPanel(
           radius: 14,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-          // The rank plate is measured first and the slack goes to the gap, so
-          // a narrow screen shrinks the space between groups, never the text.
           child: Row(
             children: [
-              MedievalPanel(
-                style: MedievalPanelStyle.inset,
-                radius: 16,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 9,
-                  vertical: 4,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.shield_moon_rounded,
-                      color: MedievalColors.textGold,
-                      size: 15,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      'Rank ${1 + (stars ~/ 9)}',
-                      style: MedievalTextStyles.cinzel(
-                        weight: FontWeight.w700,
-                        size: Responsive.sp(context, 12),
-                        color: MedievalColors.textGold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 7),
-              const MedievalStarRow(filled: 3, size: 13, spacing: 1),
-              const SizedBox(width: 3),
-              Flexible(
-                child: Text(
-                  '$stars',
-                  overflow: TextOverflow.ellipsis,
-                  style: MedievalTextStyles.cinzel(
-                    weight: FontWeight.w700,
-                    size: Responsive.sp(context, 12),
-                  ),
-                ),
-              ),
-              const Spacer(),
               BlocBuilder<EconomyBloc, EconomyState>(
                 builder: (context, eco) => MedievalResourceChip(
                   icon: Icons.monetization_on_rounded,
                   label: '${eco.coins}',
                   glowColor: MedievalColors.bronzeHighlight,
+                  scale: 1.15,
                 ),
               ),
-              const SizedBox(width: 8),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    continueLabel,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: MedievalTextStyles.cinzel(
+                      weight: FontWeight.w700,
+                      size: Responsive.sp(context, 12),
+                      color: MedievalColors.textGold,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                ),
+              ),
               MedievalBronzeButton(
                 icon: Icons.settings_rounded,
                 size: 34,
@@ -234,5 +209,14 @@ class _TopStatusBar extends StatelessWidget {
         );
       },
     );
+  }
+
+  /// `ch2_014` → `114` so the bar matches the continuous numbering elsewhere.
+  static String _labelFor(String levelId) {
+    final match = RegExp(r'^ch(\d+)_(\d+)$').firstMatch(levelId);
+    if (match == null) return levelId;
+    final chapter = int.parse(match.group(1)!);
+    final index = int.parse(match.group(2)!);
+    return '${(chapter - 1) * 100 + index}';
   }
 }

@@ -22,6 +22,7 @@ SOURCES = {
     'tome_raw.png': 'tome.png',
     'wreath_raw.png': 'wreath.png',
     'padlock_raw.png': 'padlock.png',
+    **{f'tome_ch{i}_raw.png': f'tome_ch{i}.png' for i in range(1, 11)},
 }
 
 # A highlight on polished bronze can be near-white; a background region cannot

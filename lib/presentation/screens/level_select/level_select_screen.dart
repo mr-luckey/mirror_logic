@@ -148,7 +148,10 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                                                     1);
 
                                 return _LevelCell(
-                                  index: index + 1,
+                                  index: GameConstants.displayLevelNumber(
+                                    chapterId,
+                                    index + 1,
+                                  ),
                                   unlocked: unlocked,
                                   stars: stars,
                                   highlighted: isCurrent && unlocked,

@@ -151,7 +151,12 @@ class _ChapterCard extends StatelessWidget {
           glow: unlocked && ratio >= 1 ? MedievalColors.bronzeHighlight : null,
           child: Row(
             children: [
-              _Thumb(size: thumb, unlocked: unlocked, index: index),
+              _Thumb(
+                size: thumb,
+                unlocked: unlocked,
+                chapterId: chapter.id,
+                index: index,
+              ),
               SizedBox(width: narrow ? 11 : 14),
               Expanded(
                 child: Column(
@@ -228,16 +233,18 @@ class _ChapterCard extends StatelessWidget {
   }
 }
 
-/// Chapter emblem: the tome for an open chapter, a padlock for a sealed one.
+/// Chapter emblem: a unique tome for each hall, a padlock for a sealed one.
 class _Thumb extends StatelessWidget {
   const _Thumb({
     required this.size,
     required this.unlocked,
+    required this.chapterId,
     required this.index,
   });
 
   final double size;
   final bool unlocked;
+  final String chapterId;
   final int index;
 
   @override
@@ -253,7 +260,9 @@ class _Thumb extends StatelessWidget {
             radius: 10,
             padding: const EdgeInsets.all(5),
             child: Image.asset(
-              unlocked ? MedievalArt.tome : MedievalArt.padlock,
+              unlocked
+                  ? MedievalArt.tomeForChapter(chapterId)
+                  : MedievalArt.padlock,
               fit: BoxFit.contain,
               filterQuality: FilterQuality.medium,
               color: unlocked ? null : Colors.black.withValues(alpha: 0.35),

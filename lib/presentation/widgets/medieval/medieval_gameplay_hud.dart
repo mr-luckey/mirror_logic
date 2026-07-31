@@ -4,7 +4,8 @@ import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_bronze_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_resource_chip.dart';
 
-/// Top carved-wood HUD: pause, level shield, coins, hints.
+/// Top carved-wood HUD: pause left, level centred, coins right; hint hangs
+/// under the right edge so it stays reachable without crowding the bar.
 class MedievalGameplayHud extends StatelessWidget {
   const MedievalGameplayHud({
     super.key,
@@ -25,78 +26,77 @@ class MedievalGameplayHud extends StatelessWidget {
   final VoidCallback onHint;
   final VoidCallback onAddCoins;
 
-  /// The coin and hint chips are the only controls the player reaches for
-  /// mid-puzzle, so they get the room the chapter plate used to take.
-  static const double _chipScale = 1.32;
+  static const double _coinScale = 1.45;
+  static const double _hintScale = 1.4;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(10, 6, 10, 0),
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF5A4030),
-            Color(0xFF3A2818),
-            Color(0xFF1A1008),
-          ],
-        ),
-        border: Border.all(
-          color: MedievalColors.bronzeLight.withValues(alpha: 0.85),
-          width: 2.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.55),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-          ),
-          BoxShadow(
-            color: MedievalColors.bronzeHighlight.withValues(alpha: 0.12),
-            blurRadius: 6,
-            offset: const Offset(0, -1),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          MedievalBronzeButton(
-            icon: Icons.pause_rounded,
-            size: 44,
-            onPressed: onPause,
-          ),
-          const SizedBox(width: 8),
-          _LevelShield(levelIndex: levelIndex, stars: stars),
-          const Spacer(),
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerRight,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  MedievalResourceChip(
-                    icon: Icons.monetization_on,
-                    label: '$coins',
-                    glowColor: MedievalColors.bronzeHighlight,
-                    scale: _chipScale,
-                    onTap: onAddCoins,
-                  ),
-                  const SizedBox(width: 8),
-                  MedievalResourceChip(
-                    icon: Icons.lightbulb,
-                    label: hintsLabel,
-                    glowColor: MedievalColors.laserMid,
-                    scale: _chipScale,
-                    onTap: onHint,
-                  ),
+          Container(
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF5A4030),
+                  Color(0xFF3A2818),
+                  Color(0xFF1A1008),
                 ],
               ),
+              border: Border.all(
+                color: MedievalColors.bronzeLight.withValues(alpha: 0.85),
+                width: 2.2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.55),
+                  blurRadius: 14,
+                  offset: const Offset(0, 6),
+                ),
+                BoxShadow(
+                  color: MedievalColors.bronzeHighlight.withValues(alpha: 0.12),
+                  blurRadius: 6,
+                  offset: const Offset(0, -1),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                MedievalBronzeButton(
+                  icon: Icons.pause_rounded,
+                  size: 44,
+                  onPressed: onPause,
+                ),
+                Expanded(
+                  child: Center(
+                    child: _LevelShield(levelIndex: levelIndex, stars: stars),
+                  ),
+                ),
+                MedievalResourceChip(
+                  icon: Icons.monetization_on,
+                  label: '$coins',
+                  glowColor: MedievalColors.bronzeHighlight,
+                  scale: _coinScale,
+                  onTap: onAddCoins,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: MedievalResourceChip(
+              icon: Icons.lightbulb,
+              label: hintsLabel,
+              glowColor: MedievalColors.laserMid,
+              scale: _hintScale,
+              onTap: onHint,
             ),
           ),
         ],
@@ -113,10 +113,12 @@ class _LevelShield extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Wider for three-digit global numbers (101…1000).
+    final wide = levelIndex >= 100;
     return CustomPaint(
       painter: const _ShieldPainter(),
       child: SizedBox(
-        width: 64,
+        width: wide ? 78 : 64,
         height: 72,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -132,7 +134,7 @@ class _LevelShield extends StatelessWidget {
             Text(
               '$levelIndex',
               style: MedievalTextStyles.cinzelDecorative(
-                size: 18,
+                size: wide ? 16 : 18,
                 color: MedievalColors.textCream,
               ),
             ),

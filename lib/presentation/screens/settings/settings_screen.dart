@@ -105,8 +105,6 @@ class SettingsScreen extends StatelessWidget {
                         title: 'About',
                         icon: Icons.auto_stories_rounded,
                         children: [
-                          _LinkRow(label: 'Privacy Policy', onTap: () {}),
-                          const MedievalDivider(),
                           _LinkRow(label: 'Rate Us', onTap: () {}),
                           const MedievalDivider(),
                           _LinkRow(

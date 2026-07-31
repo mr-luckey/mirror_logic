@@ -24,14 +24,9 @@ class EconomyRepository {
     return next;
   }
 
-  int coinsForStars(int stars) {
-    switch (stars) {
-      case 3:
-        return GameConstants.coinsPerThreeStar;
-      case 2:
-        return GameConstants.coinsPerTwoStar;
-      default:
-        return GameConstants.coinsPerOneStar;
-    }
-  }
+  /// Clearing any level pays the same flat purse.
+  int coinsForClear() => GameConstants.coinsPerLevel;
+
+  @Deprecated('Stars no longer change the purse; use coinsForClear()')
+  int coinsForStars(int stars) => coinsForClear();
 }

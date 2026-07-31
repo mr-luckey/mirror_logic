@@ -916,19 +916,32 @@ class GameplayPainter extends CustomPainter {
       // Bright strike on the glass face (not on the floor base)
       canvas.drawCircle(
         hit,
-        14 * pulse,
+        18 * pulse,
         Paint()
-          ..color = MedievalColors.laserGlow.withValues(alpha: 0.4)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+          ..color = MedievalColors.laserGlow.withValues(alpha: 0.45)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
       );
       canvas.drawCircle(
         hit,
-        8,
+        9,
         Paint()
-          ..color = MedievalColors.laserCore.withValues(alpha: 0.7)
+          ..color = MedievalColors.laserCore.withValues(alpha: 0.75)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
       );
-      canvas.drawCircle(hit, 3.2, Paint()..color = Colors.white);
+      canvas.drawCircle(hit, 3.6, Paint()..color = Colors.white);
+      // Radial spark lines — the "beam just struck" flash.
+      for (var i = 0; i < 6; i++) {
+        final a = animTime * 3 + i * math.pi / 3;
+        final tip = hit + Offset(math.cos(a), math.sin(a)) * (16 + 4 * pulse);
+        canvas.drawLine(
+          hit,
+          tip,
+          Paint()
+            ..color = Colors.white.withValues(alpha: 0.55 * pulse)
+            ..strokeWidth = 1.6
+            ..strokeCap = StrokeCap.round,
+        );
+      }
     }
   }
 
@@ -1386,6 +1399,21 @@ Vec2? screenToWorld({
     return null;
   }
   return Vec2(wx, wy);
+}
+
+/// Inverse of [screenToWorld]: place a world-space burst on the canvas.
+Offset worldToScreen({
+  required Vec2 world,
+  required Size canvasSize,
+  required LevelModel level,
+}) {
+  final scale = math.min(
+    canvasSize.width / level.roomBounds.x,
+    canvasSize.height / level.roomBounds.y,
+  );
+  final dx = (canvasSize.width - level.roomBounds.x * scale) / 2;
+  final dy = (canvasSize.height - level.roomBounds.y * scale) / 2;
+  return Offset(world.x * scale + dx, world.y * scale + dy);
 }
 
 String? hitTestMirror({

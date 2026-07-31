@@ -7,6 +7,13 @@ abstract final class MedievalArt {
   static const tome = 'assets/images/ui/tome.png';
   static const wreath = 'assets/images/ui/wreath.png';
   static const padlock = 'assets/images/ui/padlock.png';
+
+  /// One distinct tome per hall so the chapter list does not look copy-pasted.
+  static String tomeForChapter(String chapterId) {
+    final n = int.tryParse(chapterId.replaceFirst('ch', '')) ?? 1;
+    final clamped = n.clamp(1, 10);
+    return 'assets/images/ui/tome_ch$clamped.png';
+  }
 }
 
 /// A cut-out asset with a warm halo behind it, so it reads as lit by the same
