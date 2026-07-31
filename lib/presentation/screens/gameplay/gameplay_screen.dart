@@ -11,6 +11,7 @@ import 'package:mirror_logic/core/constants/game_constants.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/data/repositories/economy_repository.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
+import 'package:mirror_logic/domain/beam/beam_alignment.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/gameplay/gameplay_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
@@ -19,7 +20,9 @@ import 'package:mirror_logic/presentation/screens/gameplay/gameplay_paint_snapsh
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_painter.dart';
 import 'package:mirror_logic/presentation/screens/level_complete/level_complete_screen.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_gameplay_hud.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_objective_banner.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 
@@ -45,10 +48,37 @@ class _GameplayBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<GameplayBloc, GameplayState>(
-      listenWhen: (p, c) =>
-          p.phase != GameplayPhase.solved && c.phase == GameplayPhase.solved,
-      listener: (context, state) async {
+    return MultiBlocListener(
+      listeners: [
+        // One tick per lock: the drag settling onto a mirror centre or a
+        // crystal is the moment worth feeling.
+        BlocListener<GameplayBloc, GameplayState>(
+          listenWhen: (p, c) => p.alignmentPulse != c.alignmentPulse,
+          listener: (context, state) {
+            if (!context.read<SettingsCubit>().state.haptics) return;
+            if (state.alignedTargetKind == AlignmentTargetKind.crystal) {
+              HapticFeedback.mediumImpact();
+            } else {
+              HapticFeedback.selectionClick();
+            }
+          },
+        ),
+        BlocListener<GameplayBloc, GameplayState>(
+          listenWhen: (p, c) =>
+              p.phase != GameplayPhase.solved &&
+              c.phase == GameplayPhase.solved,
+          listener: _onSolved,
+        ),
+      ],
+      child: BlocBuilder<GameplayBloc, GameplayState>(
+        buildWhen: (p, c) =>
+            p.phase != c.phase || p.level?.levelId != c.level?.levelId,
+        builder: _buildBody,
+      ),
+    );
+  }
+
+  Future<void> _onSolved(BuildContext context, GameplayState state) async {
         final level = state.level!;
         final stars = state.computeStars();
         final coins = context.read<EconomyRepository>().coinsForStars(stars);
@@ -66,28 +96,26 @@ class _GameplayBody extends StatelessWidget {
                 nextLevelId: nextId,
               ),
             );
-        context.read<EconomyBloc>().add(const EconomyStarted());
 
-        unawaited(
-          context.push(
-            '/complete',
-            extra: LevelCompleteArgs(
-              levelId: level.levelId,
-              chapterId: level.chapterId,
-              levelIndex: level.levelIndex,
-              stars: stars,
-              moves: state.moves,
-              timeSeconds: state.elapsedSeconds,
-              coinsEarned: coins,
-              nextLevelId: nextId,
-            ),
+        // Replace rather than push: going back to a board that is already in
+        // the solved phase leaves the player on a frozen level, and solving it
+        // again would award the coins a second time.
+        context.pushReplacement(
+          '/complete',
+          extra: LevelCompleteArgs(
+            levelId: level.levelId,
+            chapterId: level.chapterId,
+            levelIndex: level.levelIndex,
+            stars: stars,
+            moves: state.moves,
+            timeSeconds: state.elapsedSeconds,
+            coinsEarned: coins,
+            nextLevelId: nextId,
           ),
         );
-      },
-      child: BlocBuilder<GameplayBloc, GameplayState>(
-        buildWhen: (p, c) =>
-            p.phase != c.phase || p.level?.levelId != c.level?.levelId,
-        builder: (context, state) {
+  }
+
+  Widget _buildBody(BuildContext context, GameplayState state) {
           if (state.phase == GameplayPhase.loading) {
             return const MedievalWoodBackground(
               child: Center(
@@ -153,9 +181,6 @@ class _GameplayBody extends StatelessWidget {
               ),
             ),
           );
-        },
-      ),
-    );
   }
 }
 
@@ -197,7 +222,7 @@ class _TopHud extends StatelessWidget {
           levelIndex: level?.levelIndex ?? 1,
           stars: stars,
           coins: coins,
-          hintsLabel: freeHint ? 'HINT' : 'HINT',
+          hintsLabel: freeHint ? 'FREE' : 'HINT',
           onPause: () =>
               context.read<GameplayBloc>().add(const GameplayPaused()),
           onHint: () => _showHintSheet(context, freeHint),
@@ -297,15 +322,66 @@ class _ObjectiveBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<GameplayBloc, GameplayState, String>(
+    return BlocSelector<GameplayBloc, GameplayState, (String, String)>(
       selector: (state) {
         final meta = state.level?.metadata.objective ?? '';
-        if (meta.isNotEmpty) return meta;
-        return 'Activate the Target Crystal';
+        return (
+          state.level?.levelId ?? '',
+          meta.isEmpty ? 'Activate the Target Crystal' : meta,
+        );
       },
-      builder: (context, message) {
-        return MedievalObjectiveBanner(message: message);
+      builder: (context, data) {
+        // Keyed on the level so every board starts the banner over.
+        return _FadingBanner(key: ValueKey(data.$1), message: data.$2);
       },
+    );
+  }
+}
+
+/// The objective, shown long enough to read and then faded out.
+///
+/// The banner is pinned over the top-left of the board, so leaving it up hides
+/// whatever the level put in that corner. It never accepts touches either way,
+/// so a mirror underneath it stays draggable.
+class _FadingBanner extends StatefulWidget {
+  const _FadingBanner({super.key, required this.message});
+
+  final String message;
+
+  @override
+  State<_FadingBanner> createState() => _FadingBannerState();
+}
+
+class _FadingBannerState extends State<_FadingBanner> {
+  static const _hold = Duration(seconds: 4);
+  static const _fade = Duration(milliseconds: 700);
+
+  Timer? _timer;
+  bool _visible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer(_hold, () {
+      if (mounted) setState(() => _visible = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: AnimatedOpacity(
+        opacity: _visible ? 1 : 0,
+        duration: _fade,
+        curve: Curves.easeOut,
+        child: MedievalObjectiveBanner(message: widget.message),
+      ),
     );
   }
 }
@@ -370,10 +446,17 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
 
   @override
   Widget build(BuildContext context) {
+    final showAngle = context.select<SettingsCubit, bool>(
+      (cubit) => cubit.state.angleReadout,
+    );
+
     return BlocSelector<GameplayBloc, GameplayState, GameplayPaintSnapshot?>(
       selector: (state) {
         if (state.level == null) return null;
-        return GameplayPaintSnapshot.fromState(state);
+        return GameplayPaintSnapshot.fromState(
+          state,
+          showAngleReadout: showAngle,
+        );
       },
       builder: (context, snapshot) {
         if (snapshot == null) return const SizedBox.shrink();
@@ -394,13 +477,15 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
                     );
                     if (world == null) return;
                     final bloc = context.read<GameplayBloc>();
+                    final settings = context.read<SettingsCubit>().state;
                     final id = hitTestMirror(
                       world: world,
                       level: level,
                       angles: bloc.state.mirrorAngles,
+                      padding: settings.assistMode ? 72 : 42,
                     );
                     if (id == null) return;
-                    if (context.read<SettingsCubit>().state.haptics) {
+                    if (settings.haptics) {
                       HapticFeedback.selectionClick();
                     }
                     bloc.add(
@@ -418,6 +503,7 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
                       local: details.localPosition,
                       canvasSize: size,
                       level: level,
+                      bounded: false,
                     );
                     if (world == null) return;
                     bloc.add(
@@ -462,86 +548,139 @@ void _showHintSheet(BuildContext context, bool freeHint) {
 
   showModalBottomSheet<void>(
     context: context,
-    backgroundColor: MedievalColors.woodMid,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    ),
+    backgroundColor: Colors.transparent,
     builder: (sheetContext) {
-      Widget tile(String title, String cost, int tier, int price) {
+      Widget tile(IconData icon, String title, String cost, int tier, int price) {
         final canAfford =
             freeHint && tier == 1 || coins >= price || tier == 0;
-        return ListTile(
-          title: Text(
-            title,
-            style: MedievalTextStyles.cinzel(
-              size: 14,
-              color: MedievalColors.textCream,
+        final free = tier == 0 || (freeHint && tier == 1);
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 9),
+          child: Opacity(
+            opacity: canAfford ? 1 : 0.5,
+            child: MedievalPressable(
+              enabled: canAfford,
+              onPressed: !canAfford
+                  ? null
+                  : () async {
+                      final progress = context.read<ProgressBloc>();
+                      final ecoRepo = context.read<EconomyRepository>();
+                      if (tier > 0 && !(freeHint && tier == 1)) {
+                        final spent = await ecoRepo.spendCoins(price);
+                        if (spent == null) return;
+                        economy.add(EconomyCoinsChanged(spent.coins));
+                        progress.add(const ProgressRefresh());
+                      }
+                      gameplay.add(GameplayHintRequested(tier));
+                      if (sheetContext.mounted) Navigator.pop(sheetContext);
+                    },
+              child: MedievalPanel(
+                style: MedievalPanelStyle.inset,
+                radius: 10,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                child: Row(
+                  children: [
+                    Icon(icon, size: 18, color: MedievalColors.textGold),
+                    const SizedBox(width: 11),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: MedievalTextStyles.cinzel(
+                              size: 13.5,
+                              weight: FontWeight.w600,
+                              color: MedievalColors.textCream,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            cost,
+                            style: MedievalTextStyles.cinzel(
+                              size: 10.5,
+                              letterSpacing: 0.8,
+                              color: free
+                                  ? MedievalColors.greenPlus
+                                  : MedievalColors.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      canAfford ? Icons.chevron_right_rounded : Icons.lock,
+                      size: 19,
+                      color: MedievalColors.bronzeHighlight,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-          subtitle: Text(
-            cost,
-            style: MedievalTextStyles.cinzel(
-              size: 11,
-              color: MedievalColors.textMuted,
-            ),
-          ),
-          trailing: Icon(
-            canAfford ? Icons.chevron_right : Icons.lock,
-            color: MedievalColors.bronzeHighlight,
-          ),
-          onTap: !canAfford
-              ? null
-              : () async {
-                  final progress = context.read<ProgressBloc>();
-                  final ecoRepo = context.read<EconomyRepository>();
-                  if (tier > 0 && !(freeHint && tier == 1)) {
-                    final spent = await ecoRepo.spendCoins(price);
-                    if (spent == null) return;
-                    economy.add(EconomyCoinsChanged(spent.coins));
-                    progress.add(const ProgressRefresh());
-                  }
-                  gameplay.add(GameplayHintRequested(tier));
-                  if (sheetContext.mounted) Navigator.pop(sheetContext);
-                },
         );
       }
 
       return SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'HINTS',
-                style: MedievalTextStyles.cinzel(
-                  weight: FontWeight.w700,
-                  letterSpacing: 1.5,
-                  color: MedievalColors.textGold,
+          padding: EdgeInsets.fromLTRB(
+            Responsive.pageGutter(sheetContext),
+            0,
+            Responsive.pageGutter(sheetContext),
+            12,
+          ),
+          child: MedievalPanel(
+            radius: 16,
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'COUNSEL',
+                  style: MedievalTextStyles.cinzel(
+                    size: 15,
+                    weight: FontWeight.w700,
+                    letterSpacing: 2.4,
+                    color: MedievalColors.textGold,
+                  ),
                 ),
-              ),
-              tile('Objective reminder', 'Free', 0, 0),
-              tile(
-                'Highlight a key mirror',
-                freeHint
-                    ? 'Free (early levels)'
-                    : '${GameConstants.hintTier1Cost} coins',
-                1,
-                GameConstants.hintTier1Cost,
-              ),
-              tile(
-                'Show ghost target angle',
-                '${GameConstants.hintTier2Cost} coins',
-                2,
-                GameConstants.hintTier2Cost,
-              ),
-              tile(
-                'Auto-set one mirror',
-                '${GameConstants.hintTier3Cost} coins',
-                3,
-                GameConstants.hintTier3Cost,
-              ),
-            ],
+                const MedievalDivider(height: 16),
+                tile(
+                  Icons.flag_rounded,
+                  'Objective reminder',
+                  'Free',
+                  0,
+                  0,
+                ),
+                tile(
+                  Icons.highlight_rounded,
+                  'Highlight a key mirror',
+                  freeHint
+                      ? 'Free (early levels)'
+                      : '${GameConstants.hintTier1Cost} coins',
+                  1,
+                  GameConstants.hintTier1Cost,
+                ),
+                tile(
+                  Icons.blur_on_rounded,
+                  'Show ghost target angle',
+                  '${GameConstants.hintTier2Cost} coins',
+                  2,
+                  GameConstants.hintTier2Cost,
+                ),
+                tile(
+                  Icons.auto_fix_high_rounded,
+                  'Auto-set one mirror',
+                  '${GameConstants.hintTier3Cost} coins',
+                  3,
+                  GameConstants.hintTier3Cost,
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -593,26 +732,29 @@ class _PauseOverlay extends StatelessWidget {
                       color: MedievalColors.textGold,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  _PauseAction(
+                  const MedievalDivider(height: 20),
+                  MedievalButton(
                     label: 'Resume',
-                    filled: true,
+                    style: MedievalButtonStyle.primary,
+                    icon: Icons.play_arrow_rounded,
                     onPressed: () => context
                         .read<GameplayBloc>()
                         .add(const GameplayResumed()),
                   ),
-                  const SizedBox(height: 10),
-                  _PauseAction(
+                  const SizedBox(height: 9),
+                  MedievalButton(
                     label: 'Restart',
+                    icon: Icons.refresh_rounded,
                     onPressed: () {
                       context
                           .read<GameplayBloc>()
                           .add(const GameplayRestarted());
                     },
                   ),
-                  const SizedBox(height: 10),
-                  _PauseAction(
+                  const SizedBox(height: 9),
+                  MedievalButton(
                     label: 'Undo Move',
+                    icon: Icons.undo_rounded,
                     onPressed: () {
                       context
                           .read<GameplayBloc>()
@@ -622,9 +764,10 @@ class _PauseOverlay extends StatelessWidget {
                           .add(const GameplayResumed());
                     },
                   ),
-                  const SizedBox(height: 10),
-                  _PauseAction(
+                  const SizedBox(height: 9),
+                  MedievalButton(
                     label: 'Level Select',
+                    icon: Icons.grid_view_rounded,
                     onPressed: () {
                       final chapter = context
                               .read<GameplayBloc>()
@@ -635,9 +778,10 @@ class _PauseOverlay extends StatelessWidget {
                       context.go('/levels/$chapter');
                     },
                   ),
-                  const SizedBox(height: 10),
-                  _PauseAction(
+                  const SizedBox(height: 9),
+                  MedievalButton(
                     label: 'Settings',
+                    icon: Icons.settings_rounded,
                     onPressed: () => context.push('/settings'),
                   ),
                 ],
@@ -650,49 +794,38 @@ class _PauseOverlay extends StatelessWidget {
   }
 }
 
-class _PauseAction extends StatelessWidget {
-  const _PauseAction({
-    required this.label,
-    required this.onPressed,
-    this.filled = false,
-  });
-
-  final String label;
-  final VoidCallback onPressed;
-  final bool filled;
+class _HintOverlay extends StatefulWidget {
+  const _HintOverlay();
 
   @override
-  Widget build(BuildContext context) {
-    return MedievalPressable(
-      onPressed: onPressed,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          gradient: filled ? MedievalColors.bronzeMetal : null,
-          color: filled ? null : MedievalColors.woodDeep.withValues(alpha: 0.6),
-          border: Border.all(
-            color: MedievalColors.bronze.withValues(alpha: 0.8),
-            width: 1.5,
-          ),
-        ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: MedievalTextStyles.cinzel(
-            size: 14,
-            weight: FontWeight.w700,
-            color: MedievalColors.textCream,
-          ),
-        ),
-      ),
-    );
-  }
+  State<_HintOverlay> createState() => _HintOverlayState();
 }
 
-class _HintOverlay extends StatelessWidget {
-  const _HintOverlay();
+class _HintOverlayState extends State<_HintOverlay> {
+  /// Long enough to read a sentence, short enough that it stops covering the
+  /// board before the player wants to look at it again.
+  static const _hold = Duration(seconds: 6);
+
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer(_hold, () {
+      if (!mounted) return;
+      // Guides stay: a timeout is not the player saying they are done with a
+      // highlight they spent coins on.
+      context
+          .read<GameplayBloc>()
+          .add(const GameplayHintDismissed(keepGuides: true));
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
+import 'package:mirror_logic/domain/beam/beam_alignment.dart';
 import 'package:mirror_logic/domain/beam/beam_simulator.dart';
 import 'package:mirror_logic/domain/beam/beam_types.dart';
 import 'package:mirror_logic/domain/beam/reflection_math.dart';
@@ -101,7 +102,15 @@ class GameplayHintRequested extends GameplayEvent {
 }
 
 class GameplayHintDismissed extends GameplayEvent {
-  const GameplayHintDismissed();
+  const GameplayHintDismissed({this.keepGuides = false});
+
+  /// Leave the highlight and ghost angle on the board. Set when the panel
+  /// times out on its own: the player paid for those marks and has not said
+  /// they are finished with them.
+  final bool keepGuides;
+
+  @override
+  List<Object?> get props => [keepGuides];
 }
 
 class GameplayState extends Equatable {
@@ -120,6 +129,10 @@ class GameplayState extends Equatable {
     this.highlightedMirrorId,
     this.ghostAngles = const {},
     this.undoStack = const [],
+    this.alignedTargetId,
+    this.alignedTargetKind,
+    this.alignmentPulse = 0,
+    this.rejectedCrystalIds = const {},
   });
 
   final GameplayPhase phase;
@@ -136,6 +149,18 @@ class GameplayState extends Equatable {
   final String? highlightedMirrorId;
   final Map<String, double> ghostAngles;
   final List<Map<String, double>> undoStack;
+
+  /// The mirror or crystal the beam is currently centred on, while dragging.
+  final String? alignedTargetId;
+  final AlignmentTargetKind? alignedTargetKind;
+
+  /// Bumped every time the drag settles onto a new target, so the UI can fire
+  /// one haptic tick per lock instead of one per frame.
+  final int alignmentPulse;
+
+  /// Crystals the beam is touching by a route the level does not accept — it
+  /// skipped a mirror it was supposed to bounce off.
+  final Set<String> rejectedCrystalIds;
 
   bool get isSolved => phase == GameplayPhase.solved;
 
@@ -154,8 +179,13 @@ class GameplayState extends Equatable {
     String? highlightedMirrorId,
     Map<String, double>? ghostAngles,
     List<Map<String, double>>? undoStack,
+    String? alignedTargetId,
+    AlignmentTargetKind? alignedTargetKind,
+    int? alignmentPulse,
+    Set<String>? rejectedCrystalIds,
     bool clearActiveMirror = false,
     bool clearHighlight = false,
+    bool clearAlignment = false,
   }) {
     return GameplayState(
       phase: phase ?? this.phase,
@@ -175,11 +205,20 @@ class GameplayState extends Equatable {
           : (highlightedMirrorId ?? this.highlightedMirrorId),
       ghostAngles: ghostAngles ?? this.ghostAngles,
       undoStack: undoStack ?? this.undoStack,
+      alignedTargetId:
+          clearAlignment ? null : (alignedTargetId ?? this.alignedTargetId),
+      alignedTargetKind: clearAlignment
+          ? null
+          : (alignedTargetKind ?? this.alignedTargetKind),
+      alignmentPulse: alignmentPulse ?? this.alignmentPulse,
+      rejectedCrystalIds: rejectedCrystalIds ?? this.rejectedCrystalIds,
     );
   }
 
   int computeStars() {
-    if (hintsUsed > 0) return 1;
+    // Tier 0 is the free objective reminder and never sets a tier, so only
+    // paid hints cost stars.
+    if (maxHintTierUsed > 0) return 1;
     final thresholds = level?.starThresholds;
     if (thresholds != null &&
         moves <= thresholds.threeStarMoveCount &&
@@ -205,6 +244,10 @@ class GameplayState extends Equatable {
         highlightedMirrorId,
         ghostAngles,
         undoStack,
+        alignedTargetId,
+        alignedTargetKind,
+        alignmentPulse,
+        rejectedCrystalIds,
       ];
 }
 
@@ -213,9 +256,12 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     required LevelRepository levelRepository,
     BeamSimulator? simulator,
     WinConditionEvaluator? winEvaluator,
+    BeamAlignmentFinder? alignmentFinder,
   })  : _levelRepository = levelRepository,
         _simulator = simulator ?? BeamSimulator(),
         _win = winEvaluator ?? const WinConditionEvaluator(),
+        _alignment = alignmentFinder ??
+            BeamAlignmentFinder(simulator: simulator ?? BeamSimulator()),
         super(const GameplayState(phase: GameplayPhase.loading)) {
     on<GameplayLoadLevel>(_onLoadLevel);
     on<GameplayStarted>(_onStarted);
@@ -244,9 +290,18 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
   /// rather than swept around it.
   static const double _dragMaxStep = 60;
 
+  /// How close the drag has to come before a detent grabs it.
+  static const double _detentCapture = 2.5;
+
+  /// How far past the detent the finger must sweep to pull free. Wider than
+  /// the capture window so the mirror holds still for a moment instead of
+  /// flickering in and out of the lock.
+  static const double _detentRelease = 5.5;
+
   final LevelRepository _levelRepository;
   final BeamSimulator _simulator;
   final WinConditionEvaluator _win;
+  final BeamAlignmentFinder _alignment;
   Timer? _tickTimer;
   double _elapsedSeconds = 0;
 
@@ -254,6 +309,8 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
   double _dragAngle = 0;
   double _dragStartAngle = 0;
   Map<String, double>? _dragUndoSnapshot;
+  List<BeamDetent> _dragDetents = const [];
+  BeamDetent? _heldDetent;
 
   Future<void> _onLoadLevel(
     GameplayLoadLevel event,
@@ -265,9 +322,13 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
       if (isClosed) return;
       add(GameplayStarted(level));
     } catch (_) {
+      if (isClosed) return;
       emit(const GameplayState(phase: GameplayPhase.loadFailed));
     }
   }
+
+  Set<String> _rejectedFor(LevelModel level, BeamSimulationResult beam) =>
+      _win.evaluate(level: level, beam: beam).rejectedCrystalIds;
 
   void _startTicker() {
     _tickTimer?.cancel();
@@ -304,6 +365,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
         mirrorAngles: angles,
         beam: beam,
         powerOnProgress: 0,
+        rejectedCrystalIds: _rejectedFor(event.level, beam),
       ),
     );
     _startTicker();
@@ -333,7 +395,49 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     );
     _dragUndoSnapshot = Map<String, double>.from(state.mirrorAngles);
 
-    emit(state.copyWith(activeMirrorId: event.mirrorId));
+    // The other mirrors hold still for the whole drag, so the angles worth
+    // stopping at can be worked out once, here, instead of every frame.
+    _heldDetent = null;
+    _dragDetents = mirror.snapIncrement > 0
+        ? const []
+        : _alignment.detentsFor(
+            level: level,
+            mirrorAngles: state.mirrorAngles,
+            mirrorId: event.mirrorId,
+          );
+
+    emit(
+      state.copyWith(
+        activeMirrorId: event.mirrorId,
+        clearAlignment: true,
+      ),
+    );
+  }
+
+  /// Magnetic capture with hysteresis: a detent grabs the drag from close in
+  /// and only lets go once the finger has clearly swept past it.
+  double _applyDetent(double rawAngle) {
+    final held = _heldDetent;
+    if (held != null) {
+      if ((rawAngle - held.angleDegrees).abs() <= _detentRelease) {
+        return held.angleDegrees;
+      }
+      _heldDetent = null;
+    }
+
+    BeamDetent? nearest;
+    var nearestDistance = double.infinity;
+    for (final detent in _dragDetents) {
+      final distance = (rawAngle - detent.angleDegrees).abs();
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearest = detent;
+      }
+    }
+    if (nearest == null || nearestDistance > _detentCapture) return rawAngle;
+
+    _heldDetent = nearest;
+    return nearest.angleDegrees;
   }
 
   void _onDragged(
@@ -368,6 +472,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
 
     // Snap the reported angle only — the accumulator stays continuous so the
     // mirror doesn't stick when the finger reverses inside one detent.
+    final previousDetent = _heldDetent;
     var angle = _dragAngle;
     if (mirror.snapIncrement > 0) {
       angle = ReflectionMath.clampAngle(
@@ -375,13 +480,32 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
         mirror.minAngle,
         mirror.maxAngle,
       );
+    } else {
+      angle = _applyDetent(angle);
     }
-    if (angle == state.mirrorAngles[event.mirrorId]) return;
+
+    final held = _heldDetent;
+    final lockChanged = held != previousDetent;
+    if (angle == state.mirrorAngles[event.mirrorId] && !lockChanged) return;
 
     final angles = Map<String, double>.from(state.mirrorAngles)
       ..[event.mirrorId] = angle;
     final beam = _simulator.simulate(level: level, mirrorAngles: angles);
-    emit(state.copyWith(mirrorAngles: angles, beam: beam, chargeProgress: 0));
+    emit(
+      state.copyWith(
+        mirrorAngles: angles,
+        beam: beam,
+        chargeProgress: 0,
+        rejectedCrystalIds: _rejectedFor(level, beam),
+        clearAlignment: held == null,
+        alignedTargetId: held?.targetId,
+        alignedTargetKind: held?.kind,
+        // Only a fresh lock pulses; holding one must not retrigger the haptic.
+        alignmentPulse: held != null && lockChanged
+            ? state.alignmentPulse + 1
+            : state.alignmentPulse,
+      ),
+    );
   }
 
   void _onDragEnded(
@@ -391,18 +515,21 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     final active = state.activeMirrorId;
     final snapshot = _dragUndoSnapshot;
     _dragUndoSnapshot = null;
+    _dragDetents = const [];
+    _heldDetent = null;
 
     // Grabbing a mirror and letting go without turning it costs nothing.
     if (active == null ||
         snapshot == null ||
         state.mirrorAngles[active] == _dragStartAngle) {
-      emit(state.copyWith(clearActiveMirror: true));
+      emit(state.copyWith(clearActiveMirror: true, clearAlignment: true));
       return;
     }
 
     emit(
       state.copyWith(
         clearActiveMirror: true,
+        clearAlignment: true,
         moves: state.moves + 1,
         undoStack: List<Map<String, double>>.from(state.undoStack)
           ..add(snapshot),
@@ -411,8 +538,6 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
   }
 
   void _onTick(GameplayTick event, Emitter<GameplayState> emit) {
-    _elapsedSeconds += event.dtSeconds;
-
     final powerOn = state.powerOnProgress < 1
         ? math.min(1.0, state.powerOnProgress + event.dtSeconds / _powerOnSeconds)
         : state.powerOnProgress;
@@ -424,14 +549,13 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
       return;
     }
 
-    final lit = _win.isSatisfied(
-      level: state.level!,
-      litCrystalIds: state.beam.litCrystalIds,
-      segments: state.beam.segments,
-    );
+    // Only playing time counts against the three-star threshold.
+    _elapsedSeconds += event.dtSeconds;
+
+    final verdict = _win.evaluate(level: state.level!, beam: state.beam);
 
     var charge = state.chargeProgress;
-    if (lit) {
+    if (verdict.satisfied) {
       charge += event.dtSeconds / GameConstants.holdTimeSeconds;
       if (charge >= 1) {
         _stopTicker();
@@ -465,6 +589,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
 
   void _onPaused(GameplayPaused event, Emitter<GameplayState> emit) {
     if (state.phase == GameplayPhase.playing) {
+      _stopTicker();
       emit(state.copyWith(phase: GameplayPhase.paused));
     }
   }
@@ -472,6 +597,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
   void _onResumed(GameplayResumed event, Emitter<GameplayState> emit) {
     if (state.phase == GameplayPhase.paused || state.phase == GameplayPhase.hint) {
       emit(state.copyWith(phase: GameplayPhase.playing));
+      _startTicker();
     }
   }
 
@@ -480,6 +606,8 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     if (level == null) return;
     _elapsedSeconds = 0;
     _dragUndoSnapshot = null;
+    _dragDetents = const [];
+    _heldDetent = null;
     final angles = {
       for (final m in level.mirrors) m.id: m.initialAngle,
     };
@@ -491,6 +619,11 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
         mirrorAngles: angles,
         beam: beam,
         powerOnProgress: 0,
+        // Hints already spent stay spent — otherwise the auto-solve hint could
+        // be bought, memorised, and restarted away for a free three stars.
+        hintsUsed: state.hintsUsed,
+        maxHintTierUsed: state.maxHintTierUsed,
+        rejectedCrystalIds: _rejectedFor(level, beam),
       ),
     );
     _startTicker();
@@ -509,6 +642,11 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
         undoStack: stack,
         chargeProgress: 0,
         phase: GameplayPhase.playing,
+        // The move being undone shouldn't keep counting against the star budget.
+        moves: math.max(0, state.moves - 1),
+        rejectedCrystalIds: _rejectedFor(state.level!, beam),
+        clearHighlight: true,
+        ghostAngles: const {},
       ),
     );
   }
@@ -519,10 +657,17 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     final solution = level.intendedSolution.mirrorAngles;
     if (solution.isEmpty) return;
 
-    final firstId = solution.keys.first;
+    // Point the hint at a mirror the player can actually turn.
+    final firstId = solution.keys.firstWhere(
+      (id) => !level.mirrors.any((m) => m.id == id && m.isLocked),
+      orElse: () => solution.keys.first,
+    );
+    if (event.tier < 3) _stopTicker();
+
     switch (event.tier) {
       case 0:
-        emit(state.copyWith(phase: GameplayPhase.hint, hintsUsed: state.hintsUsed + 1));
+        // Free objective reminder — costs neither coins nor stars.
+        emit(state.copyWith(phase: GameplayPhase.hint));
       case 1:
         emit(
           state.copyWith(
@@ -553,6 +698,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
             beam: beam,
             hintsUsed: state.hintsUsed + 1,
             maxHintTierUsed: 3,
+            rejectedCrystalIds: _rejectedFor(level, beam),
             clearHighlight: true,
             ghostAngles: const {},
           ),
@@ -566,8 +712,21 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     GameplayHintDismissed event,
     Emitter<GameplayState> emit,
   ) {
-    if (state.phase == GameplayPhase.hint) {
+    if (state.phase != GameplayPhase.hint) return;
+    if (event.keepGuides) {
       emit(state.copyWith(phase: GameplayPhase.playing));
+      _startTicker();
+      return;
     }
+    // Clear the tier-2 ghost angle and highlight, which otherwise stay painted
+    // on the board for the rest of the level.
+    emit(
+      state.copyWith(
+        phase: GameplayPhase.playing,
+        clearHighlight: true,
+        ghostAngles: const {},
+      ),
+    );
+    _startTicker();
   }
 }

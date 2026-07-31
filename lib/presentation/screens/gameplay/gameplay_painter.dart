@@ -484,19 +484,30 @@ class GameplayPainter extends CustomPainter {
       final a = Offset(seg.start.x, seg.start.y);
       final b = Offset(end.x, end.y);
 
+      // The stretch that lands on a rejected crystal goes red, so the player
+      // can see at a glance that this hit is not the answer.
+      final rejected = seg.hitKind == BeamHitKind.crystal &&
+          snapshot.rejectedCrystalIds.contains(seg.hitId);
+      final glowColor =
+          rejected ? MedievalColors.rejectGlow : MedievalColors.laserGlow;
+      final midColor =
+          rejected ? MedievalColors.rejectMid : MedievalColors.laserMid;
+      final coreColor =
+          rejected ? MedievalColors.rejectCore : MedievalColors.laserCore;
+
       final glow = Paint()
-        ..color = MedievalColors.laserGlow.withValues(alpha: 0.35 * pulse)
+        ..color = glowColor.withValues(alpha: 0.35 * pulse)
         ..strokeWidth = 28
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14);
       final mid = Paint()
-        ..color = MedievalColors.laserMid.withValues(alpha: 0.75)
+        ..color = midColor.withValues(alpha: 0.75)
         ..strokeWidth = 10
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
       final core = Paint()
-        ..color = MedievalColors.laserCore
+        ..color = coreColor
         ..strokeWidth = 3.5
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
@@ -511,7 +522,7 @@ class GameplayPainter extends CustomPainter {
           b,
           10 + 3 * pulse,
           Paint()
-            ..color = MedievalColors.laserCore.withValues(alpha: 0.55)
+            ..color = coreColor.withValues(alpha: 0.55)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
         );
       }
@@ -723,6 +734,14 @@ class GameplayPainter extends CustomPainter {
             ..color = MedievalColors.bronzeHighlight.withValues(alpha: 0.28)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
         );
+      }
+
+      if (snapshot.alignedTargetId == m.id) {
+        _drawAlignmentLock(canvas, hinge, m.length * 0.34);
+      }
+
+      if (active && snapshot.showAngleReadout) {
+        _drawAngleReadout(canvas, hinge, m.length, angle);
       }
 
       // Reflective plate at hinge — ABOVE stand; beam strikes this face
@@ -1023,6 +1042,93 @@ class GameplayPainter extends CustomPainter {
     }
   }
 
+  /// Ring that confirms the beam has settled dead-centre on this target — the
+  /// visual half of the haptic tick the drag fires at the same moment.
+  void _drawAlignmentLock(Canvas canvas, Offset center, double radius) {
+    final beat = 0.5 + 0.5 * math.sin(animTime * 7);
+    canvas.drawCircle(
+      center,
+      radius,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3
+        ..color = MedievalColors.laserCore.withValues(alpha: 0.5 + 0.4 * beat),
+    );
+    canvas.drawCircle(
+      center,
+      radius * (1 + 0.12 * beat),
+      Paint()
+        ..color = MedievalColors.laserCore.withValues(alpha: 0.22)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+    );
+  }
+
+  /// Live angle for the mirror being turned, parked above the hinge where the
+  /// hand is least likely to be covering it.
+  void _drawAngleReadout(
+    Canvas canvas,
+    Offset hinge,
+    double length,
+    double angle,
+  ) {
+    final text = TextPainter(
+      text: TextSpan(
+        text: '${angle.round()}°',
+        style: const TextStyle(
+          color: MedievalColors.textGold,
+          fontSize: 30,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final center = hinge.translate(0, -length * 0.62 - 22);
+    final box = RRect.fromRectAndRadius(
+      Rect.fromCenter(
+        center: center,
+        width: text.width + 26,
+        height: text.height + 12,
+      ),
+      const Radius.circular(8),
+    );
+
+    canvas.drawRRect(
+      box,
+      Paint()..color = MedievalColors.woodDeep.withValues(alpha: 0.82),
+    );
+    canvas.drawRRect(
+      box,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..color = MedievalColors.bronzeLight.withValues(alpha: 0.7),
+    );
+    text.paint(
+      canvas,
+      center.translate(-text.width / 2, -text.height / 2),
+    );
+  }
+
+  /// Struck-through ring over a crystal the beam reached the wrong way.
+  void _drawRejectedMark(Canvas canvas, Offset center, double radius) {
+    final beat = 0.6 + 0.4 * math.sin(animTime * 5);
+    final r = radius * 1.15;
+    final stroke = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round
+      ..color = MedievalColors.rejectMid.withValues(alpha: 0.55 + 0.35 * beat);
+
+    canvas.drawCircle(center, r, stroke);
+    final d = r * 0.62;
+    canvas.drawLine(
+      center.translate(-d, -d),
+      center.translate(d, d),
+      stroke,
+    );
+  }
+
   void _drawCrystals(
     Canvas canvas,
     LevelModel level,
@@ -1031,18 +1137,25 @@ class GameplayPainter extends CustomPainter {
     final pulse = 0.5 + 0.5 * math.sin(animTime * 2.4);
 
     for (final c in level.targetCrystals) {
-      final lit = snapshot.beam.litCrystalIds.contains(c.id);
+      final rejected = snapshot.rejectedCrystalIds.contains(c.id);
+      final lit = snapshot.beam.litCrystalIds.contains(c.id) && !rejected;
       final center = Offset(c.position.x, c.position.y);
+      if (snapshot.alignedTargetId == c.id) {
+        _drawAlignmentLock(canvas, center, c.hitRadius * 1.35);
+      }
       final charge = lit ? snapshot.chargeProgress : 0.0;
-      final aura = c.hitRadius * (1.6 + 0.3 * pulse) * (lit ? 1.2 : 0.9);
+      final aura =
+          c.hitRadius * (1.6 + 0.3 * pulse) * (lit || rejected ? 1.2 : 0.9);
 
       // Magical bloom
       canvas.drawCircle(
         center,
         aura,
         Paint()
-          ..color = MedievalColors.laserMid
-              .withValues(alpha: lit ? 0.4 * pulse : 0.14)
+          ..color = (rejected
+                  ? MedievalColors.rejectMid
+                  : MedievalColors.laserMid)
+              .withValues(alpha: lit || rejected ? 0.4 * pulse : 0.14)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
       );
 
@@ -1072,9 +1185,19 @@ class GameplayPainter extends CustomPainter {
           image: crystalImage!,
           fit: BoxFit.contain,
           filterQuality: FilterQuality.high,
+          colorFilter: rejected
+              ? const ColorFilter.mode(
+                  MedievalColors.rejectMid,
+                  BlendMode.modulate,
+                )
+              : null,
         );
       } else {
         _drawFallbackCrystal(canvas, center, c.hitRadius, lit);
+      }
+
+      if (rejected) {
+        _drawRejectedMark(canvas, center, c.hitRadius);
       }
 
       if (charge > 0) {
@@ -1111,9 +1234,11 @@ class GameplayPainter extends CustomPainter {
           text: TextSpan(
             text: label,
             style: TextStyle(
-              color: lit
-                  ? MedievalColors.laserCore
-                  : MedievalColors.textCream.withValues(alpha: 0.85),
+              color: rejected
+                  ? MedievalColors.rejectMid
+                  : lit
+                      ? MedievalColors.laserCore
+                      : MedievalColors.textCream.withValues(alpha: 0.85),
               fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
@@ -1199,10 +1324,16 @@ class GameplayPainter extends CustomPainter {
 }
 
 /// Maps screen touch to world coordinates matching [GameplayPainter] transform.
+///
+/// Set [bounded] to false to keep tracking a finger that has wandered off the
+/// board. Aiming a mirror is most precise when the finger is far from the
+/// hinge, which routinely means outside the room, and dropping those updates
+/// freezes the mirror mid-turn.
 Vec2? screenToWorld({
   required Offset local,
   required Size canvasSize,
   required LevelModel level,
+  bool bounded = true,
 }) {
   final scale = math.min(
     canvasSize.width / level.roomBounds.x,
@@ -1212,10 +1343,11 @@ Vec2? screenToWorld({
   final dy = (canvasSize.height - level.roomBounds.y * scale) / 2;
   final wx = (local.dx - dx) / scale;
   final wy = (local.dy - dy) / scale;
-  if (wx < -40 ||
-      wy < -40 ||
-      wx > level.roomBounds.x + 40 ||
-      wy > level.roomBounds.y + 40) {
+  if (bounded &&
+      (wx < -40 ||
+          wy < -40 ||
+          wx > level.roomBounds.x + 40 ||
+          wy > level.roomBounds.y + 40)) {
     return null;
   }
   return Vec2(wx, wy);

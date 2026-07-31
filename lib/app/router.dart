@@ -32,24 +32,34 @@ abstract final class AppRouter {
         path: '/chapters',
         builder: (_, _) => const ChapterSelectScreen(),
       ),
+      // go_router keys pages by route *pattern*, so without an explicit key
+      // Flutter reuses the same element when only the parameter changes and
+      // the screen keeps serving the previous chapter/level.
       GoRoute(
         path: '/levels/:chapterId',
         builder: (_, state) {
           final chapterId = state.pathParameters['chapterId']!;
-          return LevelSelectScreen(chapterId: chapterId);
+          return LevelSelectScreen(
+            key: ValueKey('levels_$chapterId'),
+            chapterId: chapterId,
+          );
         },
       ),
       GoRoute(
         path: '/play/:levelId',
         builder: (_, state) {
           final levelId = state.pathParameters['levelId']!;
-          return GameplayScreen(levelId: levelId);
+          return GameplayScreen(
+            key: ValueKey('play_$levelId'),
+            levelId: levelId,
+          );
         },
       ),
       GoRoute(
         path: '/complete',
         builder: (_, state) {
-          final extra = state.extra! as LevelCompleteArgs;
+          final extra = state.extra;
+          if (extra is! LevelCompleteArgs) return const MainMenuScreen();
           return LevelCompleteScreen(args: extra);
         },
       ),

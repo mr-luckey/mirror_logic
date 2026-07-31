@@ -39,6 +39,12 @@ abstract final class MedievalColors {
   static const Color greenPlus = Color(0xFF4CAF50);
   static const Color vineGreen = Color(0xFF2E5A2E);
 
+  /// A hit that does not count: the beam reached the crystal by a route the
+  /// puzzle rejects.
+  static const Color rejectCore = Color(0xFFFFD6D6);
+  static const Color rejectMid = Color(0xFFFF3B30);
+  static const Color rejectGlow = Color(0xFFC01818);
+
   static const LinearGradient bronzeMetal = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mirror_logic/app/theme/app_colors.dart';
+import 'package:mirror_logic/app/theme/medieval_colors.dart';
+import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
-import 'package:mirror_logic/presentation/widgets/atmospheric_background.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -15,11 +16,10 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final short = Responsive.isShort(context);
-    final titleSize = Responsive.sp(context, 32).clamp(24.0, 36.0);
-    final crystalSize = Responsive.wp(context, short ? 0.36 : 0.42)
-        .clamp(120.0, 180.0);
+    final crestSize =
+        Responsive.wp(context, short ? 0.44 : 0.54).clamp(150.0, 250.0);
 
-    return AtmosphericBackground(
+    return MedievalWoodBackground(
       child: _SplashBootstrap(
         child: SafeArea(
           child: Padding(
@@ -28,75 +28,39 @@ class SplashScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                const Spacer(flex: 2),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    'MIRROR LOGIC',
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    style: GoogleFonts.orbitron(
-                      fontSize: titleSize,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 2.5,
-                      color: AppColors.textPrimary,
-                      shadows: [
-                        Shadow(
-                          color: AppColors.accentBright.withValues(alpha: 0.7),
-                          blurRadius: 24,
-                        ),
-                        Shadow(
-                          color: AppColors.hotPink.withValues(alpha: 0.4),
-                          blurRadius: 48,
-                        ),
-                      ],
-                    ),
-                  ),
+                const Spacer(flex: 3),
+                MedievalArtwork(
+                  asset: MedievalArt.crest,
+                  size: crestSize,
+                  glow: MedievalColors.laserGlow,
+                  glowStrength: 0.3,
                 )
                     .animate()
-                    .fadeIn(duration: 600.ms)
-                    .slideY(begin: 0.15, end: 0),
-                const SizedBox(height: 8),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    'REFLECT  •  ALIGN  •  SOLVE',
-                    maxLines: 1,
-                    style: GoogleFonts.exo2(
-                      letterSpacing: 2,
-                      color: AppColors.muted,
-                      fontSize: Responsive.sp(context, 12),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ).animate().fadeIn(delay: 200.ms, duration: 500.ms),
-                SizedBox(height: short ? 24 : 40),
-                SizedBox(
-                  width: crystalSize,
-                  height: crystalSize,
-                  child: const CustomPaint(painter: _CrystalPainter()),
-                )
+                    .fadeIn(duration: 700.ms)
+                    .scale(begin: const Offset(0.86, 0.86), curve: Curves.easeOutBack)
+                    .then()
                     .animate(onPlay: (c) => c.repeat(reverse: true))
                     .scale(
-                      begin: const Offset(0.96, 0.96),
-                      end: const Offset(1.04, 1.04),
-                      duration: 1600.ms,
+                      begin: const Offset(1, 1),
+                      end: const Offset(1.035, 1.035),
+                      duration: 2000.ms,
                       curve: Curves.easeInOut,
                     ),
+                SizedBox(height: short ? 20 : 32),
+                const GameTitle(),
+                SizedBox(height: short ? 6 : 10),
+                Text(
+                  'REFLECT  •  ALIGN  •  SOLVE',
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  style: MedievalTextStyles.cinzel(
+                    size: Responsive.sp(context, 11),
+                    letterSpacing: 3,
+                    color: MedievalColors.textMuted,
+                  ),
+                ).animate().fadeIn(delay: 500.ms, duration: 600.ms),
                 const Spacer(flex: 3),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Responsive.wp(context, 0.08),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: LinearProgressIndicator(
-                      minHeight: 3,
-                      backgroundColor: AppColors.panel,
-                      color: AppColors.accentBright,
-                    ),
-                  ),
-                ).animate().fadeIn(delay: 300.ms),
+                const _ForgeBar(),
                 SizedBox(height: short ? 28 : 48),
               ],
             ),
@@ -104,6 +68,79 @@ class SplashScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// The engraved wordmark, shared by the splash and the main menu.
+class GameTitle extends StatelessWidget {
+  const GameTitle({super.key, this.scale = 1});
+
+  final double scale;
+
+  @override
+  Widget build(BuildContext context) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Column(
+        children: [
+          Text(
+            'MIRROR LOGIC',
+            maxLines: 1,
+            textAlign: TextAlign.center,
+            style: MedievalTextStyles.cinzelDecorative(
+              size: Responsive.sp(context, 30) * scale,
+              weight: FontWeight.w700,
+              letterSpacing: 2,
+              color: MedievalColors.textGold,
+            ).copyWith(
+              shadows: [
+                Shadow(
+                  color: MedievalColors.bronzeHighlight.withValues(alpha: 0.55),
+                  blurRadius: 22,
+                ),
+                const Shadow(
+                  color: Colors.black,
+                  blurRadius: 3,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 700.ms).slideY(begin: 0.14, end: 0);
+  }
+}
+
+/// Loading bar styled as molten bronze running along a carved channel.
+class _ForgeBar extends StatelessWidget {
+  const _ForgeBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: Responsive.wp(context, 0.1)),
+      child: Container(
+        height: 10,
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          color: Colors.black.withValues(alpha: 0.5),
+          border: Border.all(
+            color: MedievalColors.bronze.withValues(alpha: 0.7),
+            width: 1.2,
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: const LinearProgressIndicator(
+            minHeight: 4,
+            backgroundColor: Colors.transparent,
+            color: MedievalColors.bronzeHighlight,
+          ),
+        ),
+      ),
+    ).animate().fadeIn(delay: 400.ms);
   }
 }
 
@@ -133,73 +170,4 @@ class _SplashBootstrapState extends State<_SplashBootstrap> {
 
   @override
   Widget build(BuildContext context) => widget.child;
-}
-
-class _CrystalPainter extends CustomPainter {
-  const _CrystalPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final c = Offset(size.width / 2, size.height / 2);
-    final r = size.shortestSide * 0.38;
-
-    // Outer glow
-    canvas.drawCircle(
-      c,
-      r * 1.3,
-      Paint()
-        ..color = AppColors.accentBright.withValues(alpha: 0.12)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 32),
-    );
-    canvas.drawCircle(
-      c,
-      r * 1.1,
-      Paint()
-        ..color = AppColors.hotPink.withValues(alpha: 0.15)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
-    );
-
-    final path = Path()
-      ..moveTo(c.dx, c.dy - r)
-      ..lineTo(c.dx + r * 0.85, c.dy - r * 0.18)
-      ..lineTo(c.dx + r * 0.55, c.dy + r * 0.85)
-      ..lineTo(c.dx - r * 0.55, c.dy + r * 0.85)
-      ..lineTo(c.dx - r * 0.85, c.dy - r * 0.18)
-      ..close();
-
-    canvas.drawPath(
-      path,
-      Paint()
-        ..shader = LinearGradient(
-          colors: [
-            AppColors.accentBright,
-            AppColors.hotPink,
-            AppColors.accent,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ).createShader(Rect.fromCircle(center: c, radius: r)),
-    );
-    canvas.drawPath(
-      path,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5
-        ..color = Colors.white.withValues(alpha: 0.6),
-    );
-
-    // Laser hint line
-    canvas.drawLine(
-      Offset(size.width * 0.1, size.height * 0.72),
-      Offset(c.dx - r * 0.35, c.dy + r * 0.15),
-      Paint()
-        ..color = AppColors.cyan.withValues(alpha: 0.8)
-        ..strokeWidth = 3.5
-        ..strokeCap = StrokeCap.round
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

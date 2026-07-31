@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mirror_logic/app/theme/app_colors.dart';
-import 'package:mirror_logic/app/theme/app_text_styles.dart';
+import 'package:mirror_logic/app/theme/medieval_colors.dart';
+import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 
 abstract final class AppTheme {
+  /// Material defaults dressed in bronze.
+  ///
+  /// The screens draw their own surfaces, so this exists for the widgets that
+  /// insist on theming themselves — sliders, switches, dialogs, snackbars,
+  /// text selection — which would otherwise show up in stock Material blue.
   static ThemeData get dark {
     final base = ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: AppColors.primaryDark,
+      scaffoldBackgroundColor: MedievalColors.woodDeep,
       colorScheme: const ColorScheme.dark(
-        primary: AppColors.accentBright,
-        secondary: AppColors.cyan,
-        surface: AppColors.secondaryDark,
-        error: AppColors.laserRed,
-        onPrimary: Colors.white,
-        onSecondary: AppColors.primaryDark,
-        onSurface: AppColors.textPrimary,
+        primary: MedievalColors.bronzeLight,
+        onPrimary: MedievalColors.woodDeep,
+        secondary: MedievalColors.laserMid,
+        onSecondary: MedievalColors.woodDeep,
+        surface: MedievalColors.woodMid,
+        onSurface: MedievalColors.textCream,
+        error: MedievalColors.rejectMid,
       ),
     );
 
-    final textTheme = GoogleFonts.exo2TextTheme(base.textTheme).apply(
-      bodyColor: AppColors.textPrimary,
-      displayColor: AppColors.textPrimary,
+    final textTheme = GoogleFonts.cinzelTextTheme(base.textTheme).apply(
+      bodyColor: MedievalColors.textCream,
+      displayColor: MedievalColors.textGold,
       decoration: TextDecoration.none,
       decorationColor: Colors.transparent,
     );
@@ -33,44 +38,89 @@ abstract final class AppTheme {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: AppTextStyles.orbitron(
+        titleTextStyle: MedievalTextStyles.cinzel(
           size: 18,
-          weight: FontWeight.w600,
-          letterSpacing: 1.2,
-          color: AppColors.textPrimary,
+          weight: FontWeight.w700,
+          letterSpacing: 2,
+          color: MedievalColors.textGold,
         ),
+        iconTheme: const IconThemeData(color: MedievalColors.textGold),
       ),
+      iconTheme: const IconThemeData(color: MedievalColors.textGold),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          textStyle: AppTextStyles.exo2(),
-          foregroundColor: AppColors.cyan,
+          textStyle: MedievalTextStyles.cinzel(weight: FontWeight.w700),
+          foregroundColor: MedievalColors.bronzeLight,
         ),
       ),
       sliderTheme: SliderThemeData(
-        activeTrackColor: AppColors.accentBright,
-        inactiveTrackColor: AppColors.panel,
-        thumbColor: AppColors.accentBright,
-        overlayColor: AppColors.accentBright.withValues(alpha: 0.2),
+        activeTrackColor: MedievalColors.bronzeLight,
+        inactiveTrackColor: MedievalColors.woodDeep,
+        thumbColor: MedievalColors.bronzeHighlight,
+        overlayColor: MedievalColors.bronzeLight.withValues(alpha: 0.18),
+        valueIndicatorColor: MedievalColors.bronzeDark,
+        trackHeight: 5,
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return Colors.white;
-          return Colors.white70;
+          return states.contains(WidgetState.selected)
+              ? MedievalColors.bronzeHighlight
+              : MedievalColors.textMuted;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return AppColors.accentBright;
-          }
-          return AppColors.panel;
+          return states.contains(WidgetState.selected)
+              ? MedievalColors.bronze
+              : MedievalColors.woodDeep;
         }),
+        trackOutlineColor: WidgetStateProperty.all(MedievalColors.bronzeDark),
       ),
-      snackBarTheme: const SnackBarThemeData(
-        backgroundColor: AppColors.panel,
-        contentTextStyle: TextStyle(color: AppColors.textPrimary),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: MedievalColors.bronzeLight,
+        linearTrackColor: MedievalColors.woodDeep,
+        circularTrackColor: Colors.transparent,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: MedievalColors.woodPlank,
+        contentTextStyle: MedievalTextStyles.cinzel(size: 13),
+        actionTextColor: MedievalColors.bronzeHighlight,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: const BorderSide(color: MedievalColors.bronze, width: 1.5),
+        ),
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: AppColors.secondaryDark,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: MedievalColors.woodMid,
+        surfaceTintColor: Colors.transparent,
+        titleTextStyle: MedievalTextStyles.cinzel(
+          size: 17,
+          weight: FontWeight.w700,
+          letterSpacing: 1.2,
+          color: MedievalColors.textGold,
+        ),
+        contentTextStyle: MedievalTextStyles.cinzel(size: 13, height: 1.35),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: MedievalColors.bronzeLight, width: 2),
+        ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+      ),
+      dividerTheme: DividerThemeData(
+        color: MedievalColors.bronze.withValues(alpha: 0.4),
+        thickness: 1,
+      ),
+      listTileTheme: ListTileThemeData(
+        iconColor: MedievalColors.textGold,
+        textColor: MedievalColors.textCream,
+        titleTextStyle: MedievalTextStyles.cinzel(size: 14),
+        subtitleTextStyle: MedievalTextStyles.cinzel(
+          size: 11,
+          color: MedievalColors.textMuted,
+        ),
       ),
     );
   }

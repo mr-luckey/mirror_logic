@@ -20,6 +20,7 @@ class BeamSimulator {
   }) {
     final segments = _pool.acquire();
     final lit = <String>{};
+    final used = <String, Set<String>>{};
 
     for (final source in level.lightSources) {
       _traceSource(
@@ -29,12 +30,14 @@ class BeamSimulator {
         direction: ReflectionMath.directionFromDegrees(source.directionDegrees),
         segments: segments,
         lit: lit,
+        used: used,
       );
     }
 
     return BeamSimulationResult(
       segments: _pool.freeze(segments),
       litCrystalIds: Set<String>.unmodifiable(lit),
+      mirrorsUsedToCrystal: Map<String, Set<String>>.unmodifiable(used),
     );
   }
 
@@ -45,10 +48,12 @@ class BeamSimulator {
     required Vec2 direction,
     required List<BeamSegment> segments,
     required Set<String> lit,
+    required Map<String, Set<String>> used,
   }) {
     var pos = origin;
     var dir = direction.normalized();
     if (dir.lengthSquared < _epsilon) return;
+    final mirrorsSoFar = <String>{};
 
     for (var bounce = 0; bounce < GameConstants.maxBounces; bounce++) {
       final hit = _findNearestHit(
@@ -75,8 +80,19 @@ class BeamSimulator {
 
       if (hit.kind == BeamHitKind.crystal) {
         lit.add(hit.id!);
+        // Several sources could reach the same crystal; credit the route that
+        // used the most mirrors, since that is the one closest to solving it.
+        final previous = used[hit.id!];
+        if (previous == null || previous.length < mirrorsSoFar.length) {
+          used[hit.id!] = Set<String>.unmodifiable(mirrorsSoFar);
+        }
         if (hit.relay) {
-          pos = hit.point + dir * 0.5;
+          // Step clear of the crystal's whole hit circle, otherwise the next
+          // ray starts inside it and the same relay is hit again and again.
+          final radius = level.targetCrystals
+              .firstWhere((c) => c.id == hit.id)
+              .hitRadius;
+          pos = hit.point + dir * (2 * radius + 1);
           continue;
         }
         return;
@@ -87,6 +103,7 @@ class BeamSimulator {
       }
 
       if (hit.kind == BeamHitKind.mirror) {
+        mirrorsSoFar.add(hit.id!);
         final reflected = ReflectionMath.reflect(dir, hit.normal!);
         // Nudge off surface to avoid re-hitting same mirror.
         pos = hit.point + reflected * 0.5;

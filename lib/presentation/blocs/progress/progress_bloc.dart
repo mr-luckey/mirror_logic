@@ -93,8 +93,12 @@ class ProgressBloc extends Bloc<ProgressEvent, ProgressState> {
     ProgressLevelCompleted event,
     Emitter<ProgressState> emit,
   ) async {
-    final save = state.save;
+    // Read through to storage: EconomyRepository writes the same record, so the
+    // in-memory copy can be stale after a hint purchase.
+    final save = _saveRepository.loadSave();
     final existing = save.levelProgress[event.levelId];
+    // Replaying a cleared level shouldn't pay out again.
+    final alreadyCleared = existing?.completed ?? false;
     final bestStars =
         existing == null ? event.stars : (event.stars > existing.stars ? event.stars : existing.stars);
     final bestTime = existing?.bestTimeSeconds == null
@@ -111,27 +115,19 @@ class ProgressBloc extends Bloc<ProgressEvent, ProgressState> {
       completed: true,
     );
 
+    // Only the catalog knows what actually comes next; deriving an id from the
+    // string used to invent levels like `ch1_1001` that do not exist.
     final unlocked = List<String>.from(save.unlockedLevelIds);
-    if (event.nextLevelId != null && !unlocked.contains(event.nextLevelId)) {
-      unlocked.add(event.nextLevelId!);
-    }
-
-    // Unlock sequential next within chapter even if nextLevelId not passed.
-    final parts = event.levelId.split('_');
-    if (parts.length == 2) {
-      final chapter = parts[0];
-      final num = int.tryParse(parts[1]) ?? 0;
-      final nextId = '${chapter}_${(num + 1).toString().padLeft(3, '0')}';
-      if (!unlocked.contains(nextId)) {
-        unlocked.add(nextId);
-      }
+    final nextId = event.nextLevelId;
+    if (nextId != null && !unlocked.contains(nextId)) {
+      unlocked.add(nextId);
     }
 
     final next = save.copyWith(
       levelProgress: progress,
       unlockedLevelIds: unlocked,
       lastPlayedLevelId: event.levelId,
-      coins: save.coins + event.coinsEarned,
+      coins: alreadyCleared ? save.coins : save.coins + event.coinsEarned,
     );
     await _saveRepository.persistSave(next);
     emit(state.copyWith(save: next));

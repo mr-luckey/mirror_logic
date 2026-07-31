@@ -1,64 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mirror_logic/app/theme/app_colors.dart';
-import 'package:mirror_logic/app/theme/app_text_styles.dart';
+import 'package:mirror_logic/app/theme/medieval_colors.dart';
+import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
-import 'package:mirror_logic/presentation/widgets/atmospheric_background.dart';
-import 'package:mirror_logic/presentation/widgets/glass_panel.dart';
-import 'package:mirror_logic/presentation/widgets/star_row.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_progress.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_screen_header.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_star_row.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 
-class ChapterSelectScreen extends StatelessWidget {
+class ChapterSelectScreen extends StatefulWidget {
   const ChapterSelectScreen({super.key});
 
   @override
+  State<ChapterSelectScreen> createState() => _ChapterSelectScreenState();
+}
+
+class _ChapterSelectScreenState extends State<ChapterSelectScreen> {
+  // Built once: creating the future inside build restarts the load on every
+  // ancestor rebuild and flashes the spinner.
+  late final Future<List<ChapterInfo>> _chapters =
+      context.read<LevelRepository>().chapters();
+
+  @override
   Widget build(BuildContext context) {
-    return AtmosphericBackground(
+    final gutter = Responsive.pageGutter(context);
+
+    return MedievalWoodBackground(
       child: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => context.go('/menu'),
-                    icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                        color: AppColors.textPrimary),
-                  ),
-                  Text(
-                    'CHAPTERS',
-                    style: AppTextStyles.orbitron(
-                      weight: FontWeight.w700,
-                      letterSpacing: 2,
-                      size: 18,
-                    ),
-                  ),
-                ],
+              padding: EdgeInsets.symmetric(horizontal: gutter),
+              child: MedievalScreenHeader(
+                title: 'Chapters',
+                subtitle: 'Choose your trial',
+                onBack: () => context.go('/menu'),
               ),
             ),
             Expanded(
               child: FutureBuilder<List<ChapterInfo>>(
-                future: context.read<LevelRepository>().chapters(),
+                future: _chapters,
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                          color: AppColors.accentBright),
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'The archive could not be opened',
+                        style: MedievalTextStyles.cinzel(
+                          color: MedievalColors.textMuted,
+                        ),
+                      ),
                     );
+                  }
+                  if (!snapshot.hasData) {
+                    return const MedievalLoader(message: 'UNSEALING ARCHIVE');
                   }
                   final chapters = snapshot.data!;
                   return BlocBuilder<ProgressBloc, ProgressState>(
                     builder: (context, progress) {
                       return ListView.separated(
-                        padding:
-                            EdgeInsets.all(Responsive.pageGutter(context)),
+                        padding: EdgeInsets.fromLTRB(gutter, 6, gutter, 20),
                         itemCount: chapters.length,
-                        separatorBuilder: (_, _) =>
-                            const SizedBox(height: 14),
+                        separatorBuilder: (_, _) => const SizedBox(height: 13),
                         itemBuilder: (context, index) {
                           final ch = chapters[index];
                           final stars = progress.save.starsForChapter(
@@ -79,13 +89,17 @@ class ChapterSelectScreen extends StatelessWidget {
 
                           return _ChapterCard(
                             chapter: ch,
+                            index: index,
                             stars: stars,
                             completed: completed,
                             unlocked: unlocked,
                             onTap: unlocked
                                 ? () => context.push('/levels/${ch.id}')
                                 : null,
-                          );
+                          ).animate().fadeIn(
+                                delay: (index * 55).ms,
+                                duration: 320.ms,
+                              );
                         },
                       );
                     },
@@ -103,6 +117,7 @@ class ChapterSelectScreen extends StatelessWidget {
 class _ChapterCard extends StatelessWidget {
   const _ChapterCard({
     required this.chapter,
+    required this.index,
     required this.stars,
     required this.completed,
     required this.unlocked,
@@ -110,6 +125,7 @@ class _ChapterCard extends StatelessWidget {
   });
 
   final ChapterInfo chapter;
+  final int index;
   final int stars;
   final int completed;
   final bool unlocked;
@@ -117,41 +133,22 @@ class _ChapterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final thumb = Responsive.isNarrow(context) ? 56.0 : 72.0;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: GlassPanel(
-          glow: unlocked,
-          padding: EdgeInsets.all(Responsive.isNarrow(context) ? 12 : 16),
+    final narrow = Responsive.isNarrow(context);
+    final thumb = narrow ? 58.0 : 70.0;
+    final ratio = chapter.maxStars == 0 ? 0.0 : stars / chapter.maxStars;
+
+    return MedievalPressable(
+      onPressed: onTap,
+      enabled: unlocked,
+      child: Opacity(
+        opacity: unlocked ? 1 : 0.62,
+        child: MedievalPanel(
+          padding: EdgeInsets.all(narrow ? 11 : 14),
+          glow: unlocked && ratio >= 1 ? MedievalColors.bronzeHighlight : null,
           child: Row(
             children: [
-              Container(
-                width: thumb,
-                height: thumb,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: unlocked
-                      ? const LinearGradient(
-                          colors: [AppColors.panel, AppColors.surface],
-                        )
-                      : null,
-                  color: unlocked ? null : AppColors.panel,
-                  border: Border.all(
-                    color: unlocked
-                        ? AppColors.accent.withValues(alpha: 0.4)
-                        : AppColors.glassBorder,
-                  ),
-                ),
-                child: Icon(
-                  unlocked ? Icons.science_outlined : Icons.lock_rounded,
-                  color: unlocked ? AppColors.accentBright : AppColors.muted,
-                  size: thumb * 0.42,
-                ),
-              ),
-              SizedBox(width: Responsive.isNarrow(context) ? 10 : 14),
+              _Thumb(size: thumb, unlocked: unlocked, index: index),
+              SizedBox(width: narrow ? 11 : 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,69 +157,135 @@ class _ChapterCard extends StatelessWidget {
                       chapter.title.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.orbitron(
+                      style: MedievalTextStyles.cinzel(
                         weight: FontWeight.w700,
                         size: Responsive.sp(context, 13),
-                        letterSpacing: 0.8,
+                        letterSpacing: 1.2,
                         color: unlocked
-                            ? AppColors.textPrimary
-                            : AppColors.muted,
+                            ? MedievalColors.textGold
+                            : MedievalColors.textMuted,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Text(
                       chapter.subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.exo2(
-                        color: AppColors.muted,
-                        size: Responsive.sp(context, 12),
+                      style: MedievalTextStyles.cinzel(
+                        color: MedievalColors.textMuted,
+                        size: Responsive.sp(context, 11),
                       ),
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const StarRow(filled: 3, size: 12),
-                        const SizedBox(width: 4),
+                        const MedievalStarRow(filled: 3, size: 12, spacing: 1),
+                        const SizedBox(width: 5),
                         Flexible(
                           child: Text(
                             '$stars/${chapter.maxStars}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: AppTextStyles.exo2(
-                              weight: FontWeight.w600,
+                            style: MedievalTextStyles.cinzel(
+                              weight: FontWeight.w700,
                               size: 11,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 8),
                         Text(
                           '$completed/${chapter.levelCount}',
-                          style: AppTextStyles.exo2(
-                            color: AppColors.muted,
+                          style: MedievalTextStyles.cinzel(
+                            color: MedievalColors.textMuted,
                             size: 11,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: chapter.maxStars == 0
-                            ? 0
-                            : stars / chapter.maxStars,
-                        minHeight: 4,
-                        backgroundColor: AppColors.panel,
-                        color: AppColors.accentBright,
-                      ),
-                    ),
+                    const SizedBox(height: 7),
+                    MedievalProgressBar(value: ratio),
                   ],
                 ),
               ),
+              if (unlocked)
+                Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    color: MedievalColors.bronzeLight.withValues(alpha: 0.8),
+                    size: 20,
+                  ),
+                ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Chapter emblem: the tome for an open chapter, a padlock for a sealed one.
+class _Thumb extends StatelessWidget {
+  const _Thumb({
+    required this.size,
+    required this.unlocked,
+    required this.index,
+  });
+
+  final double size;
+  final bool unlocked;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          MedievalPanel(
+            style: MedievalPanelStyle.inset,
+            radius: 10,
+            padding: const EdgeInsets.all(5),
+            child: Image.asset(
+              unlocked ? MedievalArt.tome : MedievalArt.padlock,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.medium,
+              color: unlocked ? null : Colors.black.withValues(alpha: 0.35),
+              colorBlendMode: unlocked ? null : BlendMode.srcATop,
+              errorBuilder: (_, _, _) => Icon(
+                unlocked ? Icons.menu_book_rounded : Icons.lock_rounded,
+                color: MedievalColors.textGold,
+                size: size * 0.4,
+              ),
+            ),
+          ),
+          if (unlocked)
+            Positioned(
+              right: -3,
+              bottom: -3,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(7),
+                  gradient: MedievalColors.bronzeMetal,
+                  border: Border.all(
+                    color: MedievalColors.bronzeDark,
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  '${index + 1}',
+                  style: MedievalTextStyles.cinzelDecorative(
+                    size: 10,
+                    weight: FontWeight.w700,
+                    color: MedievalColors.woodDeep,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

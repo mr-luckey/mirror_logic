@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirror_logic/domain/beam/beam_simulator.dart';
+import 'package:mirror_logic/domain/beam/beam_types.dart';
 import 'package:mirror_logic/domain/beam/reflection_math.dart';
 import 'package:mirror_logic/domain/beam/vec2.dart';
 import 'package:mirror_logic/domain/level/level_model.dart';
@@ -185,12 +186,17 @@ void main() {
         intendedSolution: const IntendedSolution(mirrorAngles: {}),
         starThresholds: const StarThresholds(),
       );
+      BeamSimulationResult beamLighting(Set<String> ids) =>
+          BeamSimulationResult(segments: const [], litCrystalIds: ids);
+
       expect(
-        evaluator.isSatisfied(level: level, litCrystalIds: {'c1'}),
+        evaluator.evaluate(level: level, beam: beamLighting({'c1'})).satisfied,
         isFalse,
       );
       expect(
-        evaluator.isSatisfied(level: level, litCrystalIds: {'c1', 'c2'}),
+        evaluator
+            .evaluate(level: level, beam: beamLighting({'c1', 'c2'}))
+            .satisfied,
         isTrue,
       );
     });

@@ -14,6 +14,9 @@ class GameplayPaintSnapshot extends Equatable {
     required this.ghostAngles,
     required this.highlightedMirrorId,
     this.activeMirrorId,
+    this.alignedTargetId,
+    this.rejectedCrystalIds = const {},
+    this.showAngleReadout = false,
     this.elapsedSeconds = 0,
   });
 
@@ -25,10 +28,23 @@ class GameplayPaintSnapshot extends Equatable {
   final Map<String, double> ghostAngles;
   final String? highlightedMirrorId;
   final String? activeMirrorId;
+
+  /// Mirror or crystal the beam is currently centred on, mid-drag.
+  final String? alignedTargetId;
+
+  /// Crystals the beam reaches by a route the level rejects — drawn red.
+  final Set<String> rejectedCrystalIds;
+
+  /// Print the live angle beside the mirror being turned.
+  final bool showAngleReadout;
   final double elapsedSeconds;
 
-  factory GameplayPaintSnapshot.fromState(GameplayState state) {
+  factory GameplayPaintSnapshot.fromState(
+    GameplayState state, {
+    bool showAngleReadout = false,
+  }) {
     return GameplayPaintSnapshot(
+      showAngleReadout: showAngleReadout,
       level: state.level!,
       mirrorAngles: state.mirrorAngles,
       beam: state.beam,
@@ -37,6 +53,8 @@ class GameplayPaintSnapshot extends Equatable {
       ghostAngles: state.ghostAngles,
       highlightedMirrorId: state.highlightedMirrorId,
       activeMirrorId: state.activeMirrorId,
+      alignedTargetId: state.alignedTargetId,
+      rejectedCrystalIds: state.rejectedCrystalIds,
       elapsedSeconds: state.elapsedSeconds,
     );
   }
@@ -51,6 +69,9 @@ class GameplayPaintSnapshot extends Equatable {
         ghostAngles,
         highlightedMirrorId,
         activeMirrorId,
+        alignedTargetId,
+        rejectedCrystalIds,
+        showAngleReadout,
         // Quantize time so we don't repaint every microsecond unnecessarily
         // while still driving crystal/laser animations (~20fps visual).
         (elapsedSeconds * 20).floor(),

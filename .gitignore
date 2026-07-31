@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Snapshots taken by tool/convert_md_levels.py before it rewrites the catalogue
+/.level-backups/

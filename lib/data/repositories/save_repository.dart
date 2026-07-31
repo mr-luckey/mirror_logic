@@ -11,7 +11,12 @@ class SaveRepository {
   PlayerSave loadSave() {
     final json = _storage.readJson(_saveKey);
     if (json == null) return const PlayerSave();
-    return PlayerSave.fromJson(json);
+    // Losing progress is bad; refusing to launch is worse.
+    try {
+      return PlayerSave.fromJson(json);
+    } catch (_) {
+      return const PlayerSave();
+    }
   }
 
   Future<void> persistSave(PlayerSave save) async {
@@ -21,7 +26,11 @@ class SaveRepository {
   AppSettings loadSettings() {
     final json = _storage.readJson(_settingsKey);
     if (json == null) return const AppSettings();
-    return AppSettings.fromJson(json);
+    try {
+      return AppSettings.fromJson(json);
+    } catch (_) {
+      return const AppSettings();
+    }
   }
 
   Future<void> persistSettings(AppSettings settings) async {

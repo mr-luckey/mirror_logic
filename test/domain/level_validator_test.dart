@@ -75,11 +75,7 @@ void main() {
           for (final m in level.mirrors) m.id: m.initialAngle,
         };
         final result = sim.simulate(level: level, mirrorAngles: angles);
-        final solved = win.isSatisfied(
-          level: level,
-          litCrystalIds: result.litCrystalIds,
-          segments: result.segments,
-        );
+        final solved = win.evaluate(level: level, beam: result).satisfied;
         if (solved) failures.add(level.levelId);
       }
       expect(failures, isEmpty, reason: 'Pre-solved: $failures');
@@ -98,6 +94,23 @@ void main() {
           );
         }
       }
+    });
+
+    // A locked mirror can never be dragged, so shipping one at any angle other
+    // than the one the solution needs makes the level impossible to finish.
+    test('locked mirrors already sit at their solution angle', () {
+      final failures = <String>[];
+      for (final level in levels) {
+        final tolerance = level.intendedSolution.toleranceDegrees;
+        for (final mirror in level.mirrors.where((m) => m.isLocked)) {
+          final target = level.intendedSolution.mirrorAngles[mirror.id];
+          if (target == null) continue;
+          if ((target - mirror.initialAngle).abs() > tolerance) {
+            failures.add('${level.levelId}/${mirror.id}');
+          }
+        }
+      }
+      expect(failures, isEmpty, reason: 'Stuck locked mirrors: $failures');
     });
 
     test('obstacle shapes parse, defaulting to wall', () {

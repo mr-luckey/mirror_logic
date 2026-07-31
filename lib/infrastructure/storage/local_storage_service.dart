@@ -20,9 +20,15 @@ class LocalStorageService {
   Map<String, dynamic>? readJson(String key) {
     final raw = _box.get(key);
     if (raw is! String || raw.isEmpty) return null;
-    final decoded = jsonDecode(raw);
-    if (decoded is Map<String, dynamic>) return decoded;
-    if (decoded is Map) return Map<String, dynamic>.from(decoded);
+    // A corrupt record must not take the app down before the first frame;
+    // callers treat null as "no save yet".
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map<String, dynamic>) return decoded;
+      if (decoded is Map) return Map<String, dynamic>.from(decoded);
+    } on FormatException {
+      return null;
+    }
     return null;
   }
 

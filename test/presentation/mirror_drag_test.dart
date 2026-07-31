@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
+import 'package:mirror_logic/domain/beam/beam_alignment.dart';
 import 'package:mirror_logic/domain/beam/reflection_math.dart';
 import 'package:mirror_logic/domain/beam/vec2.dart';
 import 'package:mirror_logic/domain/level/level_model.dart';
@@ -9,7 +10,11 @@ import 'package:mirror_logic/presentation/blocs/gameplay/gameplay_bloc.dart';
 
 const hinge = Vec2(540, 960);
 
-LevelModel buildLevel({double initialAngle = 90, double snapIncrement = 0}) {
+LevelModel buildLevel({
+  double initialAngle = 90,
+  double snapIncrement = 0,
+  Vec2 crystal = const Vec2(540, 300),
+}) {
   return LevelModel.fromJson({
     'levelId': 'test_001',
     'chapterId': 'ch1',
@@ -37,7 +42,7 @@ LevelModel buildLevel({double initialAngle = 90, double snapIncrement = 0}) {
     'targetCrystals': [
       {
         'id': 'c1',
-        'position': [540.0, 300.0],
+        'position': [crystal.x, crystal.y],
         'hitRadius': 44.0,
         'groupId': 'g1',
       },
@@ -126,7 +131,11 @@ void main() {
 
     test('rotation past the limit does not leave a dead zone coming back',
         () async {
-      final bloc = await startedBloc(buildLevel(initialAngle: 170));
+      // Crystal below the hinge, so its detent sits at 45° and stays out of
+      // the way of what this test is measuring.
+      final bloc = await startedBloc(
+        buildLevel(initialAngle: 170, crystal: const Vec2(540, 1600)),
+      );
       // Push 40° past the 175 limit, then come straight back 40°.
       await drag(bloc, [...sweep(0, 45), ...sweep(45, 0)], release: false);
       expect(bloc.state.mirrorAngles['m1'], closeTo(130, 2.0));
@@ -155,6 +164,61 @@ void main() {
       final angle = bloc.state.mirrorAngles['m1']!;
       expect(angle % 5, closeTo(0, 1e-9));
       expect(angle, greaterThan(90));
+      await bloc.close();
+    });
+  });
+
+  // The light fires right into the hinge and the crystal sits straight above
+  // it, so 135° is the angle that puts the beam through the crystal's heart.
+  group('alignment detents', () {
+    test('the drag settles exactly on the crystal instead of near it',
+        () async {
+      final bloc = await startedBloc(buildLevel(initialAngle: 90));
+      // Sweep 44°, which on its own would land at 134 — just short.
+      await drag(bloc, sweep(0, 44), release: false);
+
+      expect(bloc.state.mirrorAngles['m1'], closeTo(135, 0.3));
+      expect(bloc.state.alignedTargetId, 'c1');
+      expect(bloc.state.alignedTargetKind, AlignmentTargetKind.crystal);
+      expect(bloc.state.alignmentPulse, 1);
+      await bloc.close();
+    });
+
+    test('one lock pulses once, however long it is held', () async {
+      final bloc = await startedBloc(buildLevel(initialAngle: 90));
+      await drag(bloc, sweep(0, 46), release: false);
+
+      expect(bloc.state.alignmentPulse, 1);
+      expect(bloc.state.alignedTargetId, 'c1');
+      await bloc.close();
+    });
+
+    test('sweeping well past the target breaks the lock', () async {
+      final bloc = await startedBloc(buildLevel(initialAngle: 90));
+      await drag(bloc, sweep(0, 60), release: false);
+
+      expect(bloc.state.mirrorAngles['m1'], greaterThan(140));
+      expect(bloc.state.alignedTargetId, isNull);
+      await bloc.close();
+    });
+
+    test('releasing the mirror clears the lock', () async {
+      final bloc = await startedBloc(buildLevel(initialAngle: 90));
+      await drag(bloc, sweep(0, 44));
+
+      expect(bloc.state.mirrorAngles['m1'], closeTo(135, 0.3));
+      expect(bloc.state.alignedTargetId, isNull);
+      await bloc.close();
+    });
+
+    test('a mirror with its own snap increment is left alone', () async {
+      final bloc = await startedBloc(
+        buildLevel(initialAngle: 90, snapIncrement: 5),
+      );
+      await drag(bloc, sweep(0, 44), release: false);
+
+      expect(bloc.state.mirrorAngles['m1']! % 5, closeTo(0, 1e-9));
+      expect(bloc.state.alignedTargetId, isNull);
       await bloc.close();
     });
   });

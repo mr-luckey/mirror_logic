@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mirror_logic/app/theme/app_colors.dart';
-import 'package:mirror_logic/app/theme/app_text_styles.dart';
+import 'package:mirror_logic/app/theme/medieval_colors.dart';
+import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
-import 'package:mirror_logic/presentation/widgets/atmospheric_background.dart';
-import 'package:mirror_logic/presentation/widgets/glass_panel.dart';
-import 'package:mirror_logic/presentation/widgets/gold_cta_button.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 
 class LevelCompleteArgs {
   const LevelCompleteArgs({
@@ -35,18 +36,21 @@ class LevelCompleteScreen extends StatelessWidget {
 
   final LevelCompleteArgs args;
 
+  static const _rank = ['Cleared', 'Well Struck', 'Masterful', 'Flawless'];
+
   @override
   Widget build(BuildContext context) {
     final time = args.timeSeconds;
     final timeLabel =
         '${time.floor() ~/ 60}:${(time.floor() % 60).toString().padLeft(2, '0')}';
     final gutter = Responsive.pageGutter(context);
-    final starSize = Responsive.sp(context, 48).clamp(36.0, 56.0);
+    final short = Responsive.isShort(context);
+    final wreath = Responsive.wp(context, short ? 0.5 : 0.6).clamp(180.0, 300.0);
 
-    return AtmosphericBackground(
+    return MedievalWoodBackground(
       child: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(gutter, 16, gutter, 16),
+          padding: EdgeInsets.fromLTRB(gutter, 12, gutter, 16),
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
@@ -56,106 +60,88 @@ class LevelCompleteScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [
-                            AppColors.accentBright,
-                            AppColors.gold,
-                          ],
-                        ).createShader(bounds),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            'LEVEL COMPLETE!',
-                            maxLines: 1,
-                            style: AppTextStyles.orbitron(
-                              size: Responsive.sp(context, 22),
-                              weight: FontWeight.w800,
-                              letterSpacing: 1.5,
-                              color: Colors.white,
+                      _Trophy(size: wreath, stars: args.stars),
+                      SizedBox(height: short ? 8 : 14),
+                      Text(
+                        _rank[args.stars.clamp(0, 3)].toUpperCase(),
+                        maxLines: 1,
+                        style: MedievalTextStyles.cinzelDecorative(
+                          size: Responsive.sp(context, 21),
+                          weight: FontWeight.w700,
+                          letterSpacing: 2,
+                          color: MedievalColors.textGold,
+                        ).copyWith(
+                          shadows: [
+                            Shadow(
+                              color: MedievalColors.bronzeHighlight
+                                  .withValues(alpha: 0.6),
+                              blurRadius: 20,
                             ),
-                          ),
+                          ],
                         ),
-                      ).animate().fadeIn().slideY(begin: 0.2, end: 0),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(3, (i) {
-                          final filled = i < args.stars;
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 4),
-                            child: Icon(
-                              Icons.star_rounded,
-                              size: starSize,
-                              color: filled
-                                  ? AppColors.gold
-                                  : AppColors.muted,
-                              shadows: filled
-                                  ? [
-                                      Shadow(
-                                        color: AppColors.gold
-                                            .withValues(alpha: 0.8),
-                                        blurRadius: 18,
-                                      ),
-                                    ]
-                                  : null,
-                            )
-                                .animate(delay: (150 * i).ms)
-                                .scale(
-                                  begin: const Offset(0.3, 0.3),
-                                  end: const Offset(1, 1),
-                                  curve: Curves.elasticOut,
-                                  duration: 600.ms,
-                                ),
-                          );
-                        }),
-                      ),
-                      const SizedBox(height: 20),
-                      GlassPanel(
+                      ).animate().fadeIn(delay: 550.ms).slideY(
+                            begin: 0.25,
+                            end: 0,
+                            curve: Curves.easeOutCubic,
+                          ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Level ${args.levelIndex}',
+                        style: MedievalTextStyles.cinzel(
+                          size: Responsive.sp(context, 11),
+                          letterSpacing: 2,
+                          color: MedievalColors.textMuted,
+                        ),
+                      ).animate().fadeIn(delay: 650.ms),
+                      SizedBox(height: short ? 14 : 20),
+                      MedievalPanel(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 12,
+                        ),
                         child: Column(
                           children: [
                             _stat(context, 'Moves', '${args.moves}'),
-                            Divider(
-                                color: AppColors.accent
-                                    .withValues(alpha: 0.15)),
+                            const MedievalDivider(),
                             _stat(context, 'Time', timeLabel),
-                            Divider(
-                                color: AppColors.accent
-                                    .withValues(alpha: 0.15)),
+                            const MedievalDivider(),
                             _stat(
                               context,
-                              'Reward',
+                              'Coin',
                               '+${args.coinsEarned}',
                               highlight: true,
                             ),
                           ],
                         ),
-                      ).animate().fadeIn(delay: 300.ms),
-                      const SizedBox(height: 24),
+                      ).animate().fadeIn(delay: 750.ms).slideY(
+                            begin: 0.1,
+                            end: 0,
+                          ),
+                      SizedBox(height: short ? 16 : 24),
                       if (args.nextLevelId != null) ...[
-                        GoldCtaButton(
+                        MedievalButton(
                           label: 'Next Level',
-                          width: double.infinity,
+                          style: MedievalButtonStyle.primary,
                           icon: Icons.arrow_forward_rounded,
-                          onPressed: () =>
-                              context.go('/play/${args.nextLevelId}'),
-                        ),
-                        const SizedBox(height: 12),
+                          shimmer: true,
+                          onPressed: () => context
+                              .pushReplacement('/play/${args.nextLevelId}'),
+                        ).animate().fadeIn(delay: 900.ms),
+                        const SizedBox(height: 10),
                       ],
                       Row(
                         children: [
                           Expanded(
-                            child: NeonOutlineButton(
+                            child: MedievalButton(
                               label: 'Replay',
-                              icon: Icons.refresh,
-                              onPressed: () =>
-                                  context.go('/play/${args.levelId}'),
+                              icon: Icons.refresh_rounded,
+                              onPressed: () => context
+                                  .pushReplacement('/play/${args.levelId}'),
                             ),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            child: NeonOutlineButton(
+                            child: MedievalButton(
                               label: 'Levels',
                               icon: Icons.grid_view_rounded,
                               onPressed: () =>
@@ -163,7 +149,7 @@ class LevelCompleteScreen extends StatelessWidget {
                             ),
                           ),
                         ],
-                      ),
+                      ).animate().fadeIn(delay: 1000.ms),
                     ],
                   ),
                 ),
@@ -182,24 +168,108 @@ class LevelCompleteScreen extends StatelessWidget {
     bool highlight = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
           Expanded(
             child: Text(
-              label,
-              style: AppTextStyles.exo2(
-                color: AppColors.muted,
-                size: Responsive.sp(context, 14),
+              label.toUpperCase(),
+              style: MedievalTextStyles.cinzel(
+                color: MedievalColors.textMuted,
+                letterSpacing: 1.6,
+                size: Responsive.sp(context, 11),
               ),
             ),
           ),
           Text(
             value,
-            style: AppTextStyles.exo2(
+            style: MedievalTextStyles.cinzelDecorative(
               weight: FontWeight.w700,
               size: Responsive.sp(context, 17),
-              color: highlight ? AppColors.gold : AppColors.textPrimary,
+              color: highlight
+                  ? MedievalColors.bronzeHighlight
+                  : MedievalColors.textCream,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The laurel wreath with the earned stars set inside its opening.
+class _Trophy extends StatelessWidget {
+  const _Trophy({required this.size, required this.stars});
+
+  final double size;
+  final int stars;
+
+  @override
+  Widget build(BuildContext context) {
+    final starSize = size * 0.17;
+
+    return SizedBox(
+      width: size,
+      height: size * 0.92,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          MedievalArtwork(
+            asset: MedievalArt.wreath,
+            size: size,
+            glowStrength: 0.22,
+          )
+              .animate()
+              .fadeIn(duration: 500.ms)
+              .scale(begin: const Offset(0.7, 0.7), curve: Curves.easeOutBack)
+              .then()
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .scale(
+                begin: const Offset(1, 1),
+                end: const Offset(1.02, 1.02),
+                duration: 2400.ms,
+              ),
+          Align(
+            alignment: const Alignment(0, -0.18),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(3, (i) {
+                final lit = i < stars;
+                // The middle star sits proud of the other two.
+                final scale = i == 1 ? 1.24 : 1.0;
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: 2,
+                    right: 2,
+                    bottom: i == 1 ? starSize * 0.22 : 0,
+                  ),
+                  child: Icon(
+                    lit ? Icons.star_rounded : Icons.star_outline_rounded,
+                    size: starSize * scale,
+                    color: lit
+                        ? MedievalColors.bronzeHighlight
+                        : MedievalColors.bronzeDark,
+                    shadows: lit
+                        ? [
+                            Shadow(
+                              color: MedievalColors.bronzeHighlight
+                                  .withValues(alpha: 0.85),
+                              blurRadius: 18,
+                            ),
+                          ]
+                        : null,
+                  )
+                      .animate(delay: (320 + 170 * i).ms)
+                      .scale(
+                        begin: const Offset(0.2, 0.2),
+                        end: const Offset(1, 1),
+                        curve: Curves.elasticOut,
+                        duration: 700.ms,
+                      )
+                      .fadeIn(duration: 200.ms),
+                );
+              }),
             ),
           ),
         ],

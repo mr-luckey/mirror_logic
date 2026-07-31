@@ -85,13 +85,18 @@ class PlayerSave extends Equatable {
     );
   }
 
+  /// `startsWith` would make `ch1` swallow every `ch10_*` level, so fall back to
+  /// matching the id's chapter segment exactly.
+  static bool _belongsTo(String levelId, String chapterId) =>
+      levelId.split('_').first == chapterId;
+
   int starsForChapter(String chapterId, {Iterable<String>? levelIds}) {
     final ids = levelIds?.toSet();
     return levelProgress.values
         .where(
           (p) => ids != null
               ? ids.contains(p.levelId)
-              : p.levelId.startsWith(chapterId),
+              : _belongsTo(p.levelId, chapterId),
         )
         .fold<int>(0, (sum, p) => sum + p.stars);
   }
@@ -106,7 +111,7 @@ class PlayerSave extends Equatable {
           (p) =>
               (ids != null
                   ? ids.contains(p.levelId)
-                  : p.levelId.startsWith(chapterId)) &&
+                  : _belongsTo(p.levelId, chapterId)) &&
               p.completed,
         )
         .length;
@@ -140,15 +145,20 @@ class PlayerSave extends Equatable {
     return PlayerSave(
       saveSchemaVersion: json['saveSchemaVersion'] as int? ?? 1,
       onboardingComplete: json['onboardingComplete'] as bool? ?? false,
-      coins: json['coins'] as int? ?? 50,
+      coins: (json['coins'] as num?)?.toInt() ?? 50,
       unlockedLevelIds: (json['unlockedLevelIds'] as List<dynamic>? ??
               [GameConstants.firstLevelId])
-          .cast<String>(),
-      levelProgress: progressRaw.map(
-        (k, v) => MapEntry(k, LevelProgress.fromJson(v as Map<String, dynamic>)),
-      ),
+          .whereType<String>()
+          .toList(),
+      levelProgress: {
+        for (final entry in progressRaw.entries)
+          if (entry.value is Map)
+            entry.key: LevelProgress.fromJson(
+              Map<String, dynamic>.from(entry.value as Map),
+            ),
+      },
       lastPlayedLevelId: json['lastPlayedLevelId'] as String?,
-      hintsUsedTotal: json['hintsUsedTotal'] as int? ?? 0,
+      hintsUsedTotal: (json['hintsUsedTotal'] as num?)?.toInt() ?? 0,
     );
   }
 

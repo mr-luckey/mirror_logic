@@ -37,10 +37,7 @@ void main() {
           ...level.intendedSolution.mirrorAngles,
         };
         var result = sim.simulate(level: level, mirrorAngles: angles);
-        if (!win.isSatisfied(
-          level: level,
-          litCrystalIds: result.litCrystalIds,
-        )) {
+        if (!win.evaluate(level: level, beam: result).satisfied) {
           final point = _pickCrystalPoint(result);
           if (point != null && level.targetCrystals.isNotEmpty) {
             final c = level.targetCrystals.first;
@@ -62,10 +59,7 @@ void main() {
           }
         }
 
-        final ok = win.isSatisfied(
-          level: level,
-          litCrystalIds: result.litCrystalIds,
-        );
+        final ok = win.evaluate(level: level, beam: result).satisfied;
         if (!ok) {
           failed++;
           // ignore: avoid_print

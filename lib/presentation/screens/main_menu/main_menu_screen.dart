@@ -2,16 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mirror_logic/app/theme/app_colors.dart';
-import 'package:mirror_logic/app/theme/app_text_styles.dart';
+import 'package:mirror_logic/app/theme/medieval_colors.dart';
+import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
-import 'package:mirror_logic/presentation/widgets/atmospheric_background.dart';
-import 'package:mirror_logic/presentation/widgets/glass_panel.dart';
-import 'package:mirror_logic/presentation/widgets/gold_cta_button.dart';
-import 'package:mirror_logic/presentation/widgets/star_row.dart';
+import 'package:mirror_logic/presentation/screens/splash/splash_screen.dart'
+    show GameTitle;
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_bronze_button.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_resource_chip.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_star_row.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_torch.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 
 class MainMenuScreen extends StatelessWidget {
   const MainMenuScreen({super.key});
@@ -20,93 +26,104 @@ class MainMenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final gutter = Responsive.pageGutter(context);
     final short = Responsive.isShort(context);
-    final titleSize =
-        Responsive.sp(context, short ? 34 : 42).clamp(28.0, 44.0);
+    final crestSize =
+        Responsive.wp(context, short ? 0.3 : 0.36).clamp(96.0, 168.0);
 
-    return AtmosphericBackground(
-      child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(gutter, 12, gutter, 16),
-          child: Column(
-            children: [
-              const _TopStatusBar(),
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SingleChildScrollView(
-                      child: ConstrainedBox(
-                        constraints:
-                            BoxConstraints(minHeight: constraints.maxHeight),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(height: short ? 24 : 48),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: ShaderMask(
-                                shaderCallback: (bounds) => const LinearGradient(
-                                  colors: [
-                                    AppColors.accent,
-                                    AppColors.accentBright,
-                                    AppColors.hotPink,
-                                  ],
-                                ).createShader(bounds),
-                                child: Text(
-                                  'MIRROR\nLOGIC',
+    return MedievalWoodBackground(
+      child: Stack(
+        children: [
+          const _WallTorches(),
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(gutter, 10, gutter, 16),
+              child: Column(
+                children: [
+                  const _TopStatusBar(),
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return SingleChildScrollView(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: constraints.maxHeight,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(height: short ? 10 : 22),
+                                MedievalArtwork(
+                                  asset: MedievalArt.crest,
+                                  size: crestSize,
+                                  glow: MedievalColors.laserGlow,
+                                  glowStrength: 0.26,
+                                )
+                                    .animate()
+                                    .fadeIn(duration: 550.ms)
+                                    .scale(begin: const Offset(0.9, 0.9)),
+                                SizedBox(height: short ? 10 : 16),
+                                const GameTitle(),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Reflect  •  Align  •  Solve',
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.orbitron(
-                                    fontSize: titleSize,
-                                    height: 1.05,
-                                    fontWeight: FontWeight.w800,
+                                  style: MedievalTextStyles.cinzel(
+                                    color: MedievalColors.textMuted,
                                     letterSpacing: 2,
-                                    color: Colors.white,
+                                    size: Responsive.sp(context, 12),
                                   ),
                                 ),
-                              ),
-                            )
-                                .animate()
-                                .fadeIn(duration: 500.ms)
-                                .scale(
-                                  begin: const Offset(0.94, 0.94),
-                                  end: const Offset(1, 1),
-                                ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Reflect  •  Align  •  Solve',
-                              textAlign: TextAlign.center,
-                              style: AppTextStyles.exo2(
-                                color: AppColors.muted,
-                                letterSpacing: 1.2,
-                                size: Responsive.sp(context, 14),
-                              ),
+                                SizedBox(height: short ? 26 : 40),
+                                MedievalButton(
+                                  label: 'Play',
+                                  style: MedievalButtonStyle.primary,
+                                  icon: Icons.play_arrow_rounded,
+                                  shimmer: true,
+                                  onPressed: () => context.push('/chapters'),
+                                ).animate().fadeIn(delay: 250.ms).slideY(
+                                      begin: 0.16,
+                                      end: 0,
+                                      curve: Curves.easeOutCubic,
+                                    ),
+                                SizedBox(height: short ? 14 : 22),
+                                const _MenuGrid(),
+                              ],
                             ),
-                            SizedBox(height: short ? 32 : 48),
-                            GoldCtaButton(
-                              label: 'Play',
-                              width: double.infinity,
-                              icon: Icons.play_arrow_rounded,
-                              onPressed: () => context.push('/chapters'),
-                            )
-                                .animate(
-                                    onPlay: (c) => c.repeat(reverse: true))
-                                .shimmer(
-                                  delay: 900.ms,
-                                  duration: 1800.ms,
-                                  color: Colors.white24,
-                                ),
-                            SizedBox(height: short ? 16 : 24),
-                            const _MenuGrid(),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
+    );
+  }
+}
+
+/// Torches bracketed to the wall behind the menu, flush with the screen edges.
+class _WallTorches extends StatelessWidget {
+  const _WallTorches();
+
+  @override
+  Widget build(BuildContext context) {
+    final h = Responsive.hp(context, 0.16).clamp(90.0, 150.0);
+    final top = Responsive.hp(context, 0.2);
+
+    Widget torch({required bool flip}) => IgnorePointer(
+          child: Opacity(
+            opacity: 0.85,
+            child: MedievalTorch(width: h * 0.55, height: h, flip: flip),
+          ),
+        );
+
+    return Stack(
+      children: [
+        Positioned(left: -8, top: top, child: torch(flip: false)),
+        Positioned(right: -8, top: top, child: torch(flip: true)),
+      ],
     );
   }
 }
@@ -145,7 +162,7 @@ class _MenuGrid extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final gap = Responsive.isNarrow(context) ? 8.0 : 12.0;
+        final gap = Responsive.isNarrow(context) ? 8.0 : 10.0;
         final tileWidth = (constraints.maxWidth - gap * 3) / 4;
         return Row(
           children: [
@@ -153,7 +170,10 @@ class _MenuGrid extends StatelessWidget {
               if (i > 0) SizedBox(width: gap),
               SizedBox(
                 width: tileWidth,
-                child: _MenuTile(data: items[i]),
+                child: _MenuTile(data: items[i])
+                    .animate()
+                    .fadeIn(delay: (350 + i * 90).ms, duration: 380.ms)
+                    .slideY(begin: 0.2, end: 0),
               ),
             ],
           ],
@@ -163,9 +183,11 @@ class _MenuGrid extends StatelessWidget {
   }
 
   void _soon(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Coming in the next update')),
-    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(content: Text('Sealed until the next update')),
+      );
   }
 
   void _showStats(BuildContext context) {
@@ -174,26 +196,76 @@ class _MenuGrid extends StatelessWidget {
         save.levelProgress.values.fold<int>(0, (s, p) => s + p.stars);
     final completed =
         save.levelProgress.values.where((p) => p.completed).length;
+
     showDialog<void>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text('Statistics', style: AppTextStyles.orbitron()),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Levels cleared: $completed',
-                style: AppTextStyles.exo2(color: AppColors.textPrimary)),
-            Text('Total stars: $stars',
-                style: AppTextStyles.exo2(color: AppColors.textPrimary)),
-            Text('Coins: ${save.coins}',
-                style: AppTextStyles.exo2(color: AppColors.textPrimary)),
-          ],
+      barrierColor: Colors.black.withValues(alpha: 0.7),
+      builder: (dialogContext) => Material(
+        type: MaterialType.transparency,
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: Responsive.pageGutter(dialogContext),
+            ),
+            child: MedievalPanel(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'CHRONICLE',
+                    style: MedievalTextStyles.cinzel(
+                      size: Responsive.sp(context, 18),
+                      weight: FontWeight.w700,
+                      letterSpacing: 2.4,
+                      color: MedievalColors.textGold,
+                    ),
+                  ),
+                  const MedievalDivider(height: 18),
+                  _StatLine(label: 'Levels cleared', value: '$completed'),
+                  _StatLine(label: 'Stars earned', value: '$stars'),
+                  _StatLine(label: 'Coins', value: '${save.coins}'),
+                  const SizedBox(height: 16),
+                  MedievalButton(
+                    label: 'Close',
+                    onPressed: () => Navigator.pop(dialogContext),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Close'),
+      ),
+    );
+  }
+}
+
+class _StatLine extends StatelessWidget {
+  const _StatLine({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: MedievalTextStyles.cinzel(
+              size: Responsive.sp(context, 13),
+              color: MedievalColors.textMuted,
+            ),
+          ),
+          Text(
+            value,
+            style: MedievalTextStyles.cinzelDecorative(
+              size: Responsive.sp(context, 15),
+              weight: FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -226,66 +298,68 @@ class _TopStatusBar extends StatelessWidget {
       builder: (context, progress) {
         final stars = progress.save.levelProgress.values
             .fold<int>(0, (s, p) => s + p.stars);
-        return Row(
-          children: [
-            Flexible(
-              child: GlassPanel(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                borderRadius: 20,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.military_tech,
-                      color: AppColors.accentBright,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        'Lv ${1 + (stars ~/ 9)}',
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.exo2(
-                          weight: FontWeight.w700,
-                          size: Responsive.sp(context, 13),
+
+        return MedievalPanel(
+          radius: 14,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+          child: Row(
+            children: [
+              Flexible(
+                child: MedievalPanel(
+                  style: MedievalPanelStyle.inset,
+                  radius: 16,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.shield_moon_rounded,
+                        color: MedievalColors.textGold,
+                        size: 15,
+                      ),
+                      const SizedBox(width: 5),
+                      Flexible(
+                        child: Text(
+                          'Rank ${1 + (stars ~/ 9)}',
+                          overflow: TextOverflow.ellipsis,
+                          style: MedievalTextStyles.cinzel(
+                            weight: FontWeight.w700,
+                            size: Responsive.sp(context, 12),
+                            color: MedievalColors.textGold,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 6),
-            const StarRow(filled: 3, size: 14),
-            const SizedBox(width: 2),
-            Text(
-              '$stars',
-              style: AppTextStyles.exo2(
-                weight: FontWeight.w700,
-                size: Responsive.sp(context, 13),
+              const SizedBox(width: 8),
+              const MedievalStarRow(filled: 3, size: 13, spacing: 1),
+              const SizedBox(width: 3),
+              Text(
+                '$stars',
+                style: MedievalTextStyles.cinzel(
+                  weight: FontWeight.w700,
+                  size: Responsive.sp(context, 12),
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            BlocBuilder<EconomyBloc, EconomyState>(
-              builder: (context, eco) {
-                return Flexible(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: CurrencyChip(coins: eco.coins),
-                  ),
-                );
-              },
-            ),
-            IconButton(
-              visualDensity: VisualDensity.compact,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-              onPressed: () => context.push('/settings'),
-              icon: const Icon(Icons.settings_rounded,
-                  color: AppColors.textPrimary),
-            ),
-          ],
+              const Spacer(),
+              BlocBuilder<EconomyBloc, EconomyState>(
+                builder: (context, eco) => MedievalResourceChip(
+                  icon: Icons.monetization_on_rounded,
+                  label: '${eco.coins}',
+                  glowColor: MedievalColors.bronzeHighlight,
+                ),
+              ),
+              const SizedBox(width: 8),
+              MedievalBronzeButton(
+                icon: Icons.settings_rounded,
+                size: 34,
+                onPressed: () => context.push('/settings'),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -299,86 +373,106 @@ class _MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconSize = Responsive.sp(context, 22).clamp(18.0, 26.0);
-    final fontSize = Responsive.sp(context, 10).clamp(9.0, 12.0);
+    final iconSize = Responsive.sp(context, 21).clamp(17.0, 25.0);
+    final fontSize = Responsive.sp(context, 9.5).clamp(8.5, 11.5);
 
-    return AspectRatio(
-      aspectRatio: 1,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          gradient: data.locked ? null : AppColors.cardGradient,
-          color: data.locked ? AppColors.panel.withValues(alpha: 0.5) : null,
-          border: Border.all(
-            color: data.locked
-                ? AppColors.glassBorder
-                : AppColors.accent.withValues(alpha: 0.25),
+    return MedievalPressable(
+      onPressed: data.onTap,
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: data.locked
+                  ? [
+                      MedievalColors.woodMid.withValues(alpha: 0.75),
+                      MedievalColors.woodDeep,
+                    ]
+                  : const [Color(0xFF5A4030), Color(0xFF2A1B0F)],
+            ),
+            border: Border.all(
+              color: data.locked
+                  ? MedievalColors.bronzeDark.withValues(alpha: 0.7)
+                  : MedievalColors.bronzeLight.withValues(alpha: 0.75),
+              width: 1.6,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.45),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(14),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(14),
-            onTap: data.onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(4),
-              child: Stack(
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            data.icon,
-                            color: data.locked
-                                ? AppColors.muted
-                                : AppColors.accent,
-                            size: iconSize,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            data.label,
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTextStyles.exo2(
-                              size: fontSize,
-                              height: 1.1,
-                              weight: FontWeight.w600,
-                              color: data.locked
-                                  ? AppColors.muted
-                                  : AppColors.textPrimary,
-                            ),
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Stack(
+              children: [
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        data.icon,
+                        color: data.locked
+                            ? MedievalColors.textMuted.withValues(alpha: 0.6)
+                            : MedievalColors.textGold,
+                        size: iconSize,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        data.label,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: MedievalTextStyles.cinzel(
+                          size: fontSize,
+                          height: 1.15,
+                          weight: FontWeight.w600,
+                          color: data.locked
+                              ? MedievalColors.textMuted
+                              : MedievalColors.textCream,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (data.badge)
+                  Positioned(
+                    right: 2,
+                    top: 2,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: MedievalColors.greenPlus,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: MedievalColors.greenPlus
+                                .withValues(alpha: 0.8),
+                            blurRadius: 5,
                           ),
                         ],
                       ),
                     ),
                   ),
-                  if (data.badge)
-                    Positioned(
-                      right: 4,
-                      top: 4,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: AppColors.hotPink,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
+                if (data.locked)
+                  Positioned(
+                    right: 1,
+                    top: 1,
+                    child: Image.asset(
+                      MedievalArt.padlock,
+                      width: 13,
+                      height: 13,
+                      filterQuality: FilterQuality.medium,
+                      errorBuilder: (_, _, _) => const SizedBox.shrink(),
                     ),
-                  if (data.locked)
-                    const Positioned(
-                      right: 4,
-                      top: 4,
-                      child:
-                          Icon(Icons.lock, size: 11, color: AppColors.muted),
-                    ),
-                ],
-              ),
+                  ),
+              ],
             ),
           ),
         ),

@@ -28,11 +28,7 @@ void main() {
         ...level.intendedSolution.mirrorAngles,
       },
     );
-    if (!win.isSatisfied(
-      level: level,
-      litCrystalIds: solved.litCrystalIds,
-      segments: solved.segments,
-    )) {
+    if (!win.evaluate(level: level, beam: solved).satisfied) {
       unsolvable.add(level.levelId);
     }
 
@@ -40,11 +36,7 @@ void main() {
       level: level,
       mirrorAngles: {for (final m in level.mirrors) m.id: m.initialAngle},
     );
-    if (win.isSatisfied(
-      level: level,
-      litCrystalIds: initial.litCrystalIds,
-      segments: initial.segments,
-    )) {
+    if (win.evaluate(level: level, beam: initial).satisfied) {
       preSolved.add(level.levelId);
     }
   }

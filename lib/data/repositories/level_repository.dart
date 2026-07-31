@@ -39,12 +39,18 @@ class LevelRepository {
       );
     }
     _orderedIds.sort((a, b) {
-      final ca = _cache[a]!.chapterId.compareTo(_cache[b]!.chapterId);
+      // Compare chapters numerically, otherwise `ch10` would sort before `ch2`
+      // and `nextLevelId` would jump the player across chapters.
+      final ca = _chapterOrder(_cache[a]!.chapterId)
+          .compareTo(_chapterOrder(_cache[b]!.chapterId));
       if (ca != 0) return ca;
       return _cache[a]!.levelIndex.compareTo(_cache[b]!.levelIndex);
     });
     _loaded = true;
   }
+
+  static int _chapterOrder(String chapterId) =>
+      int.tryParse(chapterId.replaceFirst('ch', '')) ?? 1 << 30;
 
   Future<List<String>> allLevelIds() async {
     await _ensureLoaded();
@@ -89,11 +95,7 @@ class LevelRepository {
   Future<List<ChapterInfo>> chapters() async {
     await _ensureLoaded();
     final ids = _chapterIds!.keys.toList()
-      ..sort((a, b) {
-        final na = int.tryParse(a.replaceFirst('ch', '')) ?? 0;
-        final nb = int.tryParse(b.replaceFirst('ch', '')) ?? 0;
-        return na.compareTo(nb);
-      });
+      ..sort((a, b) => _chapterOrder(a).compareTo(_chapterOrder(b)));
 
     return [
       for (final id in ids)

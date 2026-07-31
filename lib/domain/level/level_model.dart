@@ -235,7 +235,7 @@ class CrystalGroupDef extends Equatable {
   factory CrystalGroupDef.fromJson(Map<String, dynamic> json) {
     return CrystalGroupDef(
       groupId: json['groupId'] as String,
-      requiredCount: json['requiredCount'] as int,
+      requiredCount: (json['requiredCount'] as num?)?.round() ?? 1,
     );
   }
 
@@ -255,8 +255,11 @@ class StarThresholds extends Equatable {
   factory StarThresholds.fromJson(Map<String, dynamic>? json) {
     if (json == null) return const StarThresholds();
     return StarThresholds(
-      threeStarMoveCount: json['threeStarMoveCount'] as int? ?? 5,
-      threeStarTimeSeconds: json['threeStarTimeSeconds'] as int? ?? 60,
+      // Authored as `77` or `77.5` depending on the generator, and a cast
+      // failure here fails the whole level load.
+      threeStarMoveCount: (json['threeStarMoveCount'] as num?)?.round() ?? 5,
+      threeStarTimeSeconds:
+          (json['threeStarTimeSeconds'] as num?)?.round() ?? 60,
     );
   }
 
@@ -304,7 +307,7 @@ class LevelModel extends Equatable {
     this.schemaVersion = 1,
     this.levelIndex = 1,
     this.title = '',
-    this.requiredMirrorBounces,
+    this.requiredMirrorCount,
     this.metadata = const LevelMetadata(),
   });
 
@@ -321,8 +324,10 @@ class LevelModel extends Equatable {
   final StarThresholds starThresholds;
   final int levelIndex;
   final String title;
-  /// Win requires exactly this many mirror hits (null = no constraint).
-  final int? requiredMirrorBounces;
+  /// How many of the board's mirrors the beam must route through before it
+  /// reaches a crystal (null = no constraint). Distinct mirrors, not bounces:
+  /// the objective every level states is to use them all.
+  final int? requiredMirrorCount;
   final LevelMetadata metadata;
 
   factory LevelModel.fromJson(Map<String, dynamic> json) {
@@ -365,7 +370,7 @@ class LevelModel extends Equatable {
           ) ??
           1,
       title: json['title'] as String? ?? '',
-      requiredMirrorBounces: json['requiredMirrorBounces'] as int?,
+      requiredMirrorCount: (json['requiredMirrorBounces'] as num?)?.round(),
       metadata: LevelMetadata.fromJson(
         json['metadata'] as Map<String, dynamic>?,
       ),
@@ -387,7 +392,7 @@ class LevelModel extends Equatable {
         starThresholds,
         levelIndex,
         title,
-        requiredMirrorBounces,
+        requiredMirrorCount,
         metadata,
       ];
 }
