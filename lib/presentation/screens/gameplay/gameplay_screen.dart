@@ -24,6 +24,7 @@ import 'package:mirror_logic/presentation/blocs/settings/settings_cubit.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_fx_layer.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_paint_snapshot.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_painter.dart';
+import 'package:mirror_logic/presentation/screens/gameplay/gameplay_walkthrough_layer.dart';
 import 'package:mirror_logic/presentation/screens/level_complete/level_complete_screen.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_bronze_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_gameplay_hud.dart';
@@ -600,6 +601,12 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
     with SingleTickerProviderStateMixin {
   late final AnimationController _anim;
 
+  /// Whether this board should be played for the player by the hand.
+  ///
+  /// Read once, because the flag is written the moment the walkthrough ends and
+  /// watching it would tear the hand off the board mid-gesture.
+  late final bool _walkthrough;
+
   @override
   void initState() {
     super.initState();
@@ -607,6 +614,7 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
       vsync: this,
       duration: const Duration(seconds: 8),
     )..repeat();
+    _walkthrough = !context.read<ProgressBloc>().state.save.walkthroughSeen;
     unawaited(GameArt.ensureLoaded());
   }
 
@@ -699,6 +707,9 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
                     ),
                   ),
                   GameplayFxLayer(canvasSize: size),
+                  if (_walkthrough &&
+                      level.levelId == GameConstants.firstLevelId)
+                    GameplayWalkthroughLayer(level: level, canvasSize: size),
                 ],
               ),
             );
