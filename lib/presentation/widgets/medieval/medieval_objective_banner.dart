@@ -123,11 +123,7 @@ class _ParchmentPainter extends CustomPainter {
       Offset(10, size.height - 10),
       Offset(size.width - 12, size.height - 11),
     ]) {
-      canvas.drawCircle(
-        c,
-        3.2,
-        Paint()..color = MedievalColors.bronzeDark,
-      );
+      canvas.drawCircle(c, 3.2, Paint()..color = MedievalColors.bronzeDark);
       canvas.drawCircle(
         c,
         1.6,

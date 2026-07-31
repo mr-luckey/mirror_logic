@@ -44,8 +44,8 @@ class EconomyState extends Equatable {
 
 class EconomyBloc extends Bloc<EconomyEvent, EconomyState> {
   EconomyBloc({required EconomyRepository economyRepository})
-      : _economyRepository = economyRepository,
-        super(EconomyState(coins: economyRepository.getCoins())) {
+    : _economyRepository = economyRepository,
+      super(EconomyState(coins: economyRepository.getCoins())) {
     on<EconomyStarted>(_onStarted);
     on<EconomyCoinsChanged>(_onChanged);
     on<EconomySpendRequested>(_onSpend);

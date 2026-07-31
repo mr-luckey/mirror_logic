@@ -5,17 +5,17 @@ import 'package:mirror_logic/domain/level/level_model.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_painter.dart';
 
 LevelModel _level() => LevelModel.fromJson(const {
-      'levelId': 'test_001',
-      'chapterId': 'ch1',
-      'levelIndex': 1,
-      'roomBounds': {'width': 1000.0, 'height': 1000.0},
-      'lightSources': <Map<String, dynamic>>[],
-      'mirrors': <Map<String, dynamic>>[],
-      'obstacles': <Map<String, dynamic>>[],
-      'targetCrystals': <Map<String, dynamic>>[],
-      'intendedSolution': {'mirrorAngles': <String, double>{}},
-      'starThresholds': <String, dynamic>{},
-    });
+  'levelId': 'test_001',
+  'chapterId': 'ch1',
+  'levelIndex': 1,
+  'roomBounds': {'width': 1000.0, 'height': 1000.0},
+  'lightSources': <Map<String, dynamic>>[],
+  'mirrors': <Map<String, dynamic>>[],
+  'obstacles': <Map<String, dynamic>>[],
+  'targetCrystals': <Map<String, dynamic>>[],
+  'intendedSolution': {'mirrorAngles': <String, double>{}},
+  'starThresholds': <String, dynamic>{},
+});
 
 void main() {
   group('screenToWorld', () {

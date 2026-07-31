@@ -4,6 +4,21 @@ import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
 
+/// How much of the interstitial cadence a placement agrees to wait for.
+enum InterstitialPolicy {
+  /// Waits for both the level-clear count and the quiet period. What an ad
+  /// riding a level break asks for.
+  levelBreak,
+
+  /// Waits only for the quiet period. For exits that are not level breaks but
+  /// still should not stack two ads on top of each other.
+  quietPeriod,
+
+  /// Shows on every tap, gates waived. For the handful of exits the game
+  /// charges for without exception.
+  always,
+}
+
 /// What became of a rewarded video the player asked for.
 enum RewardedAdOutcome {
   /// Watched far enough to be paid. The caller owes the reward.
@@ -28,6 +43,7 @@ class AdsService {
     this.levelsBetweenInterstitials = 3,
     this.minGapBetweenFullScreenAds = const Duration(seconds: 45),
     this.requestTimeout = const Duration(seconds: 10),
+    this.forcedFillWait = const Duration(seconds: 4),
   });
 
   /// Level clears between two interstitials. The counter starts at zero every
@@ -41,6 +57,15 @@ class AdsService {
 
   /// How long one unit gets to fill before the waterfall moves down a slot.
   final Duration requestTimeout;
+
+  /// How long an [InterstitialPolicy.always] caller will stand and wait for an
+  /// empty cache to fill before giving up and letting the player through.
+  ///
+  /// The cache is refilled the moment an ad closes, so the only realistic way
+  /// one of these placements finds it empty is being tapped during that refill.
+  /// Waiting out those few seconds is what makes "always" mean it, and the cap
+  /// is what keeps a dead network from parking the player on a button.
+  final Duration forcedFillWait;
 
   bool _ready = false;
   bool _fullScreenShowing = false;
@@ -109,39 +134,45 @@ class AdsService {
   ///
   /// Pure bookkeeping — it says nothing about whether an ad is actually cached.
   @visibleForTesting
-  bool get interstitialDue => interstitialAllowed(respectLevelCadence: true);
+  bool get interstitialDue =>
+      interstitialAllowed(policy: InterstitialPolicy.levelBreak);
 
   /// Whether an interstitial may be shown, by the rules the caller plays under.
   ///
-  /// The quiet period binds either way. The clear counter only applies to ads
-  /// that ride a level break: leaving the board from the pause menu is already a
-  /// deliberate stop, so an ad there does not interrupt a puzzle in progress and
-  /// does not need to wait for the third clear.
+  /// See [InterstitialPolicy]. The clear counter only applies to ads that ride a
+  /// level break: leaving the board from the pause menu is already a deliberate
+  /// stop, so an ad there does not interrupt a puzzle in progress and does not
+  /// need to wait for the third clear.
   @visibleForTesting
-  bool interstitialAllowed({required bool respectLevelCadence}) {
+  bool interstitialAllowed({required InterstitialPolicy policy}) {
+    if (policy == InterstitialPolicy.always) return true;
+
     final last = _lastFullScreenAt;
     if (last != null &&
         DateTime.now().difference(last) < minGapBetweenFullScreenAds) {
       return false;
     }
-    if (respectLevelCadence &&
+    if (policy == InterstitialPolicy.levelBreak &&
         _clearsSinceInterstitial < levelsBetweenInterstitials) {
       return false;
     }
     return true;
   }
 
-  /// Shows an interstitial, if one is allowed and one is cached.
+  /// Shows an interstitial, if [policy] allows one and one is cached.
   ///
   /// Completes when the ad closes, so callers can hold navigation until the
   /// player is back. Returns whether anything was shown.
-  Future<bool> showInterstitial({bool respectLevelCadence = true}) async {
-    if (!_ready ||
-        !interstitialAllowed(respectLevelCadence: respectLevelCadence)) {
-      return false;
-    }
+  Future<bool> showInterstitial({
+    InterstitialPolicy policy = InterstitialPolicy.levelBreak,
+  }) async {
+    if (!_ready || !interstitialAllowed(policy: policy)) return false;
 
-    final ad = _interstitial;
+    var ad = _interstitial;
+    if (ad == null && policy == InterstitialPolicy.always) {
+      await _fillInterstitial().timeout(forcedFillWait, onTimeout: () {});
+      ad = _interstitial;
+    }
     if (ad == null) {
       // Nothing cached: leave the cadence counter alone so the next clear gets
       // another go, and start the fetch that should have been ready by now.
@@ -347,7 +378,10 @@ class AdsService {
   }
 
   Future<BannerAd?> _requestBanner(String unitId, AdSize size) {
-    final request = _AdRequest<BannerAd>(unitId: unitId, timeout: requestTimeout);
+    final request = _AdRequest<BannerAd>(
+      unitId: unitId,
+      timeout: requestTimeout,
+    );
     final ad = BannerAd(
       adUnitId: unitId,
       size: size,

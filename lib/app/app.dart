@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mirror_logic/app/ad_banner_host.dart';
 import 'package:mirror_logic/app/ads_scope.dart';
+import 'package:mirror_logic/app/app_update_scope.dart';
 import 'package:mirror_logic/app/audio_scope.dart';
+import 'package:mirror_logic/app/review_scope.dart';
 import 'package:mirror_logic/app/router.dart';
 import 'package:mirror_logic/app/theme/app_theme.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
+import 'package:mirror_logic/infrastructure/review/review_service.dart';
+import 'package:mirror_logic/infrastructure/update/app_update_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 
@@ -20,14 +24,20 @@ class MirrorLogicApp extends StatelessWidget {
     // the HUD can never read a stale total mid-write.
     return BlocListener<ProgressBloc, ProgressState>(
       listenWhen: (p, c) => p.save.coins != c.save.coins,
-      listener: (context, state) => context
-          .read<EconomyBloc>()
-          .add(EconomyCoinsChanged(state.save.coins)),
+      listener: (context, state) => context.read<EconomyBloc>().add(
+        EconomyCoinsChanged(state.save.coins),
+      ),
       child: AdsScope(
         ads: context.read<AdsService>(),
         child: AudioScope(
           audio: context.read<AudioService>(),
-          child: _Router(),
+          child: ReviewScope(
+            review: context.read<ReviewService>(),
+            child: AppUpdateScope(
+              updates: context.read<AppUpdateService>(),
+              child: _Router(),
+            ),
+          ),
         ),
       ),
     );

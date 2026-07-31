@@ -30,8 +30,9 @@ class MedievalStarRow extends StatelessWidget {
               boxShadow: lit
                   ? [
                       BoxShadow(
-                        color: MedievalColors.bronzeHighlight
-                            .withValues(alpha: 0.65),
+                        color: MedievalColors.bronzeHighlight.withValues(
+                          alpha: 0.65,
+                        ),
                         blurRadius: size * 0.55,
                       ),
                     ]

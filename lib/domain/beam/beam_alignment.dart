@@ -36,7 +36,7 @@ class BeamDetent extends Equatable {
 /// can be computed once when the finger goes down.
 class BeamAlignmentFinder {
   BeamAlignmentFinder({BeamSimulator? simulator})
-      : _simulator = simulator ?? BeamSimulator();
+    : _simulator = simulator ?? BeamSimulator();
 
   final BeamSimulator _simulator;
 
@@ -98,7 +98,8 @@ class BeamAlignmentFinder {
     angles.add(mirror.maxAngle);
 
     final misses = [
-      for (final a in angles) _misses(level, mirrorAngles, mirrorId, a, targets),
+      for (final a in angles)
+        _misses(level, mirrorAngles, mirrorId, a, targets),
     ];
 
     // A target is in play across a run of angles — the whole sweep where the
@@ -163,13 +164,20 @@ class BeamAlignmentFinder {
     Map<String, double> mirrorAngles,
     MirrorDef mirror,
   ) {
-    final result = _simulator.simulate(level: level, mirrorAngles: mirrorAngles);
+    final result = _simulator.simulate(
+      level: level,
+      mirrorAngles: mirrorAngles,
+    );
     final reach = mirror.length / 2;
     for (final segment in result.segments) {
       if (segment.hitKind == BeamHitKind.mirror && segment.hitId == mirror.id) {
         return true;
       }
-      if (_distanceToSegment(mirror.hingePosition, segment.start, segment.end) <=
+      if (_distanceToSegment(
+            mirror.hingePosition,
+            segment.start,
+            segment.end,
+          ) <=
           reach) {
         return true;
       }

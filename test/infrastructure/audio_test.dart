@@ -28,9 +28,20 @@ void main() {
     });
 
     test('the assets are declared in the bundle', () {
+      // pubspec lists audio file by file rather than by folder, so that the
+      // uncompressed WAV masters sitting beside them stay out of the APK. That
+      // makes a missing line a silent runtime failure, hence the per-cue check.
       final pubspec = File('pubspec.yaml').readAsStringSync();
-      expect(pubspec, contains('assets/audio/sfx/'));
-      expect(pubspec, contains('assets/audio/music/'));
+      for (final asset in [
+        ...Sfx.values.map((sfx) => sfx.asset),
+        ...MusicTrack.values.map((track) => track.asset),
+      ]) {
+        expect(
+          pubspec,
+          contains('assets/$asset'),
+          reason: 'pubspec.yaml does not bundle assets/$asset',
+        );
+      }
     });
   });
 
@@ -91,18 +102,17 @@ void main() {
 
   group('music routing', () {
     test('the board and its results screen share one loop', () {
-      expect(
-        AudioScope.trackForLocation('/play/ch1_004'),
-        MusicTrack.gameplay,
-      );
-      expect(
-        AudioScope.trackForLocation('/complete'),
-        MusicTrack.gameplay,
-      );
+      expect(AudioScope.trackForLocation('/play/ch1_004'), MusicTrack.gameplay);
+      expect(AudioScope.trackForLocation('/complete'), MusicTrack.gameplay);
     });
 
     test('every other screen gets the menu loop', () {
-      for (final location in ['/menu', '/chapters', '/levels/ch2', '/settings']) {
+      for (final location in [
+        '/menu',
+        '/chapters',
+        '/levels/ch2',
+        '/settings',
+      ]) {
         expect(
           AudioScope.trackForLocation(location),
           MusicTrack.menu,

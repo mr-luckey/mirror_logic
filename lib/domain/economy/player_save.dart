@@ -28,11 +28,11 @@ class LevelProgress extends Equatable {
   }
 
   Map<String, dynamic> toJson() => {
-        'levelId': levelId,
-        'stars': stars,
-        'bestTimeSeconds': bestTimeSeconds,
-        'completed': completed,
-      };
+    'levelId': levelId,
+    'stars': stars,
+    'bestTimeSeconds': bestTimeSeconds,
+    'completed': completed,
+  };
 
   factory LevelProgress.fromJson(Map<String, dynamic> json) {
     return LevelProgress(
@@ -51,6 +51,7 @@ class PlayerSave extends Equatable {
   const PlayerSave({
     this.saveSchemaVersion = 1,
     this.onboardingComplete = false,
+    this.walkthroughSeen = false,
     this.coins = 0,
     this.unlockedLevelIds = const [GameConstants.firstLevelId],
     this.levelProgress = const {},
@@ -60,6 +61,10 @@ class PlayerSave extends Equatable {
 
   final int saveSchemaVersion;
   final bool onboardingComplete;
+
+  /// Whether the hand has already played the first board for this player.
+  final bool walkthroughSeen;
+
   final int coins;
   final List<String> unlockedLevelIds;
   final Map<String, LevelProgress> levelProgress;
@@ -68,6 +73,7 @@ class PlayerSave extends Equatable {
 
   PlayerSave copyWith({
     bool? onboardingComplete,
+    bool? walkthroughSeen,
     int? coins,
     List<String>? unlockedLevelIds,
     Map<String, LevelProgress>? levelProgress,
@@ -77,6 +83,7 @@ class PlayerSave extends Equatable {
     return PlayerSave(
       saveSchemaVersion: saveSchemaVersion,
       onboardingComplete: onboardingComplete ?? this.onboardingComplete,
+      walkthroughSeen: walkthroughSeen ?? this.walkthroughSeen,
       coins: coins ?? this.coins,
       unlockedLevelIds: unlockedLevelIds ?? this.unlockedLevelIds,
       levelProgress: levelProgress ?? this.levelProgress,
@@ -101,10 +108,7 @@ class PlayerSave extends Equatable {
         .fold<int>(0, (sum, p) => sum + p.stars);
   }
 
-  int completedCountForChapter(
-    String chapterId, {
-    Iterable<String>? levelIds,
-  }) {
+  int completedCountForChapter(String chapterId, {Iterable<String>? levelIds}) {
     final ids = levelIds?.toSet();
     return levelProgress.values
         .where(
@@ -131,29 +135,32 @@ class PlayerSave extends Equatable {
     );
   }
 
-  bool isChapterUnlocked(String chapterId) => starsMissingToUnlock(chapterId) == 0;
+  bool isChapterUnlocked(String chapterId) =>
+      starsMissingToUnlock(chapterId) == 0;
 
   Map<String, dynamic> toJson() => {
-        'saveSchemaVersion': saveSchemaVersion,
-        'onboardingComplete': onboardingComplete,
-        'coins': coins,
-        'unlockedLevelIds': unlockedLevelIds,
-        'levelProgress': levelProgress.map((k, v) => MapEntry(k, v.toJson())),
-        'lastPlayedLevelId': lastPlayedLevelId,
-        'hintsUsedTotal': hintsUsedTotal,
-      };
+    'saveSchemaVersion': saveSchemaVersion,
+    'onboardingComplete': onboardingComplete,
+    'walkthroughSeen': walkthroughSeen,
+    'coins': coins,
+    'unlockedLevelIds': unlockedLevelIds,
+    'levelProgress': levelProgress.map((k, v) => MapEntry(k, v.toJson())),
+    'lastPlayedLevelId': lastPlayedLevelId,
+    'hintsUsedTotal': hintsUsedTotal,
+  };
 
   factory PlayerSave.fromJson(Map<String, dynamic> json) {
-    final progressRaw =
-        json['levelProgress'] as Map<String, dynamic>? ?? {};
+    final progressRaw = json['levelProgress'] as Map<String, dynamic>? ?? {};
     return PlayerSave(
       saveSchemaVersion: json['saveSchemaVersion'] as int? ?? 1,
       onboardingComplete: json['onboardingComplete'] as bool? ?? false,
+      walkthroughSeen: json['walkthroughSeen'] as bool? ?? false,
       coins: (json['coins'] as num?)?.toInt() ?? 0,
-      unlockedLevelIds: (json['unlockedLevelIds'] as List<dynamic>? ??
-              [GameConstants.firstLevelId])
-          .whereType<String>()
-          .toList(),
+      unlockedLevelIds:
+          (json['unlockedLevelIds'] as List<dynamic>? ??
+                  [GameConstants.firstLevelId])
+              .whereType<String>()
+              .toList(),
       levelProgress: {
         for (final entry in progressRaw.entries)
           if (entry.value is Map)
@@ -168,14 +175,15 @@ class PlayerSave extends Equatable {
 
   @override
   List<Object?> get props => [
-        saveSchemaVersion,
-        onboardingComplete,
-        coins,
-        unlockedLevelIds,
-        levelProgress,
-        lastPlayedLevelId,
-        hintsUsedTotal,
-      ];
+    saveSchemaVersion,
+    onboardingComplete,
+    walkthroughSeen,
+    coins,
+    unlockedLevelIds,
+    levelProgress,
+    lastPlayedLevelId,
+    hintsUsedTotal,
+  ];
 }
 
 class AppSettings extends Equatable {
@@ -210,12 +218,12 @@ class AppSettings extends Equatable {
   }
 
   Map<String, dynamic> toJson() => {
-        'musicVolume': musicVolume,
-        'sfxVolume': sfxVolume,
-        'haptics': haptics,
-        'assistMode': assistMode,
-        'angleReadout': angleReadout,
-      };
+    'musicVolume': musicVolume,
+    'sfxVolume': sfxVolume,
+    'haptics': haptics,
+    'assistMode': assistMode,
+    'angleReadout': angleReadout,
+  };
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
     return AppSettings(
@@ -228,6 +236,11 @@ class AppSettings extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [musicVolume, sfxVolume, haptics, assistMode, angleReadout];
+  List<Object?> get props => [
+    musicVolume,
+    sfxVolume,
+    haptics,
+    assistMode,
+    angleReadout,
+  ];
 }

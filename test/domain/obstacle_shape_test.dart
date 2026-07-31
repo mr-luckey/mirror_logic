@@ -18,7 +18,9 @@ Map<String, dynamic> square(String id, double cx, double cy, {String? shape}) {
 }
 
 /// Emitter on the left wall firing straight at a crystal on the same row.
-Map<String, dynamic> levelJson({List<Map<String, dynamic>> obstacles = const []}) {
+Map<String, dynamic> levelJson({
+  List<Map<String, dynamic>> obstacles = const [],
+}) {
   return {
     'levelId': 'shape_001',
     'chapterId': 'ch_test',

@@ -45,20 +45,14 @@ void main() {
         chapterId: 'ch1',
         roomBounds: const Vec2(1080, 1920),
         lightSources: const [
-          LightSource(
-            id: 'ls1',
-            position: Vec2(100, 200),
-            directionDegrees: 0,
-          ),
+          LightSource(id: 'ls1', position: Vec2(100, 200), directionDegrees: 0),
         ],
         mirrors: const [],
         obstacles: const [],
         targetCrystals: const [
           TargetCrystalDef(id: 'c1', position: Vec2(500, 200), hitRadius: 40),
         ],
-        crystalGroups: const [
-          CrystalGroupDef(groupId: 'g1', requiredCount: 1),
-        ],
+        crystalGroups: const [CrystalGroupDef(groupId: 'g1', requiredCount: 1)],
         intendedSolution: const IntendedSolution(mirrorAngles: {}),
         starThresholds: const StarThresholds(),
       );
@@ -74,11 +68,7 @@ void main() {
         chapterId: 'ch1',
         roomBounds: const Vec2(1080, 1920),
         lightSources: const [
-          LightSource(
-            id: 'ls1',
-            position: Vec2(50, 200),
-            directionDegrees: 0,
-          ),
+          LightSource(id: 'ls1', position: Vec2(50, 200), directionDegrees: 0),
         ],
         mirrors: const [],
         obstacles: const [
@@ -95,9 +85,7 @@ void main() {
         targetCrystals: const [
           TargetCrystalDef(id: 'c1', position: Vec2(800, 200)),
         ],
-        crystalGroups: const [
-          CrystalGroupDef(groupId: 'g1', requiredCount: 1),
-        ],
+        crystalGroups: const [CrystalGroupDef(groupId: 'g1', requiredCount: 1)],
         intendedSolution: const IntendedSolution(mirrorAngles: {}),
         starThresholds: const StarThresholds(),
       );
@@ -142,9 +130,7 @@ void main() {
         targetCrystals: [
           TargetCrystalDef(id: 'c1', position: crystalPos, hitRadius: 50),
         ],
-        crystalGroups: const [
-          CrystalGroupDef(groupId: 'g1', requiredCount: 1),
-        ],
+        crystalGroups: const [CrystalGroupDef(groupId: 'g1', requiredCount: 1)],
         intendedSolution: const IntendedSolution(
           mirrorAngles: {'m1': mirrorAngle},
         ),
@@ -153,13 +139,12 @@ void main() {
 
       final sim = BeamSimulator();
       final wrong = sim.simulate(level: level, mirrorAngles: {'m1': 20});
-      final right =
-          sim.simulate(level: level, mirrorAngles: {'m1': mirrorAngle});
-
-      expect(
-        LevelValidator(simulator: sim).isSolvable(level),
-        isTrue,
+      final right = sim.simulate(
+        level: level,
+        mirrorAngles: {'m1': mirrorAngle},
       );
+
+      expect(LevelValidator(simulator: sim).isSolvable(level), isTrue);
       // Wrong angle likely misses; correct hits.
       expect(right.litCrystalIds, contains('c1'));
       expect(wrong.litCrystalIds.contains('c1'), isFalse);
@@ -180,9 +165,7 @@ void main() {
           TargetCrystalDef(id: 'c1', position: Vec2(1, 1)),
           TargetCrystalDef(id: 'c2', position: Vec2(2, 2)),
         ],
-        crystalGroups: const [
-          CrystalGroupDef(groupId: 'g1', requiredCount: 2),
-        ],
+        crystalGroups: const [CrystalGroupDef(groupId: 'g1', requiredCount: 2)],
         intendedSolution: const IntendedSolution(mirrorAngles: {}),
         starThresholds: const StarThresholds(),
       );

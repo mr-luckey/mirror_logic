@@ -50,8 +50,9 @@ class LevelRepository {
     ordered.sort((a, b) {
       // Compare chapters numerically, otherwise `ch10` would sort before `ch2`
       // and `nextLevelId` would jump the player across chapters.
-      final ca = _chapterOrder(_raw[a]!['chapterId'] as String)
-          .compareTo(_chapterOrder(_raw[b]!['chapterId'] as String));
+      final ca = _chapterOrder(
+        _raw[a]!['chapterId'] as String,
+      ).compareTo(_chapterOrder(_raw[b]!['chapterId'] as String));
       if (ca != 0) return ca;
       return indexOf[a]!.compareTo(indexOf[b]!);
     });
@@ -127,7 +128,8 @@ class LevelRepository {
         ChapterInfo(
           id: id,
           title: _chapterMeta[id]?.$1 ?? 'Chapter ${id.replaceFirst('ch', '')}',
-          subtitle: _chapterMeta[id]?.$2 ??
+          subtitle:
+              _chapterMeta[id]?.$2 ??
               '${_chapterIds[id]!.length} reflection puzzles',
           levelIds: List<String>.from(_chapterIds[id]!),
           levelCount: _chapterIds[id]!.length,

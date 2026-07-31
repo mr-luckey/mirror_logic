@@ -29,8 +29,11 @@ class WinEvaluation extends Equatable {
   final Set<String> rejectedCrystalIds;
 
   @override
-  List<Object?> get props =>
-      [satisfied, acceptedCrystalIds, rejectedCrystalIds];
+  List<Object?> get props => [
+    satisfied,
+    acceptedCrystalIds,
+    rejectedCrystalIds,
+  ];
 }
 
 class WinConditionEvaluator {
@@ -90,7 +93,7 @@ class WinConditionEvaluator {
 
 class LevelValidator {
   LevelValidator({BeamSimulator? simulator})
-      : _simulator = simulator ?? BeamSimulator();
+    : _simulator = simulator ?? BeamSimulator();
 
   final BeamSimulator _simulator;
   final _win = const WinConditionEvaluator();
@@ -101,9 +104,7 @@ class LevelValidator {
     final solution = level.intendedSolution.mirrorAngles;
     return {
       for (final m in level.mirrors)
-        m.id: m.isLocked
-            ? m.initialAngle
-            : (solution[m.id] ?? m.initialAngle),
+        m.id: m.isLocked ? m.initialAngle : (solution[m.id] ?? m.initialAngle),
     };
   }
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive/hive.dart';
 import 'package:mirror_logic/app/theme/app_theme.dart';
 import 'package:mirror_logic/data/repositories/economy_repository.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
@@ -11,6 +10,7 @@ import 'package:mirror_logic/infrastructure/storage/local_storage_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/settings/settings_cubit.dart';
+import 'package:mirror_logic/presentation/screens/about/about_screen.dart';
 import 'package:mirror_logic/presentation/screens/chapter_select/chapter_select_screen.dart';
 import 'package:mirror_logic/presentation/screens/level_complete/level_complete_screen.dart';
 import 'package:mirror_logic/presentation/screens/level_select/level_select_screen.dart';
@@ -19,6 +19,8 @@ import 'package:mirror_logic/presentation/screens/onboarding/onboarding_screen.d
 import 'package:mirror_logic/presentation/screens/settings/settings_screen.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_gameplay_hud.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
+
+import '../support/memory_box.dart';
 
 void _noop() {}
 
@@ -32,28 +34,8 @@ const _sizes = <String, Size>{
   'large 430x932': Size(430, 932),
 };
 
-/// Hive's real box holds a file lock that keeps the test runner from exiting
-/// on Windows, and these screens only ever read defaults anyway.
-class _MemoryBox implements Box<dynamic> {
-  final _data = <dynamic, dynamic>{};
-
-  @override
-  dynamic get(dynamic key, {dynamic defaultValue}) =>
-      _data[key] ?? defaultValue;
-
-  @override
-  Future<void> put(dynamic key, dynamic value) async => _data[key] = value;
-
-  @override
-  Future<void> delete(dynamic key) async => _data.remove(key);
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) =>
-      super.noSuchMethod(invocation);
-}
-
 void main() {
-  final saves = SaveRepository(LocalStorageService(_MemoryBox()));
+  final saves = SaveRepository(LocalStorageService(MemoryBox()));
   final levels = LevelRepository();
 
   setUpAll(() {
@@ -61,11 +43,7 @@ void main() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });
 
-  Future<void> pumpAt(
-    WidgetTester tester,
-    Size size,
-    Widget screen,
-  ) async {
+  Future<void> pumpAt(WidgetTester tester, Size size, Widget screen) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -80,9 +58,8 @@ void main() {
           providers: [
             BlocProvider(create: (_) => ProgressBloc(saveRepository: saves)),
             BlocProvider(
-              create: (_) => EconomyBloc(
-                economyRepository: EconomyRepository(saves),
-              ),
+              create: (_) =>
+                  EconomyBloc(economyRepository: EconomyRepository(saves)),
             ),
             BlocProvider(create: (_) => SettingsCubit(saveRepository: saves)),
           ],
@@ -117,6 +94,7 @@ void main() {
     'main menu': const MainMenuScreen(),
     'level complete': const LevelCompleteScreen(args: completeArgs),
     'settings': const SettingsScreen(),
+    'about': const AboutScreen(),
   };
 
   for (final entry in screens.entries) {
@@ -177,8 +155,9 @@ void main() {
       });
     }
 
-    testWidgets('carries the pause, level and coins on one line',
-        (tester) async {
+    testWidgets('carries the pause, level and coins on one line', (
+      tester,
+    ) async {
       await pumpAt(
         tester,
         const Size(390, 844),

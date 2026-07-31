@@ -4,7 +4,9 @@ import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/data/repositories/save_repository.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
+import 'package:mirror_logic/infrastructure/review/review_service.dart';
 import 'package:mirror_logic/infrastructure/storage/local_storage_service.dart';
+import 'package:mirror_logic/infrastructure/update/app_update_service.dart';
 
 final Map<Type, Object> _services = {};
 
@@ -24,6 +26,8 @@ Future<void> configureDependencies() async {
   final levelRepository = LevelRepository();
   final audioService = AudioService();
   final adsService = AdsService();
+  final reviewService = ReviewService(storage: storage);
+  final updateService = AppUpdateService(storage: storage);
 
   _services[LocalStorageService] = storage;
   _services[SaveRepository] = saveRepository;
@@ -31,4 +35,6 @@ Future<void> configureDependencies() async {
   _services[LevelRepository] = levelRepository;
   _services[AudioService] = audioService;
   _services[AdsService] = adsService;
+  _services[ReviewService] = reviewService;
+  _services[AppUpdateService] = updateService;
 }

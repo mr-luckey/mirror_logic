@@ -36,13 +36,20 @@ class _AdBannerHostState extends State<AdBannerHost> {
   /// and a constant slot can only honestly hold a constant ad.
   static const AdSize _size = AdSize.banner;
 
-  /// Backs off and gives up. A first request can miss simply because the radio
-  /// is still waking up, which is worth asking again about; a region with no
-  /// fill will keep saying no however many times it is asked.
-  static const List<Duration> _retryDelays = [
-    Duration(seconds: 15),
-    Duration(seconds: 45),
-  ];
+  /// How long a filled banner stays up before it is replaced.
+  ///
+  /// The refresh is driven from here rather than by AdMob, so server-side
+  /// auto-refresh must stay **off** for the banner units — the two together
+  /// would refresh the same strip twice over. Note that AdMob's own floor for a
+  /// refresh interval is 30 seconds; anything shorter is out of policy and can
+  /// have the units limited for invalid traffic.
+  static const Duration _refreshInterval = Duration(seconds: 40);
+
+  /// How long to wait before asking again after a round of requests came back
+  /// empty. Unlike the refresh, this never gives up: a launch that landed with
+  /// the radio still waking up, or in a tunnel, should still get its banner
+  /// whenever the network comes back rather than staying blank for the session.
+  static const Duration _retryDelay = Duration(seconds: 15);
 
   late bool _show = AdBannerHost.showsBannerAt(_location);
   BannerAd? _ad;
@@ -86,22 +93,40 @@ class _AdBannerHostState extends State<AdBannerHost> {
     });
   }
 
+  /// Keeps a live banner in the strip for as long as this host is mounted.
+  ///
+  /// One loop covers both jobs, because they are the same job: ask for a banner,
+  /// put up whatever comes back, wait, ask again. A round that fills waits out
+  /// [_refreshInterval]; a round that comes back empty waits [_retryDelay] and
+  /// tries again, without limit.
   Future<void> _load(AdsService ads) async {
-    for (var attempt = 0; attempt <= _retryDelays.length; attempt++) {
-      if (attempt > 0) {
-        await Future<void>.delayed(_retryDelays[attempt - 1]);
-        if (!mounted) return;
-      }
+    while (mounted) {
       final ad = await ads.loadBanner(_size);
       if (!mounted) {
         await ad?.dispose();
         return;
       }
-      if (ad != null) {
-        setState(() => _ad = ad);
-        return;
+      if (ad == null) {
+        await Future<void>.delayed(_retryDelay);
+        continue;
       }
+      _swapIn(ad);
+      await Future<void>.delayed(_refreshInterval);
     }
+  }
+
+  /// Puts [ad] in the strip and retires the one it replaces.
+  ///
+  /// The outgoing ad is disposed a frame late, on purpose: its `AdWidget` is
+  /// still mounted until the build this setState schedules, and tearing the
+  /// native ad out from under a live platform view leaves an empty hole in the
+  /// strip. Swapping this way — new ad in first, old one released after — also
+  /// means the strip never collapses between two banners.
+  void _swapIn(BannerAd ad) {
+    final outgoing = _ad;
+    setState(() => _ad = ad);
+    if (outgoing == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) => outgoing.dispose());
   }
 
   @override

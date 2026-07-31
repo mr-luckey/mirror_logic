@@ -53,7 +53,10 @@ LevelModel buildLevel({
 /// A point [degrees] around the hinge at [radius], matching screen coordinates.
 Vec2 around(double degrees, {double radius = 200}) {
   final rad = degrees * math.pi / 180;
-  return Vec2(hinge.x + math.cos(rad) * radius, hinge.y + math.sin(rad) * radius);
+  return Vec2(
+    hinge.x + math.cos(rad) * radius,
+    hinge.y + math.sin(rad) * radius,
+  );
 }
 
 Future<GameplayBloc> startedBloc(LevelModel level) async {
@@ -85,7 +88,8 @@ List<Vec2> sweep(double from, double to, {double radius = 200}) {
   const stepSize = 5.0;
   final steps = ((to - from).abs() / stepSize).ceil();
   return [
-    for (var i = 0; i <= steps; i++) around(from + (to - from) * i / steps, radius: radius),
+    for (var i = 0; i <= steps; i++)
+      around(from + (to - from) * i / steps, radius: radius),
   ];
 }
 
@@ -106,41 +110,51 @@ void main() {
   });
 
   group('mirror drag', () {
-    test('grabbing above the hinge does not slam the mirror to minAngle', () async {
-      final bloc = await startedBloc(buildLevel(initialAngle: 135));
-      // -135° is up and to the left: the old absolute mapping clamped this to 5.
-      await drag(bloc, [around(-135), around(-134)], release: false);
-      expect(bloc.state.mirrorAngles['m1'], greaterThan(100));
-      await bloc.close();
-    });
+    test(
+      'grabbing above the hinge does not slam the mirror to minAngle',
+      () async {
+        final bloc = await startedBloc(buildLevel(initialAngle: 135));
+        // -135° is up and to the left: the old absolute mapping clamped this to 5.
+        await drag(bloc, [around(-135), around(-134)], release: false);
+        expect(bloc.state.mirrorAngles['m1'], greaterThan(100));
+        await bloc.close();
+      },
+    );
 
-    test('mirror turns by how far the finger swept, not where it landed', () async {
-      final bloc = await startedBloc(buildLevel(initialAngle: 90));
-      await drag(bloc, sweep(0, 40), release: false);
-      expect(bloc.state.mirrorAngles['m1'], closeTo(130, 1.0));
-      await bloc.close();
-    });
+    test(
+      'mirror turns by how far the finger swept, not where it landed',
+      () async {
+        final bloc = await startedBloc(buildLevel(initialAngle: 90));
+        await drag(bloc, sweep(0, 40), release: false);
+        expect(bloc.state.mirrorAngles['m1'], closeTo(130, 1.0));
+        await bloc.close();
+      },
+    );
 
     test('grabbing far from the current angle does not jump', () async {
       final bloc = await startedBloc(buildLevel(initialAngle: 90));
-      bloc.add(GameplayMirrorDragStarted(mirrorId: 'm1', grabPoint: around(20)));
+      bloc.add(
+        GameplayMirrorDragStarted(mirrorId: 'm1', grabPoint: around(20)),
+      );
       await Future<void>.delayed(Duration.zero);
       expect(bloc.state.mirrorAngles['m1'], closeTo(90, 1e-9));
       await bloc.close();
     });
 
-    test('rotation past the limit does not leave a dead zone coming back',
-        () async {
-      // Crystal below the hinge, so its detent sits at 45° and stays out of
-      // the way of what this test is measuring.
-      final bloc = await startedBloc(
-        buildLevel(initialAngle: 170, crystal: const Vec2(540, 1600)),
-      );
-      // Push 40° past the 175 limit, then come straight back 40°.
-      await drag(bloc, [...sweep(0, 45), ...sweep(45, 0)], release: false);
-      expect(bloc.state.mirrorAngles['m1'], closeTo(130, 2.0));
-      await bloc.close();
-    });
+    test(
+      'rotation past the limit does not leave a dead zone coming back',
+      () async {
+        // Crystal below the hinge, so its detent sits at 45° and stays out of
+        // the way of what this test is measuring.
+        final bloc = await startedBloc(
+          buildLevel(initialAngle: 170, crystal: const Vec2(540, 1600)),
+        );
+        // Push 40° past the 175 limit, then come straight back 40°.
+        await drag(bloc, [...sweep(0, 45), ...sweep(45, 0)], release: false);
+        expect(bloc.state.mirrorAngles['m1'], closeTo(130, 2.0));
+        await bloc.close();
+      },
+    );
 
     test('rotation near the hinge is damped, not amplified', () async {
       final near = await startedBloc(buildLevel(initialAngle: 90));
@@ -171,18 +185,20 @@ void main() {
   // The light fires right into the hinge and the crystal sits straight above
   // it, so 135° is the angle that puts the beam through the crystal's heart.
   group('alignment detents', () {
-    test('the drag settles exactly on the crystal instead of near it',
-        () async {
-      final bloc = await startedBloc(buildLevel(initialAngle: 90));
-      // Sweep 44°, which on its own would land at 134 — just short.
-      await drag(bloc, sweep(0, 44), release: false);
+    test(
+      'the drag settles exactly on the crystal instead of near it',
+      () async {
+        final bloc = await startedBloc(buildLevel(initialAngle: 90));
+        // Sweep 44°, which on its own would land at 134 — just short.
+        await drag(bloc, sweep(0, 44), release: false);
 
-      expect(bloc.state.mirrorAngles['m1'], closeTo(135, 0.3));
-      expect(bloc.state.alignedTargetId, 'c1');
-      expect(bloc.state.alignedTargetKind, AlignmentTargetKind.crystal);
-      expect(bloc.state.alignmentPulse, 1);
-      await bloc.close();
-    });
+        expect(bloc.state.mirrorAngles['m1'], closeTo(135, 0.3));
+        expect(bloc.state.alignedTargetId, 'c1');
+        expect(bloc.state.alignedTargetKind, AlignmentTargetKind.crystal);
+        expect(bloc.state.alignmentPulse, 1);
+        await bloc.close();
+      },
+    );
 
     test('one lock pulses once, however long it is held', () async {
       final bloc = await startedBloc(buildLevel(initialAngle: 90));

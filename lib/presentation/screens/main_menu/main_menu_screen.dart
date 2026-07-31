@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mirror_logic/app/app_update_gate.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
+import 'package:mirror_logic/core/constants/game_constants.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
@@ -24,66 +26,70 @@ class MainMenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final gutter = Responsive.pageGutter(context);
     final short = Responsive.isShort(context);
-    final crestSize =
-        Responsive.wp(context, short ? 0.38 : 0.46).clamp(120.0, 210.0);
+    final crestSize = Responsive.wp(
+      context,
+      short ? 0.38 : 0.46,
+    ).clamp(120.0, 210.0);
 
-    return MedievalExitScope(
-      child: MedievalWoodBackground(
-        child: Stack(
-          children: [
-            const _WallTorches(),
-            SafeArea(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(gutter, 10, gutter, 20),
-                child: Column(
-                  children: [
-                    const _TopStatusBar(),
-                    Expanded(
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          return SingleChildScrollView(
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minHeight: constraints.maxHeight,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  MedievalArtwork(
-                                    asset: MedievalArt.crest,
-                                    size: crestSize,
-                                    glow: MedievalColors.laserGlow,
-                                    glowStrength: 0.26,
-                                  )
-                                      .animate()
-                                      .fadeIn(duration: 550.ms)
-                                      .scale(begin: const Offset(0.9, 0.9)),
-                                  SizedBox(height: short ? 14 : 22),
-                                  const GameTitle(),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    'Reflect  •  Align  •  Solve',
-                                    textAlign: TextAlign.center,
-                                    style: MedievalTextStyles.cinzel(
-                                      color: MedievalColors.textMuted,
-                                      letterSpacing: 2,
-                                      size: Responsive.sp(context, 12),
+    return AppUpdateGate(
+      child: MedievalExitScope(
+        child: MedievalWoodBackground(
+          child: Stack(
+            children: [
+              const _WallTorches(),
+              SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(gutter, 10, gutter, 20),
+                  child: Column(
+                    children: [
+                      const _TopStatusBar(),
+                      Expanded(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SingleChildScrollView(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    MedievalArtwork(
+                                          asset: MedievalArt.crest,
+                                          size: crestSize,
+                                          glow: MedievalColors.laserGlow,
+                                          glowStrength: 0.26,
+                                        )
+                                        .animate()
+                                        .fadeIn(duration: 550.ms)
+                                        .scale(begin: const Offset(0.9, 0.9)),
+                                    SizedBox(height: short ? 14 : 22),
+                                    const GameTitle(),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      'Reflect  •  Align  •  Solve',
+                                      textAlign: TextAlign.center,
+                                      style: MedievalTextStyles.cinzel(
+                                        color: MedievalColors.textMuted,
+                                        letterSpacing: 2,
+                                        size: Responsive.sp(context, 12),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: short ? 32 : 52),
-                                  const _PlayButtons(),
-                                ],
+                                    SizedBox(height: short ? 32 : 52),
+                                    const _PlayButtons(),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -103,27 +109,27 @@ class _PlayButtons extends StatelessWidget {
 
         return Column(
           children: [
+            // A player who has never played has nothing to choose between, so
+            // Play drops them straight onto the first board rather than asking
+            // them to pick a chapter and a level first.
             MedievalButton(
-              label: last == null ? 'Play' : 'Continue',
-              style: MedievalButtonStyle.primary,
-              icon: Icons.play_arrow_rounded,
-              shimmer: true,
-              onPressed: () => context.push(
-                last == null ? '/chapters' : '/play/$last',
-              ),
-            ).animate().fadeIn(delay: 250.ms).slideY(
-                  begin: 0.16,
-                  end: 0,
-                  curve: Curves.easeOutCubic,
-                ),
-            if (last != null) ...[
-              const SizedBox(height: 11),
-              MedievalButton(
-                label: 'Chapters',
-                icon: Icons.menu_book_rounded,
-                onPressed: () => context.push('/chapters'),
-              ).animate().fadeIn(delay: 380.ms).slideY(begin: 0.16, end: 0),
-            ],
+                  label: last == null ? 'Play' : 'Continue',
+                  style: MedievalButtonStyle.primary,
+                  icon: Icons.play_arrow_rounded,
+                  shimmer: true,
+                  onPressed: () => context.push(
+                    '/play/${last ?? GameConstants.firstLevelId}',
+                  ),
+                )
+                .animate()
+                .fadeIn(delay: 250.ms)
+                .slideY(begin: 0.16, end: 0, curve: Curves.easeOutCubic),
+            const SizedBox(height: 11),
+            MedievalButton(
+              label: 'Chapters',
+              icon: Icons.menu_book_rounded,
+              onPressed: () => context.push('/chapters'),
+            ).animate().fadeIn(delay: 380.ms).slideY(begin: 0.16, end: 0),
           ],
         );
       },
@@ -141,11 +147,11 @@ class _WallTorches extends StatelessWidget {
     final top = Responsive.hp(context, 0.2);
 
     Widget torch({required bool flip}) => IgnorePointer(
-          child: Opacity(
-            opacity: 0.85,
-            child: MedievalTorch(width: h * 0.55, height: h, flip: flip),
-          ),
-        );
+      child: Opacity(
+        opacity: 0.85,
+        child: MedievalTorch(width: h * 0.55, height: h, flip: flip),
+      ),
+    );
 
     return Stack(
       children: [

@@ -48,12 +48,7 @@ abstract final class MedievalColors {
   static const LinearGradient bronzeMetal = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [
-      bronzeHighlight,
-      bronzeLight,
-      bronze,
-      bronzeDark,
-    ],
+    colors: [bronzeHighlight, bronzeLight, bronze, bronzeDark],
     stops: [0.0, 0.25, 0.65, 1.0],
   );
 

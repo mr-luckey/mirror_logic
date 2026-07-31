@@ -73,8 +73,9 @@ class MedievalPanel extends StatelessWidget {
                 // Faint warm rim from the top-left, the light direction every
                 // medieval surface in the game shares.
                 BoxShadow(
-                  color: (accent ?? MedievalColors.bronzeHighlight)
-                      .withValues(alpha: accent == null ? 0.12 : 0.4),
+                  color: (accent ?? MedievalColors.bronzeHighlight).withValues(
+                    alpha: accent == null ? 0.12 : 0.4,
+                  ),
                   blurRadius: accent == null ? 6 : 16,
                   offset: Offset(0, accent == null ? -1 : 0),
                 ),

@@ -135,16 +135,44 @@ class BeamSimulator {
     final w = level.roomBounds.x;
     final h = level.roomBounds.y;
     consider(
-      _raySegment(origin, direction, const Vec2(0, 0), Vec2(w, 0), BeamHitKind.bounds, 'top'),
+      _raySegment(
+        origin,
+        direction,
+        const Vec2(0, 0),
+        Vec2(w, 0),
+        BeamHitKind.bounds,
+        'top',
+      ),
     );
     consider(
-      _raySegment(origin, direction, Vec2(0, h), Vec2(w, h), BeamHitKind.bounds, 'bottom'),
+      _raySegment(
+        origin,
+        direction,
+        Vec2(0, h),
+        Vec2(w, h),
+        BeamHitKind.bounds,
+        'bottom',
+      ),
     );
     consider(
-      _raySegment(origin, direction, const Vec2(0, 0), Vec2(0, h), BeamHitKind.bounds, 'left'),
+      _raySegment(
+        origin,
+        direction,
+        const Vec2(0, 0),
+        Vec2(0, h),
+        BeamHitKind.bounds,
+        'left',
+      ),
     );
     consider(
-      _raySegment(origin, direction, Vec2(w, 0), Vec2(w, h), BeamHitKind.bounds, 'right'),
+      _raySegment(
+        origin,
+        direction,
+        Vec2(w, 0),
+        Vec2(w, h),
+        BeamHitKind.bounds,
+        'right',
+      ),
     );
 
     for (final obstacle in level.obstacles) {

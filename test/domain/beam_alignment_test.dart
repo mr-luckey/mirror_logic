@@ -153,11 +153,7 @@ void main() {
       );
 
       final detent = finder
-          .detentsFor(
-            level: level,
-            mirrorAngles: {'m1': 90.0},
-            mirrorId: 'm1',
-          )
+          .detentsFor(level: level, mirrorAngles: {'m1': 90.0}, mirrorId: 'm1')
           .singleWhere((d) => d.targetId == 'c1');
 
       final beam = BeamSimulator().simulate(

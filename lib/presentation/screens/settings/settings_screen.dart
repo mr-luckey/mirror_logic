@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mirror_logic/app/audio_scope.dart';
+import 'package:mirror_logic/app/review_scope.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
@@ -12,9 +13,10 @@ import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/settings/settings_cubit.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_exit_scope.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_option_rows.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
-import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_screen_header.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_toast.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_toggle.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 
@@ -25,10 +27,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Slider still asserts on a Material ancestor, and the wood backdrop is
     // only painted, not a Material surface.
-    return Material(
-      type: MaterialType.transparency,
-      child: _body(context),
-    );
+    return Material(type: MaterialType.transparency, child: _body(context));
   }
 
   Widget _body(BuildContext context) {
@@ -54,7 +53,7 @@ class SettingsScreen extends StatelessWidget {
                   child: ListView(
                     padding: EdgeInsets.fromLTRB(gutter, 4, gutter, 24),
                     children: [
-                      _Section(
+                      MedievalSection(
                         title: 'Audio',
                         icon: Icons.music_note_rounded,
                         children: [
@@ -81,7 +80,7 @@ class SettingsScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 13),
-                      _Section(
+                      MedievalSection(
                         title: 'Game',
                         icon: Icons.tune_rounded,
                         children: [
@@ -101,13 +100,23 @@ class SettingsScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 13),
-                      _Section(
+                      MedievalSection(
                         title: 'About',
                         icon: Icons.auto_stories_rounded,
                         children: [
-                          _LinkRow(label: 'Rate Us', onTap: () {}),
+                          MedievalLinkRow(
+                            label: 'About Us',
+                            note: 'Version, credits and contact',
+                            onTap: () => context.push('/about'),
+                          ),
                           const MedievalDivider(),
-                          _LinkRow(
+                          MedievalLinkRow(
+                            label: 'Rate Us',
+                            note: 'Leave a review on Google Play',
+                            onTap: () => _rate(context),
+                          ),
+                          const MedievalDivider(),
+                          MedievalLinkRow(
                             label: 'Reset Progress',
                             danger: true,
                             onTap: () => _confirmReset(context),
@@ -125,6 +134,20 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  /// Sends the player straight to the Play listing rather than through Play's
+  /// in-app sheet, which shows nothing once the device quota is spent — see
+  /// [ReviewService.openStoreListing]. Tapping here also retires the random
+  /// prompt, since the player has clearly already found the button.
+  Future<void> _rate(BuildContext context) async {
+    final review = context.review;
+    if (review == null) return;
+    await review.markSettled();
+    final opened = await review.openStoreListing();
+    if (!opened && context.mounted) {
+      MedievalToast.show(context, 'Could not open the Play Store');
+    }
+  }
+
   Future<void> _confirmReset(BuildContext context) async {
     final ok = await showDialog<bool>(
       context: context,
@@ -133,7 +156,8 @@ class SettingsScreen extends StatelessWidget {
         danger: true,
         icon: Icons.warning_amber_rounded,
         title: 'Reset Progress?',
-        body: 'Every star and unlocked hall is lost. '
+        body:
+            'Every star and unlocked hall is lost. '
             'Your coin is kept. This cannot be undone.',
         cancelLabel: 'Cancel',
         confirmLabel: 'Reset',
@@ -147,86 +171,6 @@ class SettingsScreen extends StatelessWidget {
     context.read<ProgressBloc>().add(const ProgressRefresh());
     context.read<EconomyBloc>().add(const EconomyStarted());
     context.go('/menu');
-  }
-}
-
-class _Section extends StatelessWidget {
-  const _Section({
-    required this.title,
-    required this.icon,
-    required this.children,
-  });
-
-  final String title;
-  final IconData icon;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return MedievalPanel(
-      padding: const EdgeInsets.fromLTRB(14, 11, 14, 13),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 14, color: MedievalColors.bronzeLight),
-              const SizedBox(width: 7),
-              Text(
-                title.toUpperCase(),
-                style: MedievalTextStyles.cinzel(
-                  size: 11,
-                  weight: FontWeight.w700,
-                  letterSpacing: 2,
-                  color: MedievalColors.textGold,
-                ),
-              ),
-            ],
-          ),
-          const MedievalDivider(height: 16),
-          ...children,
-        ],
-      ),
-    );
-  }
-}
-
-class _RowLabel extends StatelessWidget {
-  const _RowLabel({required this.label, this.note, this.danger = false});
-
-  final String label;
-  final String? note;
-  final bool danger;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          label,
-          style: MedievalTextStyles.cinzel(
-            size: Responsive.sp(context, 13.5),
-            weight: FontWeight.w600,
-            color: danger
-                ? MedievalColors.rejectMid
-                : MedievalColors.textCream,
-          ),
-        ),
-        if (note != null) ...[
-          const SizedBox(height: 2),
-          Text(
-            note!,
-            style: MedievalTextStyles.cinzel(
-              size: Responsive.sp(context, 10.5),
-              height: 1.3,
-              color: MedievalColors.textMuted,
-            ),
-          ),
-        ],
-      ],
-    );
   }
 }
 
@@ -252,7 +196,9 @@ class _ToggleRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 5),
         child: Row(
           children: [
-            Expanded(child: _RowLabel(label: label, note: note)),
+            Expanded(
+              child: MedievalRowLabel(label: label, note: note),
+            ),
             const SizedBox(width: 12),
             MedievalToggle(value: value, onChanged: onChanged),
           ],
@@ -284,7 +230,7 @@ class _SliderRow extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: _RowLabel(label: label)),
+              Expanded(child: MedievalRowLabel(label: label)),
               Text(
                 '${(value * 100).round()}%',
                 style: MedievalTextStyles.cinzelDecorative(
@@ -310,40 +256,6 @@ class _SliderRow extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _LinkRow extends StatelessWidget {
-  const _LinkRow({
-    required this.label,
-    required this.onTap,
-    this.danger = false,
-  });
-
-  final String label;
-  final VoidCallback onTap;
-  final bool danger;
-
-  @override
-  Widget build(BuildContext context) {
-    return MedievalPressable(
-      onPressed: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 9),
-        child: Row(
-          children: [
-            Expanded(child: _RowLabel(label: label, danger: danger)),
-            Icon(
-              Icons.chevron_right_rounded,
-              size: 20,
-              color: danger
-                  ? MedievalColors.rejectMid.withValues(alpha: 0.8)
-                  : MedievalColors.bronzeLight.withValues(alpha: 0.75),
-            ),
-          ],
-        ),
       ),
     );
   }

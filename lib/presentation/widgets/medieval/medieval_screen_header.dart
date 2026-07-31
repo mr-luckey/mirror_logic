@@ -93,20 +93,20 @@ class _RuleWithDiamond extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget rule(bool flip) => Expanded(
-          child: Container(
-            height: 1.4,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: flip ? Alignment.centerRight : Alignment.centerLeft,
-                end: flip ? Alignment.centerLeft : Alignment.centerRight,
-                colors: [
-                  Colors.transparent,
-                  MedievalColors.bronzeLight.withValues(alpha: 0.75),
-                ],
-              ),
-            ),
+      child: Container(
+        height: 1.4,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: flip ? Alignment.centerRight : Alignment.centerLeft,
+            end: flip ? Alignment.centerLeft : Alignment.centerRight,
+            colors: [
+              Colors.transparent,
+              MedievalColors.bronzeLight.withValues(alpha: 0.75),
+            ],
           ),
-        );
+        ),
+      ),
+    );
 
     return SizedBox(
       width: width,
@@ -124,8 +124,9 @@ class _RuleWithDiamond extends StatelessWidget {
                   color: MedievalColors.bronzeLight,
                   boxShadow: [
                     BoxShadow(
-                      color: MedievalColors.bronzeHighlight
-                          .withValues(alpha: 0.6),
+                      color: MedievalColors.bronzeHighlight.withValues(
+                        alpha: 0.6,
+                      ),
                       blurRadius: 5,
                     ),
                   ],

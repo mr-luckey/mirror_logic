@@ -27,8 +27,9 @@ class LevelSelectScreen extends StatefulWidget {
 class _LevelSelectScreenState extends State<LevelSelectScreen> {
   // Built once: creating the future inside build restarts the load on every
   // ancestor rebuild and flashes the spinner.
-  late final Future<List<String>> _levelIds =
-      context.read<LevelRepository>().levelIdsForChapter(widget.chapterId);
+  late final Future<List<String>> _levelIds = context
+      .read<LevelRepository>()
+      .levelIdsForChapter(widget.chapterId);
 
   /// Resolved so the header names the hall rather than showing a raw id.
   late final Future<String> _chapterTitle = context
@@ -110,44 +111,50 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                           ),
                           Expanded(
                             child: GridView.builder(
-                              padding:
-                                  EdgeInsets.fromLTRB(gutter, 0, gutter, 20),
+                              padding: EdgeInsets.fromLTRB(
+                                gutter,
+                                0,
+                                gutter,
+                                20,
+                              ),
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount:
-                                    Responsive.gridCrossAxisCount(context),
-                                mainAxisSpacing: 9,
-                                crossAxisSpacing: 9,
-                                childAspectRatio:
-                                    Responsive.isNarrow(context) ? 0.92 : 1,
-                              ),
+                                    crossAxisCount:
+                                        Responsive.gridCrossAxisCount(context),
+                                    mainAxisSpacing: 9,
+                                    crossAxisSpacing: 9,
+                                    childAspectRatio:
+                                        Responsive.isNarrow(context) ? 0.92 : 1,
+                                  ),
                               itemCount: ids.length,
                               itemBuilder: (context, index) {
                                 final id = ids[index];
                                 // Reaching this screen means the chapter is
                                 // open, so its opening level always is too.
-                                final unlocked = GameConstants
-                                        .unlockAllLevelsForTesting ||
-                                    progress.save.unlockedLevelIds
-                                        .contains(id) ||
+                                final unlocked =
+                                    GameConstants.unlockAllLevelsForTesting ||
+                                    progress.save.unlockedLevelIds.contains(
+                                      id,
+                                    ) ||
                                     index == 0;
                                 final stars =
                                     progress.save.levelProgress[id]?.stars ?? 0;
                                 final isCurrent =
                                     progress.save.lastPlayedLevelId == id ||
-                                        (!progress.save.levelProgress
-                                                .containsKey(id) &&
-                                            unlocked &&
-                                            index ==
-                                                progress.save.unlockedLevelIds
-                                                        .where((e) =>
-                                                            e
-                                                                .split('_')
-                                                                .first ==
-                                                            chapterId)
-                                                        .length
-                                                        .clamp(0, ids.length) -
-                                                    1);
+                                    (!progress.save.levelProgress.containsKey(
+                                          id,
+                                        ) &&
+                                        unlocked &&
+                                        index ==
+                                            progress.save.unlockedLevelIds
+                                                    .where(
+                                                      (e) =>
+                                                          e.split('_').first ==
+                                                          chapterId,
+                                                    )
+                                                    .length
+                                                    .clamp(0, ids.length) -
+                                                1);
 
                                 return _LevelCell(
                                   index: GameConstants.displayLevelNumber(
@@ -252,17 +259,14 @@ class _LevelCell extends StatelessWidget {
                     MedievalColors.stone,
                     MedievalColors.stoneDark,
                   ]
-                : [
-                    MedievalColors.stoneDark,
-                    MedievalColors.stoneGrout,
-                  ],
+                : [MedievalColors.stoneDark, MedievalColors.stoneGrout],
           ),
           border: Border.all(
             color: highlighted
                 ? MedievalColors.bronzeHighlight
                 : unlocked
-                    ? MedievalColors.bronzeDark.withValues(alpha: 0.85)
-                    : Colors.black.withValues(alpha: 0.5),
+                ? MedievalColors.bronzeDark.withValues(alpha: 0.85)
+                : Colors.black.withValues(alpha: 0.5),
             width: highlighted ? 2.2 : 1.4,
           ),
           boxShadow: [
@@ -289,22 +293,23 @@ class _LevelCell extends StatelessWidget {
                     children: [
                       Text(
                         '$index',
-                        style: MedievalTextStyles.cinzelDecorative(
-                          weight: FontWeight.w700,
-                          size: Responsive.sp(context, 17),
-                          color: highlighted
-                              ? MedievalColors.bronzeHighlight
-                              : MedievalColors.textCream,
-                        ).copyWith(
-                          shadows: const [
-                            // Carved into the stone rather than sitting on it.
-                            Shadow(
-                              color: Colors.black,
-                              blurRadius: 0,
-                              offset: Offset(0, 1.2),
+                        style:
+                            MedievalTextStyles.cinzelDecorative(
+                              weight: FontWeight.w700,
+                              size: Responsive.sp(context, 17),
+                              color: highlighted
+                                  ? MedievalColors.bronzeHighlight
+                                  : MedievalColors.textCream,
+                            ).copyWith(
+                              shadows: const [
+                                // Carved into the stone rather than sitting on it.
+                                Shadow(
+                                  color: Colors.black,
+                                  blurRadius: 0,
+                                  offset: Offset(0, 1.2),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
                       ),
                       const SizedBox(height: 3),
                       MedievalStarRow(

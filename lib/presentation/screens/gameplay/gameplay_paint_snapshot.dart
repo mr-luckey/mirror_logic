@@ -61,19 +61,19 @@ class GameplayPaintSnapshot extends Equatable {
 
   @override
   List<Object?> get props => [
-        level,
-        mirrorAngles,
-        beam,
-        powerOnProgress,
-        chargeProgress,
-        ghostAngles,
-        highlightedMirrorId,
-        activeMirrorId,
-        alignedTargetId,
-        rejectedCrystalIds,
-        showAngleReadout,
-        // Quantize time so we don't repaint every microsecond unnecessarily
-        // while still driving crystal/laser animations (~20fps visual).
-        (elapsedSeconds * 20).floor(),
-      ];
+    level,
+    mirrorAngles,
+    beam,
+    powerOnProgress,
+    chargeProgress,
+    ghostAngles,
+    highlightedMirrorId,
+    activeMirrorId,
+    alignedTargetId,
+    rejectedCrystalIds,
+    showAngleReadout,
+    // Quantize time so we don't repaint every microsecond unnecessarily
+    // while still driving crystal/laser animations (~20fps visual).
+    (elapsedSeconds * 20).floor(),
+  ];
 }

@@ -43,9 +43,9 @@ class GameplayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GameplayBloc(
-        levelRepository: context.read<LevelRepository>(),
-      )..add(GameplayLoadLevel(levelId)),
+      create: (context) =>
+          GameplayBloc(levelRepository: context.read<LevelRepository>())
+            ..add(GameplayLoadLevel(levelId)),
       child: const _GameplayBody(),
     );
   }
@@ -125,128 +125,126 @@ class _GameplayBody extends StatelessWidget {
   }
 
   Future<void> _onSolved(BuildContext context, GameplayState state) async {
-        final level = state.level!;
-        final stars = state.computeStars();
-        final coins = context.read<EconomyRepository>().coinsForClear();
-        final nextId =
-            await context.read<LevelRepository>().nextLevelId(level.levelId);
+    final level = state.level!;
+    final stars = state.computeStars();
+    final coins = context.read<EconomyRepository>().coinsForClear();
+    final nextId = await context.read<LevelRepository>().nextLevelId(
+      level.levelId,
+    );
 
-        if (!context.mounted) return;
+    if (!context.mounted) return;
 
-        context.read<ProgressBloc>().add(
-              ProgressLevelCompleted(
-                levelId: level.levelId,
-                stars: stars,
-                timeSeconds: state.elapsedSeconds,
-                coinsEarned: coins,
-                nextLevelId: nextId,
-              ),
-            );
+    context.read<ProgressBloc>().add(
+      ProgressLevelCompleted(
+        levelId: level.levelId,
+        stars: stars,
+        timeSeconds: state.elapsedSeconds,
+        coinsEarned: coins,
+        nextLevelId: nextId,
+      ),
+    );
 
-        // Replace rather than push: going back to a board that is already in
-        // the solved phase leaves the player on a frozen level, and solving it
-        // again would award the coins a second time.
-        context.pushReplacement(
-          '/complete',
-          extra: LevelCompleteArgs(
-            levelId: level.levelId,
-            chapterId: level.chapterId,
-            levelIndex: GameConstants.displayLevelNumber(
-              level.chapterId,
-              level.levelIndex,
-            ),
-            stars: stars,
-            moves: state.moves,
-            timeSeconds: state.elapsedSeconds,
-            coinsEarned: coins,
-            nextLevelId: nextId,
-          ),
-        );
+    // Replace rather than push: going back to a board that is already in
+    // the solved phase leaves the player on a frozen level, and solving it
+    // again would award the coins a second time.
+    context.pushReplacement(
+      '/complete',
+      extra: LevelCompleteArgs(
+        levelId: level.levelId,
+        chapterId: level.chapterId,
+        levelIndex: GameConstants.displayLevelNumber(
+          level.chapterId,
+          level.levelIndex,
+        ),
+        stars: stars,
+        moves: state.moves,
+        timeSeconds: state.elapsedSeconds,
+        coinsEarned: coins,
+        nextLevelId: nextId,
+      ),
+    );
   }
 
   Widget _buildBody(BuildContext context, GameplayState state) {
-          if (state.phase == GameplayPhase.loading) {
-            return const MedievalWoodBackground(
-              child: Center(
-                child: CircularProgressIndicator(
-                  color: MedievalColors.bronzeHighlight,
+    if (state.phase == GameplayPhase.loading) {
+      return const MedievalWoodBackground(
+        child: Center(
+          child: CircularProgressIndicator(
+            color: MedievalColors.bronzeHighlight,
+          ),
+        ),
+      );
+    }
+    if (state.phase == GameplayPhase.loadFailed) {
+      return MedievalWoodBackground(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Could not load level',
+                  style: MedievalTextStyles.cinzel(size: 16),
                 ),
-              ),
-            );
-          }
-          if (state.phase == GameplayPhase.loadFailed) {
-            return MedievalWoodBackground(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Could not load level',
-                        style: MedievalTextStyles.cinzel(size: 16),
-                      ),
-                      const SizedBox(height: 16),
-                      MedievalPressable(
-                        onPressed: () => context.pop(),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 28,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            gradient: MedievalColors.bronzeMetal,
-                          ),
-                          child: Text(
-                            'Back',
-                            style: MedievalTextStyles.cinzel(
-                              weight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 16),
+                MedievalPressable(
+                  onPressed: () => context.pop(),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 28,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      gradient: MedievalColors.bronzeMetal,
+                    ),
+                    child: Text(
+                      'Back',
+                      style: MedievalTextStyles.cinzel(weight: FontWeight.w700),
+                    ),
                   ),
                 ),
-              ),
-            );
-          }
-
-          // Back mid-puzzle opens the pause menu rather than dumping the
-          // player out of the level they are halfway through.
-          return PopScope(
-            canPop: false,
-            onPopInvokedWithResult: (didPop, _) {
-              if (didPop) return;
-              final bloc = context.read<GameplayBloc>();
-              if (bloc.state.phase == GameplayPhase.playing) {
-                bloc.add(const GameplayPaused());
-              } else if (bloc.state.phase == GameplayPhase.paused) {
-                bloc.add(const GameplayResumed());
-              }
-            },
-            child: MedievalWoodBackground(
-              child: SafeArea(
-                child: Stack(
-                  children: [
-                    // The banner strip is laid out for the whole app by
-                    // AdBannerHost, so the board no longer reserves room for
-                    // one itself.
-                    const Column(
-                      children: [
-                        _TopHud(),
-                        Expanded(child: _BoardArea()),
-                      ],
-                    ),
-                    if (state.phase == GameplayPhase.paused)
-                      const _PauseOverlay(),
-                    if (state.phase == GameplayPhase.hint) const _HintOverlay(),
-                  ],
-                ),
-              ),
+              ],
             ),
-          );
+          ),
+        ),
+      );
+    }
+
+    // Back mid-puzzle opens the pause menu rather than dumping the
+    // player out of the level they are halfway through.
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        final bloc = context.read<GameplayBloc>();
+        if (bloc.state.phase == GameplayPhase.playing) {
+          bloc.add(const GameplayPaused());
+        } else if (bloc.state.phase == GameplayPhase.paused) {
+          bloc.add(const GameplayResumed());
+        }
+      },
+      child: MedievalWoodBackground(
+        child: SafeArea(
+          child: Stack(
+            children: [
+              // The banner strip is laid out for the whole app by
+              // AdBannerHost, so the board no longer reserves room for
+              // one itself.
+              const Column(
+                children: [
+                  _TopHud(),
+                  Expanded(child: _BoardArea()),
+                ],
+              ),
+              if (state.phase == GameplayPhase.paused) const _PauseOverlay(),
+              if (state.phase == GameplayPhase.hint) const _HintOverlay(),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -337,9 +335,9 @@ Future<bool> _payForHint(BuildContext context) async {
 Future<bool> _spendCoinOnHint(BuildContext context) async {
   final economy = context.read<EconomyBloc>();
   final progress = context.read<ProgressBloc>();
-  final spent = await context
-      .read<EconomyRepository>()
-      .spendCoins(GameConstants.hintCost);
+  final spent = await context.read<EconomyRepository>().spendCoins(
+    GameConstants.hintCost,
+  );
   if (!context.mounted) return false;
   if (spent == null) {
     MedievalToast.show(
@@ -447,8 +445,7 @@ class _HintPaymentSheet extends StatelessWidget {
                 label: 'Watch a Video',
                 style: MedievalButtonStyle.primary,
                 icon: Icons.play_circle_outline_rounded,
-                onPressed: () =>
-                    Navigator.of(context).pop(_HintPayment.video),
+                onPressed: () => Navigator.of(context).pop(_HintPayment.video),
               ),
               const SizedBox(height: 9),
               MedievalButton(
@@ -583,9 +580,9 @@ class _ObjectiveBanner extends StatelessWidget {
         // mirror underneath it stays draggable throughout.
         return IgnorePointer(
           key: ValueKey(data.$1),
-          child: MedievalObjectiveBanner(message: data.$2)
-              .animate()
-              .fadeOut(delay: 4000.ms, duration: 700.ms),
+          child: MedievalObjectiveBanner(
+            message: data.$2,
+          ).animate().fadeOut(delay: 4000.ms, duration: 700.ms),
         );
       },
     );
@@ -678,9 +675,9 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
                 );
               },
               onPanEnd: (_) {
-                context
-                    .read<GameplayBloc>()
-                    .add(const GameplayMirrorDragEnded());
+                context.read<GameplayBloc>().add(
+                  const GameplayMirrorDragEnded(),
+                );
               },
               child: Stack(
                 fit: StackFit.expand,
@@ -720,10 +717,15 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
 /// in the middle of. Resume stays clean — an ad standing between deciding to keep
 /// playing and being allowed to is a toll on the wrong door.
 ///
-/// The level cadence is waived here because none of these are level breaks; the
-/// service's quiet period is the only thing between two ads on this menu.
-Future<void> _leavePause(BuildContext context, VoidCallback action) async {
-  await context.ads?.showInterstitial(respectLevelCadence: false);
+/// The level cadence is waived throughout, because none of these are level
+/// breaks. The three exits that actually leave the board go further and waive
+/// the quiet period too — see [InterstitialPolicy.always].
+Future<void> _leavePause(
+  BuildContext context,
+  VoidCallback action, {
+  InterstitialPolicy policy = InterstitialPolicy.quietPeriod,
+}) async {
+  await context.ads?.showInterstitial(policy: policy);
   if (!context.mounted) return;
   action();
 }
@@ -749,10 +751,7 @@ class _PauseOverlay extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 gradient: MedievalColors.woodPanel,
-                border: Border.all(
-                  color: MedievalColors.bronzeLight,
-                  width: 2,
-                ),
+                border: Border.all(color: MedievalColors.bronzeLight, width: 2),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.5),
@@ -777,18 +776,18 @@ class _PauseOverlay extends StatelessWidget {
                     label: 'Resume',
                     style: MedievalButtonStyle.primary,
                     icon: Icons.play_arrow_rounded,
-                    onPressed: () => context
-                        .read<GameplayBloc>()
-                        .add(const GameplayResumed()),
+                    onPressed: () => context.read<GameplayBloc>().add(
+                      const GameplayResumed(),
+                    ),
                   ),
                   const SizedBox(height: 9),
                   MedievalButton(
                     label: 'Restart',
                     icon: Icons.refresh_rounded,
                     onPressed: () => _leavePause(context, () {
-                      context
-                          .read<GameplayBloc>()
-                          .add(const GameplayRestarted());
+                      context.read<GameplayBloc>().add(
+                        const GameplayRestarted(),
+                      );
                     }),
                   ),
                   const SizedBox(height: 9),
@@ -797,16 +796,14 @@ class _PauseOverlay extends StatelessWidget {
                     icon: Icons.grid_view_rounded,
                     sfx: Sfx.back,
                     onPressed: () {
-                      final chapter = context
-                              .read<GameplayBloc>()
-                              .state
-                              .level
-                              ?.chapterId ??
+                      final chapter =
+                          context.read<GameplayBloc>().state.level?.chapterId ??
                           GameConstants.chapter1Id;
                       unawaited(
                         _leavePause(
                           context,
                           () => context.go('/levels/$chapter'),
+                          policy: InterstitialPolicy.always,
                         ),
                       );
                     },
@@ -815,16 +812,22 @@ class _PauseOverlay extends StatelessWidget {
                   MedievalButton(
                     label: 'Settings',
                     icon: Icons.settings_rounded,
-                    onPressed: () =>
-                        _leavePause(context, () => context.push('/settings')),
+                    onPressed: () => _leavePause(
+                      context,
+                      () => context.push('/settings'),
+                      policy: InterstitialPolicy.always,
+                    ),
                   ),
                   const SizedBox(height: 9),
                   MedievalButton(
                     label: 'Home',
                     icon: Icons.home_rounded,
                     sfx: Sfx.back,
-                    onPressed: () =>
-                        _leavePause(context, () => context.go('/menu')),
+                    onPressed: () => _leavePause(
+                      context,
+                      () => context.go('/menu'),
+                      policy: InterstitialPolicy.always,
+                    ),
                   ),
                 ],
               ),

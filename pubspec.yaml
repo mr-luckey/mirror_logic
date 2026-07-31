@@ -21,6 +21,10 @@ dependencies:
   collection: ^1.19.1
   uuid: ^4.5.1
   google_mobile_ads: ^9.0.0
+  in_app_review: ^2.0.12
+  in_app_update: ^5.0.0
+  package_info_plus: ^10.2.1
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -29,9 +33,50 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # Every shipped file is listed one by one on purpose. Globbing the asset
+  # folders used to bundle the PNG/WAV masters and unused art variants too,
+  # which cost ~45 MB of APK for files the game never loads. Regenerate these
+  # from the masters with `python3 tool/optimize_assets.py`.
   assets:
     - assets/levels/levels.json
-    - assets/images/medieval/
-    - assets/images/ui/
-    - assets/audio/sfx/
-    - assets/audio/music/
+
+    - assets/images/medieval/crystal_cut.webp
+    - assets/images/medieval/emitter_cut.webp
+    - assets/images/medieval/torch_base_cut.webp
+    - assets/images/medieval/torch_cut.webp
+    - assets/images/medieval/vine_cut.webp
+    - assets/images/medieval/wall_h_cut.webp
+    - assets/images/medieval/wall_v_cut.webp
+
+    - assets/images/ui/crest.webp
+    - assets/images/ui/padlock.webp
+    - assets/images/ui/tome.webp
+    - assets/images/ui/wreath.webp
+    - assets/images/ui/tome_ch1.webp
+    - assets/images/ui/tome_ch2.webp
+    - assets/images/ui/tome_ch3.webp
+    - assets/images/ui/tome_ch4.webp
+    - assets/images/ui/tome_ch5.webp
+    - assets/images/ui/tome_ch6.webp
+    - assets/images/ui/tome_ch7.webp
+    - assets/images/ui/tome_ch8.webp
+    - assets/images/ui/tome_ch9.webp
+    - assets/images/ui/tome_ch10.webp
+
+    - assets/audio/music/gameplay.ogg
+    - assets/audio/music/menu.ogg
+
+    - assets/audio/sfx/back.ogg
+    - assets/audio/sfx/beam_hit.ogg
+    - assets/audio/sfx/coin.ogg
+    - assets/audio/sfx/crystal_lit.ogg
+    - assets/audio/sfx/hint.ogg
+    - assets/audio/sfx/mirror_detent.ogg
+    - assets/audio/sfx/mirror_grab.ogg
+    - assets/audio/sfx/mirror_lock.ogg
+    - assets/audio/sfx/reject.ogg
+    - assets/audio/sfx/star.ogg
+    - assets/audio/sfx/tap.ogg
+    - assets/audio/sfx/undo.ogg
+    - assets/audio/sfx/unlock.ogg
+    - assets/audio/sfx/win.ogg

@@ -7,7 +7,7 @@ import 'package:mirror_logic/domain/economy/player_save.dart';
 
 /// Every one-shot the game can play.
 ///
-/// Each entry maps to `assets/audio/sfx/<file>.wav`.
+/// Each entry maps to `assets/audio/sfx/<file>.ogg`.
 enum Sfx {
   /// Finger lands on a mirror.
   mirrorGrab('mirror_grab', HapticStrength.selection, minGapMs: 60),
@@ -60,14 +60,14 @@ enum Sfx {
   /// far faster than a speaker or a vibration motor can articulate them.
   final int minGapMs;
 
-  String get asset => 'audio/sfx/$file.wav';
+  String get asset => 'audio/sfx/$file.ogg';
 }
 
 enum HapticStrength { none, selection, light, medium, heavy }
 
 enum MusicTrack {
-  menu('audio/music/menu.wav'),
-  gameplay('audio/music/gameplay.wav');
+  menu('audio/music/menu.ogg'),
+  gameplay('audio/music/gameplay.ogg');
 
   const MusicTrack(this.asset);
 
@@ -102,8 +102,9 @@ class AudioService {
   @visibleForTesting
   double get musicGain => _musicGain;
 
-  double get _musicGain =>
-      _muted ? 0.0 : _settings.musicVolume * (_ducked ? _duckedMusicScale : 1.0);
+  double get _musicGain => _muted
+      ? 0.0
+      : _settings.musicVolume * (_ducked ? _duckedMusicScale : 1.0);
 
   Future<void> init() async {
     if (_ready) return;
@@ -124,8 +125,7 @@ class AudioService {
         _pool.add(player);
       }
 
-      _music = AudioPlayer(playerId: 'music')
-        ..setReleaseMode(ReleaseMode.loop);
+      _music = AudioPlayer(playerId: 'music')..setReleaseMode(ReleaseMode.loop);
       _ready = true;
     } catch (error, stack) {
       // A device with no working audio route must not take the game down.

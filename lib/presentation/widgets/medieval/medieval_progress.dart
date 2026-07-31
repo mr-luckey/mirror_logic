@@ -50,7 +50,12 @@ class MedievalProgressBar extends StatelessWidget {
                   ],
                 ),
                 boxShadow: clamped > 0
-                    ? [BoxShadow(color: fill.withValues(alpha: 0.5), blurRadius: 5)]
+                    ? [
+                        BoxShadow(
+                          color: fill.withValues(alpha: 0.5),
+                          blurRadius: 5,
+                        ),
+                      ]
                     : null,
               ),
               child: SizedBox(height: height),

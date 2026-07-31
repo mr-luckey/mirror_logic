@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
 
 /// Dark carved-wood backdrop with depth, planks, and corner vines.
 class MedievalWoodBackground extends StatelessWidget {
@@ -32,7 +33,7 @@ class MedievalWoodBackground extends StatelessWidget {
               child: Transform.rotate(
                 angle: 0.28,
                 child: Image.asset(
-                  'assets/images/medieval/vine_cut.png',
+                  MedievalArt.vine,
                   width: MediaQuery.sizeOf(context).width * 0.28,
                   height: MediaQuery.sizeOf(context).width * 0.28,
                   fit: BoxFit.contain,
@@ -53,7 +54,7 @@ class MedievalWoodBackground extends StatelessWidget {
               child: Transform.rotate(
                 angle: math.pi + 0.15,
                 child: Image.asset(
-                  'assets/images/medieval/vine_cut.png',
+                  MedievalArt.vine,
                   width: MediaQuery.sizeOf(context).width * 0.26,
                   height: MediaQuery.sizeOf(context).width * 0.26,
                   fit: BoxFit.contain,
@@ -162,10 +163,7 @@ class _WoodPlankPainter extends CustomPainter {
         ..shader = RadialGradient(
           center: const Alignment(0, -0.05),
           radius: 1.2,
-          colors: [
-            Colors.transparent,
-            Colors.black.withValues(alpha: 0.5),
-          ],
+          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.5)],
           stops: const [0.5, 1.0],
         ).createShader(Offset.zero & size),
     );

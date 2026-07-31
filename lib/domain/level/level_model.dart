@@ -102,16 +102,16 @@ class MirrorDef extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        hingePosition,
-        length,
-        initialAngle,
-        minAngle,
-        maxAngle,
-        snapIncrement,
-        isLocked,
-        type,
-      ];
+    id,
+    hingePosition,
+    length,
+    initialAngle,
+    minAngle,
+    maxAngle,
+    snapIncrement,
+    isLocked,
+    type,
+  ];
 }
 
 /// How an obstacle should be drawn. Collision is unaffected — the beam always
@@ -176,6 +176,7 @@ class TargetCrystalDef extends Equatable {
   final Vec2 position;
   final double hitRadius;
   final String groupId;
+
   /// Beam passes through without stopping (still marks lit).
   final bool relay;
   final String label;
@@ -185,7 +186,8 @@ class TargetCrystalDef extends Equatable {
     return TargetCrystalDef(
       id: json['id'] as String,
       position: Vec2(pos[0].toDouble(), pos[1].toDouble()),
-      hitRadius: (json['hitRadius'] as num?)?.toDouble() ??
+      hitRadius:
+          (json['hitRadius'] as num?)?.toDouble() ??
           GameConstants.defaultHitRadius,
       groupId: json['groupId'] as String? ?? 'g1',
       relay: json['relay'] as bool? ?? false,
@@ -224,10 +226,7 @@ class LevelMetadata extends Equatable {
 }
 
 class CrystalGroupDef extends Equatable {
-  const CrystalGroupDef({
-    required this.groupId,
-    required this.requiredCount,
-  });
+  const CrystalGroupDef({required this.groupId, required this.requiredCount});
 
   final String groupId;
   final int requiredCount;
@@ -283,7 +282,8 @@ class IntendedSolution extends Equatable {
     final raw = json['mirrorAngles'] as Map<String, dynamic>? ?? {};
     return IntendedSolution(
       mirrorAngles: raw.map((k, v) => MapEntry(k, (v as num).toDouble())),
-      toleranceDegrees: (json['toleranceDegrees'] as num?)?.toDouble() ??
+      toleranceDegrees:
+          (json['toleranceDegrees'] as num?)?.toDouble() ??
           GameConstants.angleToleranceDegrees,
     );
   }
@@ -324,6 +324,7 @@ class LevelModel extends Equatable {
   final StarThresholds starThresholds;
   final int levelIndex;
   final String title;
+
   /// How many of the board's mirrors the beam must route through before it
   /// reaches a crystal (null = no constraint). Distinct mirrors, not bounces:
   /// the objective every level states is to use them all.
@@ -352,22 +353,22 @@ class LevelModel extends Equatable {
       targetCrystals: (json['targetCrystals'] as List<dynamic>)
           .map((e) => TargetCrystalDef.fromJson(e as Map<String, dynamic>))
           .toList(),
-      crystalGroups: (json['crystalGroups'] as List<dynamic>? ??
-              [
-                {'groupId': 'g1', 'requiredCount': 1},
-              ])
-          .map((e) => CrystalGroupDef.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      crystalGroups:
+          (json['crystalGroups'] as List<dynamic>? ??
+                  [
+                    {'groupId': 'g1', 'requiredCount': 1},
+                  ])
+              .map((e) => CrystalGroupDef.fromJson(e as Map<String, dynamic>))
+              .toList(),
       intendedSolution: IntendedSolution.fromJson(
         json['intendedSolution'] as Map<String, dynamic>?,
       ),
       starThresholds: StarThresholds.fromJson(
         json['starThresholds'] as Map<String, dynamic>?,
       ),
-      levelIndex: json['levelIndex'] as int? ??
-          int.tryParse(
-            (json['levelId'] as String).split('_').last,
-          ) ??
+      levelIndex:
+          json['levelIndex'] as int? ??
+          int.tryParse((json['levelId'] as String).split('_').last) ??
           1,
       title: json['title'] as String? ?? '',
       requiredMirrorCount: (json['requiredMirrorBounces'] as num?)?.round(),
@@ -379,20 +380,20 @@ class LevelModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        levelId,
-        chapterId,
-        schemaVersion,
-        roomBounds,
-        lightSources,
-        mirrors,
-        obstacles,
-        targetCrystals,
-        crystalGroups,
-        intendedSolution,
-        starThresholds,
-        levelIndex,
-        title,
-        requiredMirrorCount,
-        metadata,
-      ];
+    levelId,
+    chapterId,
+    schemaVersion,
+    roomBounds,
+    lightSources,
+    mirrors,
+    obstacles,
+    targetCrystals,
+    crystalGroups,
+    intendedSolution,
+    starThresholds,
+    levelIndex,
+    title,
+    requiredMirrorCount,
+    metadata,
+  ];
 }

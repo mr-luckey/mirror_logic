@@ -12,11 +12,8 @@ import 'package:mirror_logic/presentation/screens/gameplay/gameplay_paint_snapsh
 
 /// Medieval stone-board painter: tiles, bronze frame, laser, entities.
 class GameplayPainter extends CustomPainter {
-  GameplayPainter({
-    required this.snapshot,
-    required this.clock,
-    this.art,
-  }) : super(repaint: clock);
+  GameplayPainter({required this.snapshot, required this.clock, this.art})
+    : super(repaint: clock);
 
   final GameplayPaintSnapshot snapshot;
 
@@ -297,10 +294,7 @@ class GameplayPainter extends CustomPainter {
         ..shader = RadialGradient(
           center: Alignment.center,
           radius: 0.9,
-          colors: [
-            Colors.transparent,
-            Colors.black.withValues(alpha: 0.4),
-          ],
+          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.4)],
         ).createShader(Rect.fromLTWH(0, 0, w, h)),
     );
     canvas.restore();
@@ -434,10 +428,7 @@ class GameplayPainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            MedievalColors.stoneLight,
-            MedievalColors.stoneDark,
-          ],
+          colors: [MedievalColors.stoneLight, MedievalColors.stoneDark],
         ).createShader(bounds),
     );
     canvas.drawPath(
@@ -470,8 +461,10 @@ class GameplayPainter extends CustomPainter {
     if (beam.segments.isEmpty || snapshot.powerOnProgress <= 0) return;
 
     final pulse = 0.85 + 0.15 * math.sin(animTime * 6);
-    final visibleCount =
-        math.max(1, (beam.segments.length * snapshot.powerOnProgress).ceil());
+    final visibleCount = math.max(
+      1,
+      (beam.segments.length * snapshot.powerOnProgress).ceil(),
+    );
 
     for (var i = 0; i < visibleCount && i < beam.segments.length; i++) {
       final seg = beam.segments[i];
@@ -490,14 +483,18 @@ class GameplayPainter extends CustomPainter {
 
       // The stretch that lands on a rejected crystal goes red, so the player
       // can see at a glance that this hit is not the answer.
-      final rejected = seg.hitKind == BeamHitKind.crystal &&
+      final rejected =
+          seg.hitKind == BeamHitKind.crystal &&
           snapshot.rejectedCrystalIds.contains(seg.hitId);
-      final glowColor =
-          rejected ? MedievalColors.rejectGlow : MedievalColors.laserGlow;
-      final midColor =
-          rejected ? MedievalColors.rejectMid : MedievalColors.laserMid;
-      final coreColor =
-          rejected ? MedievalColors.rejectCore : MedievalColors.laserCore;
+      final glowColor = rejected
+          ? MedievalColors.rejectGlow
+          : MedievalColors.laserGlow;
+      final midColor = rejected
+          ? MedievalColors.rejectMid
+          : MedievalColors.laserMid;
+      final coreColor = rejected
+          ? MedievalColors.rejectCore
+          : MedievalColors.laserCore;
 
       final glow = Paint()
         ..color = glowColor.withValues(alpha: 0.35 * pulse)
@@ -696,10 +693,7 @@ class GameplayPainter extends CustomPainter {
         Paint()
           ..shader = RadialGradient(
             center: const Alignment(-0.3, -0.4),
-            colors: [
-              MedievalColors.bronzeHighlight,
-              MedievalColors.bronzeDark,
-            ],
+            colors: [MedievalColors.bronzeHighlight, MedievalColors.bronzeDark],
           ).createShader(Rect.fromCircle(center: p, radius: 3.5)),
       );
     }
@@ -891,7 +885,9 @@ class GameplayPainter extends CustomPainter {
       start,
       end,
       Paint()
-        ..color = MedievalColors.bronzeHighlight.withValues(alpha: 0.2 * strength)
+        ..color = MedievalColors.bronzeHighlight.withValues(
+          alpha: 0.2 * strength,
+        )
         ..strokeWidth = 11
         ..strokeCap = StrokeCap.round
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
@@ -1025,10 +1021,7 @@ class GameplayPainter extends CustomPainter {
         Paint()
           ..shader = RadialGradient(
             center: const Alignment(-0.3, -0.4),
-            colors: [
-              MedievalColors.bronzeHighlight,
-              MedievalColors.bronzeDark,
-            ],
+            colors: [MedievalColors.bronzeHighlight, MedievalColors.bronzeDark],
           ).createShader(Rect.fromCircle(center: rp, radius: 2.6)),
       );
     }
@@ -1079,17 +1072,15 @@ class GameplayPainter extends CustomPainter {
         Offset(hinge.dx, postTop),
         rInner * 0.95,
         Paint()
-          ..shader = RadialGradient(
-            colors: [
-              MedievalColors.bronzeLight,
-              MedievalColors.bronzeDark,
-            ],
-          ).createShader(
-            Rect.fromCircle(
-              center: Offset(hinge.dx, postTop),
-              radius: rInner,
-            ),
-          ),
+          ..shader =
+              RadialGradient(
+                colors: [MedievalColors.bronzeLight, MedievalColors.bronzeDark],
+              ).createShader(
+                Rect.fromCircle(
+                  center: Offset(hinge.dx, postTop),
+                  radius: rInner,
+                ),
+              ),
       );
     }
   }
@@ -1156,10 +1147,7 @@ class GameplayPainter extends CustomPainter {
         ..strokeWidth = 2
         ..color = MedievalColors.bronzeLight.withValues(alpha: 0.7),
     );
-    text.paint(
-      canvas,
-      center.translate(-text.width / 2, -text.height / 2),
-    );
+    text.paint(canvas, center.translate(-text.width / 2, -text.height / 2));
   }
 
   /// Struck-through ring over a crystal the beam reached the wrong way.
@@ -1174,11 +1162,7 @@ class GameplayPainter extends CustomPainter {
 
     canvas.drawCircle(center, r, stroke);
     final d = r * 0.62;
-    canvas.drawLine(
-      center.translate(-d, -d),
-      center.translate(d, d),
-      stroke,
-    );
+    canvas.drawLine(center.translate(-d, -d), center.translate(d, d), stroke);
   }
 
   void _drawCrystals(
@@ -1204,10 +1188,9 @@ class GameplayPainter extends CustomPainter {
         center,
         aura,
         Paint()
-          ..color = (rejected
-                  ? MedievalColors.rejectMid
-                  : MedievalColors.laserMid)
-              .withValues(alpha: lit || rejected ? 0.4 * pulse : 0.14)
+          ..color =
+              (rejected ? MedievalColors.rejectMid : MedievalColors.laserMid)
+                  .withValues(alpha: lit || rejected ? 0.4 * pulse : 0.14)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
       );
 
@@ -1289,18 +1272,15 @@ class GameplayPainter extends CustomPainter {
               color: rejected
                   ? MedievalColors.rejectMid
                   : lit
-                      ? MedievalColors.laserCore
-                      : MedievalColors.textCream.withValues(alpha: 0.85),
+                  ? MedievalColors.laserCore
+                  : MedievalColors.textCream.withValues(alpha: 0.85),
               fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
           ),
           textDirection: TextDirection.ltr,
         )..layout();
-        tp.paint(
-          canvas,
-          center.translate(-tp.width / 2, c.hitRadius * 1.1),
-        );
+        tp.paint(canvas, center.translate(-tp.width / 2, c.hitRadius * 1.1));
       }
     }
   }
@@ -1320,10 +1300,7 @@ class GameplayPainter extends CustomPainter {
       ),
       Paint()
         ..shader = RadialGradient(
-          colors: [
-            MedievalColors.bronzeHighlight,
-            MedievalColors.bronzeDark,
-          ],
+          colors: [MedievalColors.bronzeHighlight, MedievalColors.bronzeDark],
         ).createShader(Rect.fromCircle(center: center, radius: radius)),
     );
 

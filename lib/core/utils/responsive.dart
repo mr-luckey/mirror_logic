@@ -33,10 +33,7 @@ abstract final class Responsive {
 
   static EdgeInsets screenPadding(BuildContext context) {
     final s = scaleOf(context);
-    return EdgeInsets.symmetric(
-      horizontal: 16 * s,
-      vertical: 8 * s,
-    );
+    return EdgeInsets.symmetric(horizontal: 16 * s, vertical: 8 * s);
   }
 
   /// Horizontal inset that never exceeds comfortable phone margins.

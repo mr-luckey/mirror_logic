@@ -51,8 +51,9 @@ class MedievalToggle extends StatelessWidget {
           boxShadow: value
               ? [
                   BoxShadow(
-                    color: MedievalColors.bronzeHighlight
-                        .withValues(alpha: 0.35),
+                    color: MedievalColors.bronzeHighlight.withValues(
+                      alpha: 0.35,
+                    ),
                     blurRadius: 8,
                   ),
                 ]

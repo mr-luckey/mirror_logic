@@ -27,8 +27,9 @@ class ChapterSelectScreen extends StatefulWidget {
 class _ChapterSelectScreenState extends State<ChapterSelectScreen> {
   // Built once: creating the future inside build restarts the load on every
   // ancestor rebuild and flashes the spinner.
-  late final Future<List<ChapterInfo>> _chapters =
-      context.read<LevelRepository>().chapters();
+  late final Future<List<ChapterInfo>> _chapters = context
+      .read<LevelRepository>()
+      .chapters();
 
   @override
   Widget build(BuildContext context) {
@@ -76,13 +77,14 @@ class _ChapterSelectScreenState extends State<ChapterSelectScreen> {
                             ch.id,
                             levelIds: ch.levelIds,
                           );
-                          final completed =
-                              progress.save.completedCountForChapter(
+                          final completed = progress.save
+                              .completedCountForChapter(
+                                ch.id,
+                                levelIds: ch.levelIds,
+                              );
+                          final missing = progress.save.starsMissingToUnlock(
                             ch.id,
-                            levelIds: ch.levelIds,
                           );
-                          final missing =
-                              progress.save.starsMissingToUnlock(ch.id);
                           final unlocked = missing == 0;
 
                           return _ChapterCard(
@@ -96,9 +98,9 @@ class _ChapterSelectScreenState extends State<ChapterSelectScreen> {
                                 ? () => context.push('/levels/${ch.id}')
                                 : null,
                           ).animate().fadeIn(
-                                delay: (index * 55).ms,
-                                duration: 320.ms,
-                              );
+                            delay: (index * 55).ms,
+                            duration: 320.ms,
+                          );
                         },
                       );
                     },
@@ -150,88 +152,94 @@ class _ChapterCard extends StatelessWidget {
       child: Stack(
         children: [
           MedievalPanel(
-          padding: EdgeInsets.all(narrow ? 11 : 14),
-          glow: unlocked && ratio >= 1 ? MedievalColors.bronzeHighlight : null,
-          child: Row(
-            children: [
-              _Thumb(
-                size: thumb,
-                unlocked: unlocked,
-                chapterId: chapter.id,
-                index: index,
-              ),
-              SizedBox(width: narrow ? 11 : 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      chapter.title.toUpperCase(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: MedievalTextStyles.cinzel(
-                        weight: FontWeight.w700,
-                        size: Responsive.sp(context, 13),
-                        letterSpacing: 1.2,
-                        color: unlocked
-                            ? MedievalColors.textGold
-                            : MedievalColors.textMuted,
+            padding: EdgeInsets.all(narrow ? 11 : 14),
+            glow: unlocked && ratio >= 1
+                ? MedievalColors.bronzeHighlight
+                : null,
+            child: Row(
+              children: [
+                _Thumb(
+                  size: thumb,
+                  unlocked: unlocked,
+                  chapterId: chapter.id,
+                  index: index,
+                ),
+                SizedBox(width: narrow ? 11 : 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        chapter.title.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: MedievalTextStyles.cinzel(
+                          weight: FontWeight.w700,
+                          size: Responsive.sp(context, 13),
+                          letterSpacing: 1.2,
+                          color: unlocked
+                              ? MedievalColors.textGold
+                              : MedievalColors.textMuted,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      unlocked
-                          ? chapter.subtitle
-                          : 'Sealed — $starsMissing more stars',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: MedievalTextStyles.cinzel(
-                        color: MedievalColors.textMuted,
-                        size: Responsive.sp(context, 11),
+                      const SizedBox(height: 3),
+                      Text(
+                        unlocked
+                            ? chapter.subtitle
+                            : 'Sealed — $starsMissing more stars',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: MedievalTextStyles.cinzel(
+                          color: MedievalColors.textMuted,
+                          size: Responsive.sp(context, 11),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const MedievalStarRow(filled: 3, size: 12, spacing: 1),
-                        const SizedBox(width: 5),
-                        Flexible(
-                          child: Text(
-                            '$stars/${chapter.maxStars}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const MedievalStarRow(
+                            filled: 3,
+                            size: 12,
+                            spacing: 1,
+                          ),
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              '$stars/${chapter.maxStars}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: MedievalTextStyles.cinzel(
+                                weight: FontWeight.w700,
+                                size: 11,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '$completed/${chapter.levelCount}',
                             style: MedievalTextStyles.cinzel(
-                              weight: FontWeight.w700,
+                              color: MedievalColors.textMuted,
                               size: 11,
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '$completed/${chapter.levelCount}',
-                          style: MedievalTextStyles.cinzel(
-                            color: MedievalColors.textMuted,
-                            size: 11,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 7),
-                    MedievalProgressBar(value: ratio),
-                  ],
-                ),
-              ),
-              if (unlocked)
-                Padding(
-                  padding: const EdgeInsets.only(left: 6),
-                  child: Icon(
-                    Icons.chevron_right_rounded,
-                    color: MedievalColors.bronzeLight.withValues(alpha: 0.8),
-                    size: 20,
+                        ],
+                      ),
+                      const SizedBox(height: 7),
+                      MedievalProgressBar(value: ratio),
+                    ],
                   ),
                 ),
-            ],
-          ),
+                if (unlocked)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 6),
+                    child: Icon(
+                      Icons.chevron_right_rounded,
+                      color: MedievalColors.bronzeLight.withValues(alpha: 0.8),
+                      size: 20,
+                    ),
+                  ),
+              ],
+            ),
           ),
           // The seal covers the whole card rather than swapping the tome out,
           // so a locked hall still shows which one it is and what it costs.

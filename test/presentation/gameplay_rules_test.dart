@@ -158,24 +158,22 @@ void main() {
   });
 
   group('solution hint', () {
-    Map<String, dynamic> mirror(
-      String id,
-      double x, {
-      bool locked = false,
-    }) =>
-        {
-          'id': id,
-          'hingePosition': [x, 800.0],
-          'length': 160.0,
-          'initialAngle': 10.0,
-          'minAngle': 5.0,
-          'maxAngle': 175.0,
-          'isLocked': locked,
-        };
+    Map<String, dynamic> mirror(String id, double x, {bool locked = false}) => {
+      'id': id,
+      'hingePosition': [x, 800.0],
+      'length': 160.0,
+      'initialAngle': 10.0,
+      'minAngle': 5.0,
+      'maxAngle': 175.0,
+      'isLocked': locked,
+    };
 
     Future<GameplayBloc> hintingBloc({bool lockSecond = false}) async {
       final level = _level(
-        mirrors: [mirror('m1', 400), mirror('m2', 600, locked: lockSecond)],
+        mirrors: [
+          mirror('m1', 400),
+          mirror('m2', 600, locked: lockSecond),
+        ],
         solution: const {
           'mirrorAngles': {'m1': 45.0, 'm2': 135.0},
           'toleranceDegrees': 4.0,
@@ -233,14 +231,14 @@ void main() {
   group('LevelValidator', () {
     test('a locked mirror at the wrong angle makes the level unsolvable', () {
       Map<String, dynamic> mirror({required bool locked}) => {
-            'id': 'm1',
-            'hingePosition': [500.0, 800.0],
-            'length': 160.0,
-            'initialAngle': 0.0,
-            'minAngle': 0.0,
-            'maxAngle': 180.0,
-            'isLocked': locked,
-          };
+        'id': 'm1',
+        'hingePosition': [500.0, 800.0],
+        'length': 160.0,
+        'initialAngle': 0.0,
+        'minAngle': 0.0,
+        'maxAngle': 180.0,
+        'isLocked': locked,
+      };
 
       const solution = {
         'mirrorAngles': {'m1': 45.0},
@@ -321,10 +319,7 @@ void main() {
     });
 
     test('seeing the solution drops the player to one star', () {
-      expect(
-        stateWith(hintsUsed: 1, solutionRevealed: true).computeStars(),
-        1,
-      );
+      expect(stateWith(hintsUsed: 1, solutionRevealed: true).computeStars(), 1);
     });
 
     test('going over the move budget drops to two stars', () {
@@ -350,9 +345,16 @@ void main() {
     test('ch1 does not swallow ch10 progress', () {
       const save = PlayerSave(
         levelProgress: {
-          'ch1_001': LevelProgress(levelId: 'ch1_001', stars: 3, completed: true),
-          'ch10_001':
-              LevelProgress(levelId: 'ch10_001', stars: 2, completed: true),
+          'ch1_001': LevelProgress(
+            levelId: 'ch1_001',
+            stars: 3,
+            completed: true,
+          ),
+          'ch10_001': LevelProgress(
+            levelId: 'ch10_001',
+            stars: 2,
+            completed: true,
+          ),
         },
       );
 

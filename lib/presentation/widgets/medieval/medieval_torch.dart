@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
 
 /// Metal wall torch with a live flame sitting in the cup.
 ///
@@ -28,13 +29,11 @@ class MedievalTorch extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/images/medieval/torch_base_cut.png',
+              MedievalArt.torchBase,
               fit: BoxFit.fill,
               filterQuality: FilterQuality.high,
-              errorBuilder: (_, _, _) => Image.asset(
-                'assets/images/medieval/torch_cut.png',
-                fit: BoxFit.contain,
-              ),
+              errorBuilder: (_, _, _) =>
+                  Image.asset(MedievalArt.torch, fit: BoxFit.contain),
             ),
           ),
           // The sprite's top ~40% is transparent and the bowl rim sits at
@@ -88,9 +87,7 @@ class _TorchFlameState extends State<_TorchFlame>
     // and without this it would drag the crest, title and buttons along with
     // it on each tick.
     return RepaintBoundary(
-      child: CustomPaint(
-        painter: _FlamePainter(clock: _tick),
-      ),
+      child: CustomPaint(painter: _FlamePainter(clock: _tick)),
     );
   }
 }
@@ -202,8 +199,7 @@ class _FlamePainter extends CustomPainter {
             const Color(0xFFFFEE88),
             const Color(0xFFFF4400),
             life,
-          )!
-              .withValues(alpha: 0.9 * (1 - life * 0.7)),
+          )!.withValues(alpha: 0.9 * (1 - life * 0.7)),
       );
     }
   }
@@ -245,10 +241,7 @@ class _FlamePainter extends CustomPainter {
         ..color = color.withValues(alpha: alpha * 0.55)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
     );
-    canvas.drawPath(
-      path,
-      Paint()..color = color.withValues(alpha: alpha),
-    );
+    canvas.drawPath(path, Paint()..color = color.withValues(alpha: alpha));
   }
 
   /// The clock drives repaints; nothing else about the flame ever changes.

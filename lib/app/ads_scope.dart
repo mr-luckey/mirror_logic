@@ -12,9 +12,8 @@ class AdsScope extends StatelessWidget {
   final AdsService ads;
   final Widget child;
 
-  static AdsService? maybeOf(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<_AdsProvider>()
-      ?.ads;
+  static AdsService? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_AdsProvider>()?.ads;
 
   @override
   Widget build(BuildContext context) => _AdsProvider(ads: ads, child: child);

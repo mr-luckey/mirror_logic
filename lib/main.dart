@@ -12,6 +12,8 @@ import 'package:mirror_logic/data/repositories/save_repository.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 import 'package:mirror_logic/infrastructure/art/game_art.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
+import 'package:mirror_logic/infrastructure/review/review_service.dart';
+import 'package:mirror_logic/infrastructure/update/app_update_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/settings/settings_cubit.dart';
@@ -48,7 +50,9 @@ Future<void> main() async {
   // Never block first paint on the audio stack; a device with no route just
   // leaves the service disabled.
   unawaited(
-    audioService.init().then((_) => audioService.applySettings(settingsCubit.state)),
+    audioService.init().then(
+      (_) => audioService.applySettings(settingsCubit.state),
+    ),
   );
 
   // Same deal for ads, and for the same reason: the SDK talks to the network on
@@ -68,17 +72,23 @@ Future<void> main() async {
         RepositoryProvider<LevelRepository>.value(value: levelRepository),
         RepositoryProvider<AudioService>.value(value: audioService),
         RepositoryProvider<AdsService>.value(value: adsService),
+        RepositoryProvider<ReviewService>.value(value: sl<ReviewService>()),
+        RepositoryProvider<AppUpdateService>.value(
+          value: sl<AppUpdateService>(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(create: (_) => settingsCubit),
           BlocProvider(
-            create: (_) => ProgressBloc(saveRepository: saveRepository)
-              ..add(const ProgressStarted()),
+            create: (_) =>
+                ProgressBloc(saveRepository: saveRepository)
+                  ..add(const ProgressStarted()),
           ),
           BlocProvider(
-            create: (_) => EconomyBloc(economyRepository: economyRepository)
-              ..add(const EconomyStarted()),
+            create: (_) =>
+                EconomyBloc(economyRepository: economyRepository)
+                  ..add(const EconomyStarted()),
           ),
         ],
         child: const MirrorLogicApp(),

@@ -35,16 +35,16 @@ class MedievalResourceChip extends StatelessWidget {
 
     final chip = Container(
       height: height,
-      padding: EdgeInsets.only(left: 4 * scale, right: (onAdd == null ? 10 : 2) * scale),
+      padding: EdgeInsets.only(
+        left: 4 * scale,
+        right: (onAdd == null ? 10 : 2) * scale,
+      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(height / 2),
         gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            MedievalColors.bronzeMid,
-            MedievalColors.bronzeDark,
-          ],
+          colors: [MedievalColors.bronzeMid, MedievalColors.bronzeDark],
         ),
         border: Border.all(
           color: MedievalColors.bronzeLight.withValues(alpha: 0.7),
@@ -68,17 +68,19 @@ class MedievalResourceChip extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  (glowColor ?? MedievalColors.bronzeHighlight)
-                      .withValues(alpha: 0.9),
+                  (glowColor ?? MedievalColors.bronzeHighlight).withValues(
+                    alpha: 0.9,
+                  ),
                   MedievalColors.bronzeDark,
                 ],
               ),
-              border: Border.all(
-                color: MedievalColors.bronzeLight,
-                width: 1.2,
-              ),
+              border: Border.all(color: MedievalColors.bronzeLight, width: 1.2),
             ),
-            child: Icon(icon, size: 14 * scale, color: MedievalColors.textCream),
+            child: Icon(
+              icon,
+              size: 14 * scale,
+              color: MedievalColors.textCream,
+            ),
           ),
           SizedBox(width: 6 * scale),
           Text(

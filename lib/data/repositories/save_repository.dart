@@ -49,6 +49,7 @@ class SaveRepository {
       PlayerSave(
         coins: current.coins,
         onboardingComplete: current.onboardingComplete,
+        walkthroughSeen: current.walkthroughSeen,
       ).toJson(),
     );
   }

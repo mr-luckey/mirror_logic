@@ -54,10 +54,7 @@ class BeamSimulationResult extends Equatable {
   /// apart from a beam that skipped a mirror and stumbled onto the crystal.
   final Map<String, Set<String>> mirrorsUsedToCrystal;
 
-  static const empty = BeamSimulationResult(
-    segments: [],
-    litCrystalIds: {},
-  );
+  static const empty = BeamSimulationResult(segments: [], litCrystalIds: {});
 
   @override
   List<Object?> get props => [segments, litCrystalIds, mirrorsUsedToCrystal];

@@ -30,13 +30,21 @@ class GameArt {
 
   static Future<void> ensureLoaded() => _pending ??= _load();
 
+  /// The board sprites, in the order [_load] assigns them.
+  ///
+  /// Public so a test can assert each one is on disk and declared in
+  /// pubspec.yaml: [_decode] deliberately tolerates a missing file, so a sprite
+  /// dropped from the bundle would quietly fall back to the painted shapes
+  /// instead of failing the build.
+  static const assetPaths = <String>[
+    'assets/images/medieval/crystal_cut.webp',
+    'assets/images/medieval/emitter_cut.webp',
+    'assets/images/medieval/wall_h_cut.webp',
+    'assets/images/medieval/wall_v_cut.webp',
+  ];
+
   static Future<void> _load() async {
-    final images = await Future.wait<ui.Image?>([
-      _decode('assets/images/medieval/crystal_cut.png'),
-      _decode('assets/images/medieval/emitter_cut.png'),
-      _decode('assets/images/medieval/wall_h_cut.png'),
-      _decode('assets/images/medieval/wall_v_cut.png'),
-    ]);
+    final images = await Future.wait<ui.Image?>(assetPaths.map(_decode));
     notifier.value = GameArt(
       crystal: images[0],
       emitter: images[1],

@@ -96,9 +96,7 @@ void main() {
     test('no level starts already solved', () {
       final failures = <String>[];
       for (final level in levels) {
-        final angles = {
-          for (final m in level.mirrors) m.id: m.initialAngle,
-        };
+        final angles = {for (final m in level.mirrors) m.id: m.initialAngle};
         final result = sim.simulate(level: level, mirrorAngles: angles);
         final solved = win.evaluate(level: level, beam: result).satisfied;
         if (solved) failures.add(level.levelId);
@@ -109,8 +107,9 @@ void main() {
     test('every mirror can reach its solution angle', () {
       for (final level in levels) {
         for (final entry in level.intendedSolution.mirrorAngles.entries) {
-          final mirror =
-              level.mirrors.where((m) => m.id == entry.key).firstOrNull;
+          final mirror = level.mirrors
+              .where((m) => m.id == entry.key)
+              .firstOrNull;
           expect(mirror, isNotNull, reason: '${level.levelId}/${entry.key}');
           expect(
             entry.value,

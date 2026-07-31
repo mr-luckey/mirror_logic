@@ -3,17 +3,36 @@ import 'package:mirror_logic/app/theme/medieval_colors.dart';
 
 /// Cut-out illustration assets used by the menus.
 abstract final class MedievalArt {
-  static const crest = 'assets/images/ui/crest.png';
-  static const tome = 'assets/images/ui/tome.png';
-  static const wreath = 'assets/images/ui/wreath.png';
-  static const padlock = 'assets/images/ui/padlock.png';
+  static const crest = 'assets/images/ui/crest.webp';
+  static const tome = 'assets/images/ui/tome.webp';
+  static const wreath = 'assets/images/ui/wreath.webp';
+  static const padlock = 'assets/images/ui/padlock.webp';
+  static const vine = 'assets/images/medieval/vine_cut.webp';
+  static const torchBase = 'assets/images/medieval/torch_base_cut.webp';
+  static const torch = 'assets/images/medieval/torch_cut.webp';
+
+  /// Highest chapter with its own tome; beyond this the art repeats.
+  static const lastTomeChapter = 10;
 
   /// One distinct tome per hall so the chapter list does not look copy-pasted.
   static String tomeForChapter(String chapterId) {
     final n = int.tryParse(chapterId.replaceFirst('ch', '')) ?? 1;
-    final clamped = n.clamp(1, 10);
-    return 'assets/images/ui/tome_ch$clamped.png';
+    final clamped = n.clamp(1, lastTomeChapter);
+    return 'assets/images/ui/tome_ch$clamped.webp';
   }
+
+  /// Every menu asset the game can ask for. Used by a test to check each one is
+  /// on disk and bundled, since the widgets fall back silently when one is not.
+  static List<String> get all => [
+    crest,
+    tome,
+    wreath,
+    padlock,
+    vine,
+    torchBase,
+    torch,
+    for (var i = 1; i <= lastTomeChapter; i++) tomeForChapter('ch$i'),
+  ];
 }
 
 /// A cut-out asset with a warm halo behind it, so it reads as lit by the same

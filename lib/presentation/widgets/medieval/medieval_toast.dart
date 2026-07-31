@@ -98,11 +98,7 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      widget.icon,
-                      size: 17,
-                      color: MedievalColors.textGold,
-                    ),
+                    Icon(widget.icon, size: 17, color: MedievalColors.textGold),
                     const SizedBox(width: 10),
                     Flexible(
                       child: Text(

@@ -16,8 +16,10 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final short = Responsive.isShort(context);
-    final crestSize =
-        Responsive.wp(context, short ? 0.44 : 0.54).clamp(150.0, 250.0);
+    final crestSize = Responsive.wp(
+      context,
+      short ? 0.44 : 0.54,
+    ).clamp(150.0, 250.0);
 
     return MedievalWoodBackground(
       child: _SplashBootstrap(
@@ -30,14 +32,17 @@ class SplashScreen extends StatelessWidget {
               children: [
                 const Spacer(flex: 3),
                 MedievalArtwork(
-                  asset: MedievalArt.crest,
-                  size: crestSize,
-                  glow: MedievalColors.laserGlow,
-                  glowStrength: 0.3,
-                )
+                      asset: MedievalArt.crest,
+                      size: crestSize,
+                      glow: MedievalColors.laserGlow,
+                      glowStrength: 0.3,
+                    )
                     .animate()
                     .fadeIn(duration: 700.ms)
-                    .scale(begin: const Offset(0.86, 0.86), curve: Curves.easeOutBack)
+                    .scale(
+                      begin: const Offset(0.86, 0.86),
+                      curve: Curves.easeOutBack,
+                    )
                     .then()
                     .animate(onPlay: (c) => c.repeat(reverse: true))
                     .scale(
@@ -87,24 +92,27 @@ class GameTitle extends StatelessWidget {
             'MIRROR LOGIC',
             maxLines: 1,
             textAlign: TextAlign.center,
-            style: MedievalTextStyles.cinzelDecorative(
-              size: Responsive.sp(context, 30) * scale,
-              weight: FontWeight.w700,
-              letterSpacing: 2,
-              color: MedievalColors.textGold,
-            ).copyWith(
-              shadows: [
-                Shadow(
-                  color: MedievalColors.bronzeHighlight.withValues(alpha: 0.55),
-                  blurRadius: 22,
+            style:
+                MedievalTextStyles.cinzelDecorative(
+                  size: Responsive.sp(context, 30) * scale,
+                  weight: FontWeight.w700,
+                  letterSpacing: 2,
+                  color: MedievalColors.textGold,
+                ).copyWith(
+                  shadows: [
+                    Shadow(
+                      color: MedievalColors.bronzeHighlight.withValues(
+                        alpha: 0.55,
+                      ),
+                      blurRadius: 22,
+                    ),
+                    const Shadow(
+                      color: Colors.black,
+                      blurRadius: 3,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
-                const Shadow(
-                  color: Colors.black,
-                  blurRadius: 3,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
           ),
         ],
       ),
@@ -163,8 +171,11 @@ class _SplashBootstrapState extends State<_SplashBootstrap> {
     await context.read<LevelRepository>().preloadCatalog();
     await Future<void>.delayed(const Duration(milliseconds: 1400));
     if (!mounted) return;
-    final onboarded =
-        context.read<ProgressBloc>().state.save.onboardingComplete;
+    final onboarded = context
+        .read<ProgressBloc>()
+        .state
+        .save
+        .onboardingComplete;
     context.go(onboarded ? '/menu' : '/onboarding');
   }
 

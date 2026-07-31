@@ -230,8 +230,7 @@ class _FxPainter extends CustomPainter {
             Colors.white,
             MedievalColors.laserMid,
             rng.nextDouble(),
-          )!
-              .withValues(alpha: 0.85 * fade),
+          )!.withValues(alpha: 0.85 * fade),
       );
       if (age < 0.45) {
         canvas.drawLine(
@@ -300,8 +299,9 @@ class _FxPainter extends CustomPainter {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = (4 - i) * fade
-          ..color = MedievalColors.bronzeHighlight
-              .withValues(alpha: (0.55 - i * 0.12) * fade)
+          ..color = MedievalColors.bronzeHighlight.withValues(
+            alpha: (0.55 - i * 0.12) * fade,
+          )
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
       );
     }

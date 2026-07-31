@@ -60,8 +60,9 @@ class MedievalBronzeButton extends StatelessWidget {
                         offset: const Offset(0, 3),
                       ),
                       BoxShadow(
-                        color: MedievalColors.bronzeHighlight
-                            .withValues(alpha: 0.25),
+                        color: MedievalColors.bronzeHighlight.withValues(
+                          alpha: 0.25,
+                        ),
                         blurRadius: 4,
                         offset: const Offset(-1, -1),
                       ),

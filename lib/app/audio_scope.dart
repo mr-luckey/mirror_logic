@@ -17,9 +17,8 @@ class AudioScope extends StatefulWidget {
   final AudioService audio;
   final Widget child;
 
-  static AudioService? maybeOf(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<_AudioProvider>()
-      ?.audio;
+  static AudioService? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_AudioProvider>()?.audio;
 
   /// Which loop belongs to a route, or null to leave the current one playing.
   static MusicTrack? trackForLocation(String location) {

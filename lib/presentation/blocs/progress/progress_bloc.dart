@@ -17,6 +17,11 @@ class ProgressOnboardingCompleted extends ProgressEvent {
   const ProgressOnboardingCompleted();
 }
 
+/// The hand has finished — or been waved off — on the first board.
+class ProgressWalkthroughSeen extends ProgressEvent {
+  const ProgressWalkthroughSeen();
+}
+
 class ProgressLevelCompleted extends ProgressEvent {
   const ProgressLevelCompleted({
     required this.levelId,
@@ -33,8 +38,13 @@ class ProgressLevelCompleted extends ProgressEvent {
   final String? nextLevelId;
 
   @override
-  List<Object?> get props =>
-      [levelId, stars, timeSeconds, coinsEarned, nextLevelId];
+  List<Object?> get props => [
+    levelId,
+    stars,
+    timeSeconds,
+    coinsEarned,
+    nextLevelId,
+  ];
 }
 
 class ProgressRefresh extends ProgressEvent {
@@ -42,10 +52,7 @@ class ProgressRefresh extends ProgressEvent {
 }
 
 class ProgressState extends Equatable {
-  const ProgressState({
-    required this.save,
-    this.loading = false,
-  });
+  const ProgressState({required this.save, this.loading = false});
 
   final PlayerSave save;
   final bool loading;
@@ -63,10 +70,11 @@ class ProgressState extends Equatable {
 
 class ProgressBloc extends Bloc<ProgressEvent, ProgressState> {
   ProgressBloc({required SaveRepository saveRepository})
-      : _saveRepository = saveRepository,
-        super(ProgressState(save: saveRepository.loadSave(), loading: true)) {
+    : _saveRepository = saveRepository,
+      super(ProgressState(save: saveRepository.loadSave(), loading: true)) {
     on<ProgressStarted>(_onStarted);
     on<ProgressOnboardingCompleted>(_onOnboarding);
+    on<ProgressWalkthroughSeen>(_onWalkthroughSeen);
     on<ProgressLevelCompleted>(_onLevelCompleted);
     on<ProgressRefresh>(_onRefresh);
   }
@@ -89,6 +97,18 @@ class ProgressBloc extends Bloc<ProgressEvent, ProgressState> {
     emit(state.copyWith(save: next));
   }
 
+  Future<void> _onWalkthroughSeen(
+    ProgressWalkthroughSeen event,
+    Emitter<ProgressState> emit,
+  ) async {
+    if (state.save.walkthroughSeen) return;
+    // Read through: the walkthrough runs on a live board, so the coins and
+    // stars in memory may already be behind storage.
+    final next = _saveRepository.loadSave().copyWith(walkthroughSeen: true);
+    await _saveRepository.persistSave(next);
+    emit(state.copyWith(save: next));
+  }
+
   Future<void> _onLevelCompleted(
     ProgressLevelCompleted event,
     Emitter<ProgressState> emit,
@@ -99,13 +119,14 @@ class ProgressBloc extends Bloc<ProgressEvent, ProgressState> {
     final existing = save.levelProgress[event.levelId];
     // Replaying a cleared level shouldn't pay out again.
     final alreadyCleared = existing?.completed ?? false;
-    final bestStars =
-        existing == null ? event.stars : (event.stars > existing.stars ? event.stars : existing.stars);
+    final bestStars = existing == null
+        ? event.stars
+        : (event.stars > existing.stars ? event.stars : existing.stars);
     final bestTime = existing?.bestTimeSeconds == null
         ? event.timeSeconds
         : (event.timeSeconds < existing!.bestTimeSeconds!
-            ? event.timeSeconds
-            : existing.bestTimeSeconds);
+              ? event.timeSeconds
+              : existing.bestTimeSeconds);
 
     final progress = Map<String, LevelProgress>.from(save.levelProgress);
     progress[event.levelId] = LevelProgress(

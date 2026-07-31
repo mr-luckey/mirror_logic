@@ -13,14 +13,7 @@ import 'package:mirror_logic/domain/beam/vec2.dart';
 import 'package:mirror_logic/domain/level/level_model.dart';
 import 'package:mirror_logic/domain/level/win_condition_evaluator.dart';
 
-enum GameplayPhase {
-  loading,
-  loadFailed,
-  playing,
-  paused,
-  hint,
-  solved,
-}
+enum GameplayPhase { loading, loadFailed, playing, paused, hint, solved }
 
 sealed class GameplayEvent extends Equatable {
   const GameplayEvent();
@@ -193,15 +186,17 @@ class GameplayState extends Equatable {
       elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
       hintsUsed: hintsUsed ?? this.hintsUsed,
       solutionRevealed: solutionRevealed ?? this.solutionRevealed,
-      activeMirrorId:
-          clearActiveMirror ? null : (activeMirrorId ?? this.activeMirrorId),
+      activeMirrorId: clearActiveMirror
+          ? null
+          : (activeMirrorId ?? this.activeMirrorId),
       highlightedMirrorId: clearHighlight
           ? null
           : (highlightedMirrorId ?? this.highlightedMirrorId),
       ghostAngles: ghostAngles ?? this.ghostAngles,
       undoStack: undoStack ?? this.undoStack,
-      alignedTargetId:
-          clearAlignment ? null : (alignedTargetId ?? this.alignedTargetId),
+      alignedTargetId: clearAlignment
+          ? null
+          : (alignedTargetId ?? this.alignedTargetId),
       alignedTargetKind: clearAlignment
           ? null
           : (alignedTargetKind ?? this.alignedTargetKind),
@@ -224,25 +219,25 @@ class GameplayState extends Equatable {
 
   @override
   List<Object?> get props => [
-        phase,
-        level,
-        mirrorAngles,
-        beam,
-        chargeProgress,
-        powerOnProgress,
-        moves,
-        elapsedSeconds,
-        hintsUsed,
-        solutionRevealed,
-        activeMirrorId,
-        highlightedMirrorId,
-        ghostAngles,
-        undoStack,
-        alignedTargetId,
-        alignedTargetKind,
-        alignmentPulse,
-        rejectedCrystalIds,
-      ];
+    phase,
+    level,
+    mirrorAngles,
+    beam,
+    chargeProgress,
+    powerOnProgress,
+    moves,
+    elapsedSeconds,
+    hintsUsed,
+    solutionRevealed,
+    activeMirrorId,
+    highlightedMirrorId,
+    ghostAngles,
+    undoStack,
+    alignedTargetId,
+    alignedTargetKind,
+    alignmentPulse,
+    rejectedCrystalIds,
+  ];
 }
 
 class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
@@ -251,12 +246,13 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     BeamSimulator? simulator,
     WinConditionEvaluator? winEvaluator,
     BeamAlignmentFinder? alignmentFinder,
-  })  : _levelRepository = levelRepository,
-        _simulator = simulator ?? BeamSimulator(),
-        _win = winEvaluator ?? const WinConditionEvaluator(),
-        _alignment = alignmentFinder ??
-            BeamAlignmentFinder(simulator: simulator ?? BeamSimulator()),
-        super(const GameplayState(phase: GameplayPhase.loading)) {
+  }) : _levelRepository = levelRepository,
+       _simulator = simulator ?? BeamSimulator(),
+       _win = winEvaluator ?? const WinConditionEvaluator(),
+       _alignment =
+           alignmentFinder ??
+           BeamAlignmentFinder(simulator: simulator ?? BeamSimulator()),
+       super(const GameplayState(phase: GameplayPhase.loading)) {
     on<GameplayLoadLevel>(_onLoadLevel);
     on<GameplayStarted>(_onStarted);
     on<GameplayMirrorDragStarted>(_onDragStarted);
@@ -348,9 +344,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     Emitter<GameplayState> emit,
   ) async {
     _elapsedSeconds = 0;
-    final angles = {
-      for (final m in event.level.mirrors) m.id: m.initialAngle,
-    };
+    final angles = {for (final m in event.level.mirrors) m.id: m.initialAngle};
     final beam = _simulator.simulate(level: event.level, mirrorAngles: angles);
     emit(
       GameplayState(
@@ -376,8 +370,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     if (matches.isEmpty || matches.first.isLocked) return;
     final mirror = matches.first;
 
-    _dragStartAngle =
-        state.mirrorAngles[event.mirrorId] ?? mirror.initialAngle;
+    _dragStartAngle = state.mirrorAngles[event.mirrorId] ?? mirror.initialAngle;
     _dragAngle = ReflectionMath.clampAngle(
       ReflectionMath.normalizeMirrorAngle(_dragStartAngle),
       mirror.minAngle,
@@ -400,12 +393,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
             mirrorId: event.mirrorId,
           );
 
-    emit(
-      state.copyWith(
-        activeMirrorId: event.mirrorId,
-        clearAlignment: true,
-      ),
-    );
+    emit(state.copyWith(activeMirrorId: event.mirrorId, clearAlignment: true));
   }
 
   /// Magnetic capture with hysteresis: a detent grabs the drag from close in
@@ -434,10 +422,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     return nearest.angleDegrees;
   }
 
-  void _onDragged(
-    GameplayMirrorDragged event,
-    Emitter<GameplayState> emit,
-  ) {
+  void _onDragged(GameplayMirrorDragged event, Emitter<GameplayState> emit) {
     if (state.phase != GameplayPhase.playing) return;
     final level = state.level;
     if (level == null) return;
@@ -533,7 +518,10 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
 
   void _onTick(GameplayTick event, Emitter<GameplayState> emit) {
     final powerOn = state.powerOnProgress < 1
-        ? math.min(1.0, state.powerOnProgress + event.dtSeconds / _powerOnSeconds)
+        ? math.min(
+            1.0,
+            state.powerOnProgress + event.dtSeconds / _powerOnSeconds,
+          )
         : state.powerOnProgress;
 
     if (state.phase != GameplayPhase.playing || state.level == null) {
@@ -589,7 +577,8 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
   }
 
   void _onResumed(GameplayResumed event, Emitter<GameplayState> emit) {
-    if (state.phase == GameplayPhase.paused || state.phase == GameplayPhase.hint) {
+    if (state.phase == GameplayPhase.paused ||
+        state.phase == GameplayPhase.hint) {
       emit(state.copyWith(phase: GameplayPhase.playing));
       _startTicker();
     }
@@ -602,9 +591,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     _dragUndoSnapshot = null;
     _dragDetents = const [];
     _heldDetent = null;
-    final angles = {
-      for (final m in level.mirrors) m.id: m.initialAngle,
-    };
+    final angles = {for (final m in level.mirrors) m.id: m.initialAngle};
     final beam = _simulator.simulate(level: level, mirrorAngles: angles);
     emit(
       GameplayState(
@@ -629,8 +616,10 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     if (state.undoStack.isEmpty || state.level == null) return;
     final stack = List<Map<String, double>>.from(state.undoStack);
     final previous = stack.removeLast();
-    final beam =
-        _simulator.simulate(level: state.level!, mirrorAngles: previous);
+    final beam = _simulator.simulate(
+      level: state.level!,
+      mirrorAngles: previous,
+    );
     emit(
       state.copyWith(
         mirrorAngles: previous,

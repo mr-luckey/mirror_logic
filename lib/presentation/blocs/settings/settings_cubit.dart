@@ -4,8 +4,8 @@ import 'package:mirror_logic/domain/economy/player_save.dart';
 
 class SettingsCubit extends Cubit<AppSettings> {
   SettingsCubit({required SaveRepository saveRepository})
-      : _saveRepository = saveRepository,
-        super(const AppSettings());
+    : _saveRepository = saveRepository,
+      super(const AppSettings());
 
   final SaveRepository _saveRepository;
 

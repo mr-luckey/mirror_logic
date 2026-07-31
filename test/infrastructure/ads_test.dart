@@ -51,8 +51,9 @@ void main() {
 
     test('the three placements do not share a unit', () {
       final banner = AdUnitIds.forPlacement(AdPlacement.banner).first;
-      final interstitial =
-          AdUnitIds.forPlacement(AdPlacement.interstitial).first;
+      final interstitial = AdUnitIds.forPlacement(
+        AdPlacement.interstitial,
+      ).first;
       final rewarded = AdUnitIds.forPlacement(AdPlacement.rewarded).first;
       expect({banner, interstitial, rewarded}, hasLength(3));
     });
@@ -127,7 +128,10 @@ void main() {
       final ads = AdsService(levelsBetweenInterstitials: 3);
 
       expect(ads.interstitialDue, isFalse);
-      expect(ads.interstitialAllowed(respectLevelCadence: false), isTrue);
+      expect(
+        ads.interstitialAllowed(policy: InterstitialPolicy.quietPeriod),
+        isTrue,
+      );
     });
 
     test('still honours the quiet period', () {
@@ -137,7 +141,41 @@ void main() {
 
       ads.claimFullScreenSlot();
       ads.releaseFullScreenSlot(shown: true);
-      expect(ads.interstitialAllowed(respectLevelCadence: false), isFalse);
+      expect(
+        ads.interstitialAllowed(policy: InterstitialPolicy.quietPeriod),
+        isFalse,
+      );
+    });
+  });
+
+  group('the exits that always charge', () {
+    test('wait for neither the cadence nor the quiet period', () {
+      final ads = AdsService(
+        levelsBetweenInterstitials: 3,
+        minGapBetweenFullScreenAds: const Duration(minutes: 1),
+      );
+
+      ads.claimFullScreenSlot();
+      ads.releaseFullScreenSlot(shown: true);
+
+      expect(ads.interstitialDue, isFalse);
+      expect(
+        ads.interstitialAllowed(policy: InterstitialPolicy.quietPeriod),
+        isFalse,
+      );
+      expect(
+        ads.interstitialAllowed(policy: InterstitialPolicy.always),
+        isTrue,
+      );
+    });
+
+    test('still show nothing while the SDK is down', () async {
+      final ads = AdsService(forcedFillWait: Duration.zero);
+
+      expect(
+        await ads.showInterstitial(policy: InterstitialPolicy.always),
+        isFalse,
+      );
     });
   });
 
@@ -151,11 +189,7 @@ void main() {
         '/complete',
         '/settings',
       ]) {
-        expect(
-          AdBannerHost.showsBannerAt(location),
-          isTrue,
-          reason: location,
-        );
+        expect(AdBannerHost.showsBannerAt(location), isTrue, reason: location);
       }
     });
 

@@ -54,26 +54,27 @@ class OnboardingScreen extends StatelessWidget {
                   builder: (context, constraints) {
                     return SingleChildScrollView(
                       child: ConstrainedBox(
-                        constraints:
-                            BoxConstraints(minHeight: constraints.maxHeight),
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             MedievalPanel(
-                              padding: const EdgeInsets.all(10),
-                              child: MedievalPanel(
-                                style: MedievalPanelStyle.inset,
-                                radius: 8,
-                                padding: const EdgeInsets.all(8),
-                                child: SizedBox(
-                                  height: diagramHeight,
-                                  width: double.infinity,
-                                  child: const CustomPaint(
-                                    painter: _TutorialPainter(),
+                                  padding: const EdgeInsets.all(10),
+                                  child: MedievalPanel(
+                                    style: MedievalPanelStyle.inset,
+                                    radius: 8,
+                                    padding: const EdgeInsets.all(8),
+                                    child: SizedBox(
+                                      height: diagramHeight,
+                                      width: double.infinity,
+                                      child: const CustomPaint(
+                                        painter: _TutorialPainter(),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            )
+                                )
                                 .animate()
                                 .fadeIn(duration: 500.ms)
                                 .slideY(begin: 0.08, end: 0),
@@ -81,17 +82,18 @@ class OnboardingScreen extends StatelessWidget {
                             for (var i = 0; i < _steps.length; i++)
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
-                                child: _StepRow(
-                                  icon: _steps[i].$1,
-                                  title: _steps[i].$2,
-                                  body: _steps[i].$3,
-                                )
-                                    .animate()
-                                    .fadeIn(
-                                      delay: (180 + i * 130).ms,
-                                      duration: 420.ms,
-                                    )
-                                    .slideX(begin: 0.08, end: 0),
+                                child:
+                                    _StepRow(
+                                          icon: _steps[i].$1,
+                                          title: _steps[i].$2,
+                                          body: _steps[i].$3,
+                                        )
+                                        .animate()
+                                        .fadeIn(
+                                          delay: (180 + i * 130).ms,
+                                          duration: 420.ms,
+                                        )
+                                        .slideX(begin: 0.08, end: 0),
                               ),
                           ],
                         ),
@@ -107,9 +109,9 @@ class OnboardingScreen extends StatelessWidget {
                 icon: Icons.play_arrow_rounded,
                 shimmer: true,
                 onPressed: () {
-                  context
-                      .read<ProgressBloc>()
-                      .add(const ProgressOnboardingCompleted());
+                  context.read<ProgressBloc>().add(
+                    const ProgressOnboardingCompleted(),
+                  );
                   context.go('/menu');
                 },
               ),
@@ -122,11 +124,7 @@ class OnboardingScreen extends StatelessWidget {
 }
 
 class _StepRow extends StatelessWidget {
-  const _StepRow({
-    required this.icon,
-    required this.title,
-    required this.body,
-  });
+  const _StepRow({required this.icon, required this.title, required this.body});
 
   final IconData icon;
   final String title;
@@ -247,11 +245,7 @@ class _TutorialPainter extends CustomPainter {
     );
     final tipA = normal + 1.15;
     final tip = hinge + Offset(math.cos(tipA), math.sin(tipA)) * half * 1.42;
-    canvas.drawCircle(
-      tip,
-      5,
-      Paint()..color = MedievalColors.bronzeHighlight,
-    );
+    canvas.drawCircle(tip, 5, Paint()..color = MedievalColors.bronzeHighlight);
     canvas.drawCircle(
       tip,
       9,
