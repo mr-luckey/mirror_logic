@@ -9,11 +9,9 @@ abstract final class GameConstants {
   /// Flat reward for clearing a level, regardless of stars.
   static const int coinsPerLevel = 5;
 
-  /// Price of revealing the solved board. One hint, one price.
+  /// Price of revealing the solved board. One hint, one price — no free tier,
+  /// so coin always has somewhere to go.
   static const int hintCost = 25;
-
-  /// Hints are free while the player is still learning the rules.
-  static const int freeHintLevels = 10;
 
   static const double chapterUnlockRatio = 0.8;
 

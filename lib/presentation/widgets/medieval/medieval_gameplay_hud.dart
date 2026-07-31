@@ -12,7 +12,7 @@ class MedievalGameplayHud extends StatelessWidget {
     required this.levelIndex,
     required this.stars,
     required this.coins,
-    required this.hintsLabel,
+    required this.hintCost,
     required this.onPause,
     required this.onHint,
     required this.onAddCoins,
@@ -21,13 +21,15 @@ class MedievalGameplayHud extends StatelessWidget {
   final int levelIndex;
   final int stars;
   final int coins;
-  final String hintsLabel;
+
+  /// Price of the hint, or null once it has been paid for on this board.
+  final int? hintCost;
+
   final VoidCallback onPause;
   final VoidCallback onHint;
   final VoidCallback onAddCoins;
 
-  static const double _coinScale = 1.45;
-  static const double _hintScale = 1.4;
+  static const double _coinScale = 1.05;
 
   @override
   Widget build(BuildContext context) {
@@ -91,16 +93,61 @@ class MedievalGameplayHud extends StatelessWidget {
           const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerRight,
-            child: MedievalResourceChip(
-              icon: Icons.lightbulb,
-              label: hintsLabel,
-              glowColor: MedievalColors.laserMid,
-              scale: _hintScale,
-              onTap: onHint,
-            ),
+            child: _HintButton(cost: hintCost, onPressed: onHint),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// A bronze bulb stud with its price stamped underneath.
+///
+/// The label lives below the button rather than inside it so the icon reads at
+/// a glance and the cost never widens the control.
+class _HintButton extends StatelessWidget {
+  const _HintButton({required this.cost, required this.onPressed});
+
+  final int? cost;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final price = cost;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        MedievalBronzeButton(
+          icon: Icons.lightbulb,
+          size: 52,
+          onPressed: onPressed,
+        ),
+        const SizedBox(height: 3),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (price != null) ...[
+              const Icon(
+                Icons.monetization_on,
+                size: 10,
+                color: MedievalColors.bronzeHighlight,
+              ),
+              const SizedBox(width: 3),
+            ],
+            Text(
+              price == null ? 'SHOWN' : '$price',
+              style: MedievalTextStyles.cinzel(
+                size: 10,
+                weight: FontWeight.w700,
+                letterSpacing: 0.6,
+                color: MedievalColors.textGold,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

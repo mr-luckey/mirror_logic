@@ -37,14 +37,14 @@ class MedievalTorch extends StatelessWidget {
               ),
             ),
           ),
-          // The cup sits on the outer end of the arm (right side of the
-          // sprite). Anchor the flame there so it reads as rising from the
-          // bowl rather than floating in the middle of the bracket.
+          // The sprite's top ~40% is transparent and the bowl rim sits at
+          // x 0.56..0.99, y 0.41 of the box. Anchor the flame to those
+          // measured bounds so it burns inside the cup, not above it.
           Positioned(
-            left: width * 0.40,
-            right: width * 0.06,
-            top: -height * 0.22,
-            height: height * 0.52,
+            left: width * 0.565,
+            right: width * 0.01,
+            top: height * 0.03,
+            height: height * 0.43,
             child: const _TorchFlame(),
           ),
         ],
@@ -101,38 +101,58 @@ class _FlamePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final cx = size.width * 0.5;
-    final baseY = size.height * 0.92;
+    // The base sits low in the box so the flame roots inside the bowl.
+    final baseY = size.height * 0.95;
     final rng = math.Random(7);
 
-    // Soft amber glow under the flame so the bracket reads as lit metal.
+    // Firelight spilling onto the bracket and the wall behind it.
     canvas.drawCircle(
-      Offset(cx, baseY - size.height * 0.08),
-      size.width * 0.55,
+      Offset(cx, baseY - size.height * 0.06),
+      size.width * 0.95,
       Paint()
-        ..color = const Color(0xFFFF8A2A).withValues(alpha: 0.28)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
+        ..color = const Color(0xFFFF7A18).withValues(alpha: 0.20)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+    );
+    canvas.drawCircle(
+      Offset(cx, baseY - size.height * 0.10),
+      size.width * 0.5,
+      Paint()
+        ..color = const Color(0xFFFFB43C).withValues(alpha: 0.35)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
     );
 
-    // Layered tongues: outer orange, mid yellow, core white-hot.
+    // Layered tongues: outer orange, mid yellow, core white-hot. Each one is
+    // a bit shorter and narrower, which is what gives fire its depth.
     _tongue(
       canvas,
       cx: cx,
       baseY: baseY,
-      height: size.height * 0.88,
-      width: size.width * 0.72,
-      color: const Color(0xFFE85A10),
+      height: size.height * 0.9,
+      width: size.width * 0.78,
+      color: const Color(0xFFD8400A),
       wobble: 0.0,
       time: time,
-      alpha: 0.9,
+      alpha: 0.85,
     );
     _tongue(
       canvas,
       cx: cx,
       baseY: baseY,
-      height: size.height * 0.72,
-      width: size.width * 0.48,
-      color: const Color(0xFFFFB020),
-      wobble: 1.7,
+      height: size.height * 0.74,
+      width: size.width * 0.56,
+      color: const Color(0xFFF97A10),
+      wobble: 1.1,
+      time: time,
+      alpha: 0.92,
+    );
+    _tongue(
+      canvas,
+      cx: cx,
+      baseY: baseY,
+      height: size.height * 0.55,
+      width: size.width * 0.4,
+      color: const Color(0xFFFFC02A),
+      wobble: 2.3,
       time: time,
       alpha: 0.95,
     );
@@ -140,23 +160,36 @@ class _FlamePainter extends CustomPainter {
       canvas,
       cx: cx,
       baseY: baseY,
-      height: size.height * 0.48,
-      width: size.width * 0.26,
-      color: const Color(0xFFFFF4C8),
-      wobble: 3.1,
+      height: size.height * 0.34,
+      width: size.width * 0.22,
+      color: const Color(0xFFFFF6D0),
+      wobble: 3.4,
       time: time,
-      alpha: 0.85,
+      alpha: 0.9,
     );
 
-    // Rising sparks — the detail that sells "real fire" at a glance.
-    for (var i = 0; i < 7; i++) {
-      final phase = (time * (0.7 + i * 0.11) + i * 0.9) % (math.pi * 2);
+    // Hot pool where the flame meets the fuel, so it does not look like it is
+    // hovering above the cup.
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(cx, baseY - size.height * 0.02),
+        width: size.width * 0.7,
+        height: size.height * 0.1,
+      ),
+      Paint()
+        ..color = const Color(0xFFFFD98A).withValues(alpha: 0.75)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+    );
+
+    // Rising embers — the detail that sells "real fire" at a glance.
+    for (var i = 0; i < 9; i++) {
+      final phase = (time * (0.7 + i * 0.09) + i * 0.9) % (math.pi * 2);
       final life = (math.sin(phase) + 1) * 0.5;
-      if (life < 0.15) continue;
-      final x = cx +
-          math.sin(phase * 2.1 + i) * size.width * 0.22 * (0.4 + life);
-      final y = baseY - size.height * (0.15 + life * 0.85);
-      final r = 0.8 + rng.nextDouble() * 1.4 * (1 - life);
+      if (life < 0.12) continue;
+      final x =
+          cx + math.sin(phase * 2.1 + i) * size.width * 0.26 * (0.4 + life);
+      final y = baseY - size.height * (0.2 + life * 0.95);
+      final r = 0.7 + rng.nextDouble() * 1.5 * (1 - life);
       canvas.drawCircle(
         Offset(x, y),
         r,
@@ -166,7 +199,7 @@ class _FlamePainter extends CustomPainter {
             const Color(0xFFFF4400),
             life,
           )!
-              .withValues(alpha: 0.85 * (1 - life * 0.6)),
+              .withValues(alpha: 0.9 * (1 - life * 0.7)),
       );
     }
   }

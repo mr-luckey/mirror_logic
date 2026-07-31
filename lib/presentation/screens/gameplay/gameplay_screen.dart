@@ -258,12 +258,6 @@ class _TopHud extends StatelessWidget {
         final level = gameplay.level;
         final stars = gameplay.isSolved ? gameplay.computeStars() : 0;
         final coins = context.watch<EconomyBloc>().state.coins;
-        final progress = context.watch<ProgressBloc>().state.save;
-        final completed = progress.levelProgress.values
-            .where((p) => p.completed)
-            .length;
-        final free = gameplay.solutionRevealed ||
-            completed < GameConstants.freeHintLevels;
 
         return MedievalGameplayHud(
           levelIndex: level == null
@@ -274,10 +268,11 @@ class _TopHud extends StatelessWidget {
                 ),
           stars: stars,
           coins: coins,
-          hintsLabel: free ? 'FREE' : '${GameConstants.hintCost}',
+          // Already paid for on this board, so re-opening the panel is free.
+          hintCost: gameplay.solutionRevealed ? null : GameConstants.hintCost,
           onPause: () =>
               context.read<GameplayBloc>().add(const GameplayPaused()),
-          onHint: () => _requestHint(context, free: free),
+          onHint: () => _requestHint(context),
           onAddCoins: () {
             MedievalToast.show(
               context,
@@ -295,20 +290,22 @@ class _TopHud extends StatelessWidget {
 ///
 /// The tiered counsel sheet is gone: the player wanted the answer, and making
 /// them pick which fragment of it to buy only added a step.
-Future<void> _requestHint(BuildContext context, {required bool free}) async {
+Future<void> _requestHint(BuildContext context) async {
   final gameplay = context.read<GameplayBloc>();
   if (gameplay.state.phase == GameplayPhase.hint) return;
 
-  if (!free) {
+  // Charge once per board. Showing the same answer again costs nothing.
+  if (!gameplay.state.solutionRevealed) {
     final economy = context.read<EconomyBloc>();
     final progress = context.read<ProgressBloc>();
-    final spent =
-        await context.read<EconomyRepository>().spendCoins(GameConstants.hintCost);
+    final spent = await context
+        .read<EconomyRepository>()
+        .spendCoins(GameConstants.hintCost);
     if (!context.mounted) return;
     if (spent == null) {
       MedievalToast.show(
         context,
-        'Not enough coin — clear a level to earn more',
+        'Not enough coin — clear levels to earn more',
         icon: Icons.lock_rounded,
       );
       return;

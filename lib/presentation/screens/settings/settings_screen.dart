@@ -133,8 +133,8 @@ class SettingsScreen extends StatelessWidget {
         danger: true,
         icon: Icons.warning_amber_rounded,
         title: 'Reset Progress?',
-        body: 'Every star, coin and unlocked hall is lost. '
-            'This cannot be undone.',
+        body: 'Every star and unlocked hall is lost. '
+            'Your coin is kept. This cannot be undone.',
         cancelLabel: 'Cancel',
         confirmLabel: 'Reset',
         onCancel: () => Navigator.pop(dialogContext, false),

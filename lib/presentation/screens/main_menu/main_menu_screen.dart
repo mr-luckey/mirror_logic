@@ -165,9 +165,8 @@ class _TopStatusBar extends StatelessWidget {
     return BlocBuilder<ProgressBloc, ProgressState>(
       builder: (context, progress) {
         final last = progress.save.lastPlayedLevelId;
-        final continueLabel = last == null
-            ? 'Begin at Level 1'
-            : 'Continue Level ${_labelFor(last)}';
+        final continueLabel =
+            last == null ? 'Level 1' : 'Level ${_labelFor(last)}';
 
         return MedievalPanel(
           radius: 14,
@@ -179,7 +178,7 @@ class _TopStatusBar extends StatelessWidget {
                   icon: Icons.monetization_on_rounded,
                   label: '${eco.coins}',
                   glowColor: MedievalColors.bronzeHighlight,
-                  scale: 1.15,
+                  scale: 1.0,
                 ),
               ),
               Expanded(

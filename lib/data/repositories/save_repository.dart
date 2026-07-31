@@ -37,7 +37,19 @@ class SaveRepository {
     await _storage.writeJson(_settingsKey, settings.toJson());
   }
 
+  /// Wipes stars, unlocks and last-played, but keeps the purse.
+  ///
+  /// Coins are earned currency; a player clearing their progress to replay the
+  /// game has not asked to be charged for it. The tutorial flag stays too —
+  /// nobody resetting their stars is asking to be taught the rules again.
   Future<void> resetProgress() async {
-    await _storage.writeJson(_saveKey, const PlayerSave().toJson());
+    final current = loadSave();
+    await _storage.writeJson(
+      _saveKey,
+      PlayerSave(
+        coins: current.coins,
+        onboardingComplete: current.onboardingComplete,
+      ).toJson(),
+    );
   }
 }
