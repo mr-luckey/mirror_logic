@@ -13,10 +13,20 @@ abstract final class GameConstants {
   /// so coin always has somewhere to go.
   static const int hintCost = 25;
 
-  static const double chapterUnlockRatio = 0.8;
+  /// Height reserved under the board for the bottom ad banner.
+  ///
+  /// Kept as layout even before ads are wired up, so turning them on never
+  /// moves the board out from under the player's finger.
+  static const double adBannerHeight = 56;
+
+  /// Stars the player must hold in a chapter before the next one opens.
+  ///
+  /// A chapter is 100 levels worth three stars each, so this is the full
+  /// chapter total — every level has to be cleared at three stars.
+  static const int starsToUnlockNextChapter = 300;
 
   /// Set to false before shipping. When true, all chapters/levels are playable.
-  static const bool unlockAllLevelsForTesting = true;
+  static const bool unlockAllLevelsForTesting = false;
 
   static const String chapter1Id = 'ch1';
   static const String chapter2Id = 'ch2';

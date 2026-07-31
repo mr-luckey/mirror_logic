@@ -84,19 +84,23 @@ class _TorchFlameState extends State<_TorchFlame>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _tick,
-      builder: (_, _) => CustomPaint(
-        painter: _FlamePainter(time: _tick.value * math.pi * 2),
+    // Boundaried: the flame runs every frame for as long as the menu is up,
+    // and without this it would drag the crest, title and buttons along with
+    // it on each tick.
+    return RepaintBoundary(
+      child: CustomPaint(
+        painter: _FlamePainter(clock: _tick),
       ),
     );
   }
 }
 
 class _FlamePainter extends CustomPainter {
-  _FlamePainter({required this.time});
+  _FlamePainter({required this.clock}) : super(repaint: clock);
 
-  final double time;
+  final Animation<double> clock;
+
+  double get time => clock.value * math.pi * 2;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -204,7 +208,7 @@ class _FlamePainter extends CustomPainter {
     }
   }
 
-  void _tongue(
+  static void _tongue(
     Canvas canvas, {
     required double cx,
     required double baseY,
@@ -247,7 +251,7 @@ class _FlamePainter extends CustomPainter {
     );
   }
 
+  /// The clock drives repaints; nothing else about the flame ever changes.
   @override
-  bool shouldRepaint(covariant _FlamePainter oldDelegate) =>
-      oldDelegate.time != time;
+  bool shouldRepaint(covariant _FlamePainter oldDelegate) => false;
 }

@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:mirror_logic/app/nav.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
-import 'package:mirror_logic/core/constants/game_constants.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
@@ -82,12 +81,9 @@ class _ChapterSelectScreenState extends State<ChapterSelectScreen> {
                             ch.id,
                             levelIds: ch.levelIds,
                           );
-                          final unlocked =
-                              GameConstants.unlockAllLevelsForTesting ||
-                                  progress.save.isChapterUnlocked(
-                                    ch.id,
-                                    ch.levelCount,
-                                  );
+                          final missing =
+                              progress.save.starsMissingToUnlock(ch.id);
+                          final unlocked = missing == 0;
 
                           return _ChapterCard(
                             chapter: ch,
@@ -95,6 +91,7 @@ class _ChapterSelectScreenState extends State<ChapterSelectScreen> {
                             stars: stars,
                             completed: completed,
                             unlocked: unlocked,
+                            starsMissing: missing,
                             onTap: unlocked
                                 ? () => context.push('/levels/${ch.id}')
                                 : null,
@@ -123,6 +120,7 @@ class _ChapterCard extends StatelessWidget {
     required this.stars,
     required this.completed,
     required this.unlocked,
+    required this.starsMissing,
     required this.onTap,
   });
 
@@ -131,6 +129,11 @@ class _ChapterCard extends StatelessWidget {
   final int stars;
   final int completed;
   final bool unlocked;
+
+  /// Stars still owed on the previous chapter, shown on a sealed card so the
+  /// lock reads as a goal rather than a dead end.
+  final int starsMissing;
+
   final VoidCallback? onTap;
 
   @override
@@ -144,9 +147,9 @@ class _ChapterCard extends StatelessWidget {
       enabled: unlocked,
       // A chapter opening is a heavier moment than a button press.
       sfx: Sfx.unlock,
-      child: Opacity(
-        opacity: unlocked ? 1 : 0.62,
-        child: MedievalPanel(
+      child: Stack(
+        children: [
+          MedievalPanel(
           padding: EdgeInsets.all(narrow ? 11 : 14),
           glow: unlocked && ratio >= 1 ? MedievalColors.bronzeHighlight : null,
           child: Row(
@@ -177,7 +180,9 @@ class _ChapterCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      chapter.subtitle,
+                      unlocked
+                          ? chapter.subtitle
+                          : 'Sealed — $starsMissing more stars',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: MedievalTextStyles.cinzel(
@@ -227,13 +232,50 @@ class _ChapterCard extends StatelessWidget {
                 ),
             ],
           ),
-        ),
+          ),
+          // The seal covers the whole card rather than swapping the tome out,
+          // so a locked hall still shows which one it is and what it costs.
+          if (!unlocked)
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: ColoredBox(
+                  color: MedievalColors.woodDeep.withValues(alpha: 0.45),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(9),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: MedievalColors.bronzeMetal,
+                        border: Border.all(
+                          color: MedievalColors.bronzeDark,
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.lock_rounded,
+                        size: 22,
+                        color: MedievalColors.woodDeep,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
 }
 
-/// Chapter emblem: a unique tome for each hall, a padlock for a sealed one.
+/// Chapter emblem: the hall's own tome, dimmed while the hall is sealed.
 class _Thumb extends StatelessWidget {
   const _Thumb({
     required this.size,
@@ -260,15 +302,11 @@ class _Thumb extends StatelessWidget {
             radius: 10,
             padding: const EdgeInsets.all(5),
             child: Image.asset(
-              unlocked
-                  ? MedievalArt.tomeForChapter(chapterId)
-                  : MedievalArt.padlock,
+              MedievalArt.tomeForChapter(chapterId),
               fit: BoxFit.contain,
               filterQuality: FilterQuality.medium,
-              color: unlocked ? null : Colors.black.withValues(alpha: 0.35),
-              colorBlendMode: unlocked ? null : BlendMode.srcATop,
               errorBuilder: (_, _, _) => Icon(
-                unlocked ? Icons.menu_book_rounded : Icons.lock_rounded,
+                Icons.menu_book_rounded,
                 color: MedievalColors.textGold,
                 size: size * 0.4,
               ),

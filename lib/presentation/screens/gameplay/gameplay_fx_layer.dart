@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/domain/beam/beam_types.dart';
@@ -23,12 +24,22 @@ class GameplayFxLayer extends StatefulWidget {
   State<GameplayFxLayer> createState() => _GameplayFxLayerState();
 }
 
+/// Repaint signal for the effects canvas, ticked once per frame while alive.
+class _Repaint extends ChangeNotifier {
+  void tick() => notifyListeners();
+}
+
 class _GameplayFxLayerState extends State<GameplayFxLayer>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _tick = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1000),
-  )..repeat();
+  /// Monotonic time base. Kept separate from the ticker so stopping and
+  /// restarting the loop never rewinds the age of a live burst.
+  final _clock = Stopwatch()..start();
+  final _repaint = _Repaint();
+
+  /// Idle until something spawns. A permanently repeating ticker here meant
+  /// the board repainted sixty times a second on a motionless puzzle, which is
+  /// exactly the sort of thing that drains a low-end phone.
+  late final Ticker _ticker = createTicker(_onFrame);
 
   final List<_Burst> _bursts = [];
   Set<String> _lit = {};
@@ -38,8 +49,16 @@ class _GameplayFxLayerState extends State<GameplayFxLayer>
 
   @override
   void dispose() {
-    _tick.dispose();
+    _ticker.dispose();
+    _repaint.dispose();
     super.dispose();
+  }
+
+  void _onFrame(Duration _) {
+    final now = _clock.elapsedMilliseconds.toDouble();
+    _bursts.removeWhere((b) => now - b.bornMs > b.kind.lifeMs);
+    if (_bursts.isEmpty) _ticker.stop();
+    _repaint.tick();
   }
 
   void _spawn({
@@ -47,12 +66,11 @@ class _GameplayFxLayerState extends State<GameplayFxLayer>
     required _BurstKind kind,
     int count = 14,
   }) {
-    final now = _tick.lastElapsedDuration?.inMilliseconds ?? 0;
     _bursts.add(
       _Burst(
         origin: origin,
         kind: kind,
-        bornMs: now.toDouble(),
+        bornMs: _clock.elapsedMilliseconds.toDouble(),
         seeds: List.generate(count, (i) => i * 17 + kind.index * 31),
       ),
     );
@@ -60,6 +78,7 @@ class _GameplayFxLayerState extends State<GameplayFxLayer>
     if (_bursts.length > 12) {
       _bursts.removeRange(0, _bursts.length - 12);
     }
+    if (!_ticker.isActive) _ticker.start();
   }
 
   Offset? _toScreen(LevelModel level, Vec2 world) {
@@ -127,17 +146,15 @@ class _GameplayFxLayerState extends State<GameplayFxLayer>
     return BlocListener<GameplayBloc, GameplayState>(
       listener: (context, state) => _onState(state),
       child: IgnorePointer(
-        child: AnimatedBuilder(
-          animation: _tick,
-          builder: (_, _) {
-            final now =
-                (_tick.lastElapsedDuration?.inMilliseconds ?? 0).toDouble();
-            _bursts.removeWhere((b) => now - b.bornMs > b.kind.lifeMs);
-            return CustomPaint(
-              size: widget.canvasSize,
-              painter: _FxPainter(bursts: List.of(_bursts), nowMs: now),
-            );
-          },
+        child: RepaintBoundary(
+          child: CustomPaint(
+            size: widget.canvasSize,
+            painter: _FxPainter(
+              bursts: _bursts,
+              clock: _clock,
+              repaint: _repaint,
+            ),
+          ),
         ),
       ),
     );
@@ -169,13 +186,20 @@ class _Burst {
 }
 
 class _FxPainter extends CustomPainter {
-  _FxPainter({required this.bursts, required this.nowMs});
+  _FxPainter({
+    required this.bursts,
+    required this.clock,
+    required Listenable repaint,
+  }) : super(repaint: repaint);
 
+  /// The live list, read during paint in the same frame it was pruned.
   final List<_Burst> bursts;
-  final double nowMs;
+  final Stopwatch clock;
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (bursts.isEmpty) return;
+    final nowMs = clock.elapsedMilliseconds.toDouble();
     for (final burst in bursts) {
       final age = ((nowMs - burst.bornMs) / burst.kind.lifeMs).clamp(0.0, 1.0);
       final fade = 1.0 - age;

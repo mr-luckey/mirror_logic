@@ -9,6 +9,7 @@ import 'package:mirror_logic/core/di/injection.dart';
 import 'package:mirror_logic/data/repositories/economy_repository.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/data/repositories/save_repository.dart';
+import 'package:mirror_logic/infrastructure/art/game_art.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
@@ -48,6 +49,10 @@ Future<void> main() async {
   unawaited(
     audioService.init().then((_) => audioService.applySettings(settingsCubit.state)),
   );
+
+  // Warm the board sprites while the player is still on the menu, so opening
+  // a level does not pay for four PNG decodes.
+  unawaited(GameArt.ensureLoaded());
 
   runApp(
     MultiRepositoryProvider(

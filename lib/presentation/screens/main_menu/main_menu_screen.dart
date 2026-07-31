@@ -13,7 +13,6 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_bronze_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_exit_scope.dart';
-import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_resource_chip.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_torch.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
@@ -162,51 +161,49 @@ class _TopStatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProgressBloc, ProgressState>(
-      builder: (context, progress) {
-        final last = progress.save.lastPlayedLevelId;
-        final continueLabel =
-            last == null ? 'Level 1' : 'Level ${_labelFor(last)}';
-
-        return MedievalPanel(
-          radius: 14,
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-          child: Row(
-            children: [
-              BlocBuilder<EconomyBloc, EconomyState>(
-                builder: (context, eco) => MedievalResourceChip(
-                  icon: Icons.monetization_on_rounded,
-                  label: '${eco.coins}',
-                  glowColor: MedievalColors.bronzeHighlight,
-                  scale: 1.0,
-                ),
+    // No panel behind the bar — the coin and the cog sit straight on the wood,
+    // with the level called out on its own line underneath.
+    return Column(
+      children: [
+        Row(
+          children: [
+            BlocBuilder<EconomyBloc, EconomyState>(
+              buildWhen: (p, c) => p.coins != c.coins,
+              builder: (context, eco) => MedievalResourceChip(
+                icon: Icons.monetization_on_rounded,
+                label: '${eco.coins}',
+                glowColor: MedievalColors.bronzeHighlight,
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    continueLabel,
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: MedievalTextStyles.cinzel(
-                      weight: FontWeight.w700,
-                      size: Responsive.sp(context, 12),
-                      color: MedievalColors.textGold,
-                      letterSpacing: 0.6,
-                    ),
-                  ),
-                ),
+            ),
+            const Spacer(),
+            MedievalBronzeButton(
+              icon: Icons.settings_rounded,
+              size: 34,
+              onPressed: () => context.push('/settings'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 14),
+        BlocBuilder<ProgressBloc, ProgressState>(
+          buildWhen: (p, c) =>
+              p.save.lastPlayedLevelId != c.save.lastPlayedLevelId,
+          builder: (context, progress) {
+            final last = progress.save.lastPlayedLevelId;
+            return Text(
+              last == null ? 'Level 1' : 'Level ${_labelFor(last)}',
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: MedievalTextStyles.cinzelDecorative(
+                weight: FontWeight.w700,
+                size: Responsive.sp(context, 27),
+                color: MedievalColors.textGold,
+                letterSpacing: 1.6,
               ),
-              MedievalBronzeButton(
-                icon: Icons.settings_rounded,
-                size: 34,
-                onPressed: () => context.push('/settings'),
-              ),
-            ],
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ],
     );
   }
 

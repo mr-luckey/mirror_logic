@@ -51,7 +51,7 @@ class PlayerSave extends Equatable {
   const PlayerSave({
     this.saveSchemaVersion = 1,
     this.onboardingComplete = false,
-    this.coins = 50,
+    this.coins = 0,
     this.unlockedLevelIds = const [GameConstants.firstLevelId],
     this.levelProgress = const {},
     this.lastPlayedLevelId,
@@ -117,17 +117,21 @@ class PlayerSave extends Equatable {
         .length;
   }
 
-  bool isChapterUnlocked(String chapterId, int chapterLevelCount) {
-    if (GameConstants.unlockAllLevelsForTesting) return true;
-    if (chapterId == GameConstants.chapter1Id) return true;
-    // Later chapters unlock after 80% of the previous chapter is complete.
+  /// Stars still owed on the previous chapter before [chapterId] opens.
+  ///
+  /// Zero means the chapter is unlocked. The first chapter is never sealed.
+  int starsMissingToUnlock(String chapterId) {
+    if (GameConstants.unlockAllLevelsForTesting) return 0;
     final n = int.tryParse(chapterId.replaceFirst('ch', '')) ?? 0;
-    if (n <= 1) return true;
-    final prevId = 'ch${n - 1}';
-    final completed = completedCountForChapter(prevId);
-    final need = (chapterLevelCount * GameConstants.chapterUnlockRatio).ceil();
-    return completed >= need;
+    if (n <= 1) return 0;
+    final earned = starsForChapter('ch${n - 1}');
+    return (GameConstants.starsToUnlockNextChapter - earned).clamp(
+      0,
+      GameConstants.starsToUnlockNextChapter,
+    );
   }
+
+  bool isChapterUnlocked(String chapterId) => starsMissingToUnlock(chapterId) == 0;
 
   Map<String, dynamic> toJson() => {
         'saveSchemaVersion': saveSchemaVersion,
@@ -145,7 +149,7 @@ class PlayerSave extends Equatable {
     return PlayerSave(
       saveSchemaVersion: json['saveSchemaVersion'] as int? ?? 1,
       onboardingComplete: json['onboardingComplete'] as bool? ?? false,
-      coins: (json['coins'] as num?)?.toInt() ?? 50,
+      coins: (json['coins'] as num?)?.toInt() ?? 0,
       unlockedLevelIds: (json['unlockedLevelIds'] as List<dynamic>? ??
               [GameConstants.firstLevelId])
           .whereType<String>()

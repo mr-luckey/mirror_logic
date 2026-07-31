@@ -14,7 +14,14 @@ class MedievalWoodBackground extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        const CustomPaint(painter: _WoodPlankPainter(), child: SizedBox.expand()),
+        // Boundaried so a busy board above it never forces the planks,
+        // gradients and grain to be rasterised again.
+        const RepaintBoundary(
+          child: CustomPaint(
+            painter: _WoodPlankPainter(),
+            child: SizedBox.expand(),
+          ),
+        ),
         // Top-right vine
         Positioned(
           top: -6,

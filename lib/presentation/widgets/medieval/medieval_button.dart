@@ -108,13 +108,15 @@ class MedievalButton extends StatelessWidget {
     );
 
     if (shimmer && enabled) {
-      face = face
-          .animate(onPlay: (c) => c.repeat())
-          .shimmer(
-            duration: 2600.ms,
-            delay: 900.ms,
-            color: MedievalColors.bronzeHighlight.withValues(alpha: 0.55),
-          );
+      // Boundaried because the sweep never stops, and its shader would
+      // otherwise repaint whatever screen is hosting the button.
+      face = RepaintBoundary(
+        child: face.animate(onPlay: (c) => c.repeat()).shimmer(
+              duration: 2600.ms,
+              delay: 900.ms,
+              color: MedievalColors.bronzeHighlight.withValues(alpha: 0.55),
+            ),
+      );
     }
 
     return Opacity(

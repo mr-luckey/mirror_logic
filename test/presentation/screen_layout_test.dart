@@ -17,6 +17,10 @@ import 'package:mirror_logic/presentation/screens/level_select/level_select_scre
 import 'package:mirror_logic/presentation/screens/main_menu/main_menu_screen.dart';
 import 'package:mirror_logic/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:mirror_logic/presentation/screens/settings/settings_screen.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_gameplay_hud.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
+
+void _noop() {}
 
 /// The range the design is expected to survive: a small old phone through a
 /// large modern one. A `RenderFlex` overflow at any of these fails the test,
@@ -145,6 +149,60 @@ void main() {
       );
       expect(find.text('CLEARED'), findsOneWidget);
       expect(find.text('Next Level'), findsNothing);
+    });
+  });
+
+  group('gameplay hud', () {
+    // The bar is a bare row over the board rather than a panel, so it is the
+    // first thing to overflow if a control grows.
+    for (final size in _sizes.entries) {
+      testWidgets('lays out on a ${size.key} screen', (tester) async {
+        await pumpAt(
+          tester,
+          size.value,
+          const MedievalWoodBackground(
+            child: SafeArea(
+              child: MedievalGameplayHud(
+                levelIndex: 1000,
+                stars: 3,
+                coins: 99999,
+                onPause: _noop,
+                onAddCoins: _noop,
+              ),
+            ),
+          ),
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.text('1000'), findsOneWidget);
+      });
+    }
+
+    testWidgets('carries the pause, level and coins on one line',
+        (tester) async {
+      await pumpAt(
+        tester,
+        const Size(390, 844),
+        const MedievalWoodBackground(
+          child: SafeArea(
+            child: MedievalGameplayHud(
+              levelIndex: 4,
+              stars: 0,
+              coins: 10,
+              onPause: _noop,
+              onAddCoins: _noop,
+            ),
+          ),
+        ),
+      );
+
+      double centreY(Finder f) => tester.getCenter(f).dy;
+      final pause = centreY(find.byIcon(Icons.pause_rounded));
+      expect(centreY(find.text('4')), closeTo(pause, 6));
+      expect(centreY(find.text('10')), closeTo(pause, 6));
+
+      // The hint moved down to the board, and it is never free.
+      expect(find.byIcon(Icons.lightbulb), findsNothing);
+      expect(find.text('FREE'), findsNothing);
     });
   });
 

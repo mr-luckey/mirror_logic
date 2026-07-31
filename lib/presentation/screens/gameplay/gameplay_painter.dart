@@ -7,27 +7,31 @@ import 'package:mirror_logic/domain/beam/beam_types.dart';
 import 'package:mirror_logic/domain/beam/reflection_math.dart';
 import 'package:mirror_logic/domain/beam/vec2.dart';
 import 'package:mirror_logic/domain/level/level_model.dart';
+import 'package:mirror_logic/infrastructure/art/game_art.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_paint_snapshot.dart';
 
 /// Medieval stone-board painter: tiles, bronze frame, laser, entities.
 class GameplayPainter extends CustomPainter {
   GameplayPainter({
     required this.snapshot,
-    required this.animTime,
-    this.crystalImage,
-    this.mirrorImage,
-    this.emitterImage,
-    this.wallHorizontalImage,
-    this.wallVerticalImage,
-  });
+    required this.clock,
+    this.art,
+  }) : super(repaint: clock);
 
   final GameplayPaintSnapshot snapshot;
-  final double animTime;
-  final ui.Image? crystalImage;
-  final ui.Image? mirrorImage;
-  final ui.Image? emitterImage;
-  final ui.Image? wallHorizontalImage;
-  final ui.Image? wallVerticalImage;
+
+  /// Drives the idle shimmer. Passed as `repaint` so ticks reach the canvas
+  /// without rebuilding a single widget.
+  final Animation<double> clock;
+
+  final GameArt? art;
+
+  ui.Image? get crystalImage => art?.crystal;
+  ui.Image? get emitterImage => art?.emitter;
+  ui.Image? get wallHorizontalImage => art?.wallHorizontal;
+  ui.Image? get wallVerticalImage => art?.wallVertical;
+
+  double get animTime => clock.value * 8 * math.pi * 2;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -1359,15 +1363,10 @@ class GameplayPainter extends CustomPainter {
     );
   }
 
+  /// The clock repaints us on its own; this only covers board changes.
   @override
   bool shouldRepaint(covariant GameplayPainter oldDelegate) {
-    return oldDelegate.snapshot != snapshot ||
-        oldDelegate.animTime != animTime ||
-        oldDelegate.crystalImage != crystalImage ||
-        oldDelegate.mirrorImage != mirrorImage ||
-        oldDelegate.emitterImage != emitterImage ||
-        oldDelegate.wallHorizontalImage != wallHorizontalImage ||
-        oldDelegate.wallVerticalImage != wallVerticalImage;
+    return oldDelegate.snapshot != snapshot || oldDelegate.art != art;
   }
 }
 

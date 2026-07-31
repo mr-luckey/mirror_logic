@@ -124,11 +124,13 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                               itemCount: ids.length,
                               itemBuilder: (context, index) {
                                 final id = ids[index];
-                                final unlocked =
-                                    GameConstants.unlockAllLevelsForTesting ||
-                                        progress.save.unlockedLevelIds
-                                            .contains(id) ||
-                                        index == 0;
+                                // Reaching this screen means the chapter is
+                                // open, so its opening level always is too.
+                                final unlocked = GameConstants
+                                        .unlockAllLevelsForTesting ||
+                                    progress.save.unlockedLevelIds
+                                        .contains(id) ||
+                                    index == 0;
                                 final stars =
                                     progress.save.levelProgress[id]?.stars ?? 0;
                                 final isCurrent =

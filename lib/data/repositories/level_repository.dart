@@ -1,52 +1,67 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mirror_logic/domain/level/level_model.dart';
 
+/// Runs on a background isolate — the catalog is several megabytes and
+/// decoding it on the UI thread drops a second of frames on a slow phone.
+List<Map<String, dynamic>> _decodeCatalog(String raw) {
+  final root = jsonDecode(raw) as Map<String, dynamic>;
+  return (root['levels'] as List<dynamic>).cast<Map<String, dynamic>>();
+}
+
 class LevelRepository {
+  /// Models are built the first time a level is actually opened. Constructing
+  /// all thousand up front cost far more than it saved, since a session only
+  /// ever touches a handful.
   final Map<String, LevelModel> _cache = {};
-  Map<String, List<String>>? _chapterIds;
+
+  final Map<String, Map<String, dynamic>> _raw = {};
+  final Map<String, List<String>> _chapterIds = {};
   List<String> _orderedIds = const [];
-  bool _loaded = false;
 
-  Future<void> preloadCatalog() async {
-    await _ensureLoaded();
-  }
+  /// Memoised so two screens asking at once cannot both parse the catalog.
+  Future<void>? _loading;
 
-  Future<void> _ensureLoaded() async {
-    if (_loaded) return;
+  Future<void> preloadCatalog() => _ensureLoaded();
+
+  Future<void> _ensureLoaded() => _loading ??= _load();
+
+  Future<void> _load() async {
     final raw = await rootBundle.loadString('assets/levels/levels.json');
-    final root = jsonDecode(raw) as Map<String, dynamic>;
-    final levels =
-        (root['levels'] as List<dynamic>).cast<Map<String, dynamic>>();
+    final levels = await compute(_decodeCatalog, raw);
 
-    _chapterIds = {};
-    _orderedIds = [];
-    for (final levelJson in levels) {
-      final model = LevelModel.fromJson(levelJson);
-      _cache[model.levelId] = model;
-      _chapterIds!
-          .putIfAbsent(model.chapterId, () => [])
-          .add(model.levelId);
-      _orderedIds.add(model.levelId);
+    final indexOf = <String, int>{};
+    final ordered = <String>[];
+
+    for (final json in levels) {
+      final id = json['levelId'] as String;
+      final chapterId = json['chapterId'] as String;
+      _raw[id] = json;
+      _chapterIds.putIfAbsent(chapterId, () => []).add(id);
+      indexOf[id] = _levelIndexOf(json);
+      ordered.add(id);
     }
 
-    for (final entry in _chapterIds!.entries) {
-      entry.value.sort(
-        (a, b) =>
-            _cache[a]!.levelIndex.compareTo(_cache[b]!.levelIndex),
-      );
+    for (final ids in _chapterIds.values) {
+      ids.sort((a, b) => indexOf[a]!.compareTo(indexOf[b]!));
     }
-    _orderedIds.sort((a, b) {
+    ordered.sort((a, b) {
       // Compare chapters numerically, otherwise `ch10` would sort before `ch2`
       // and `nextLevelId` would jump the player across chapters.
-      final ca = _chapterOrder(_cache[a]!.chapterId)
-          .compareTo(_chapterOrder(_cache[b]!.chapterId));
+      final ca = _chapterOrder(_raw[a]!['chapterId'] as String)
+          .compareTo(_chapterOrder(_raw[b]!['chapterId'] as String));
       if (ca != 0) return ca;
-      return _cache[a]!.levelIndex.compareTo(_cache[b]!.levelIndex);
+      return indexOf[a]!.compareTo(indexOf[b]!);
     });
-    _loaded = true;
+    _orderedIds = ordered;
   }
+
+  static int _levelIndexOf(Map<String, dynamic> json) =>
+      (json['levelIndex'] as num?)?.toInt() ??
+      int.tryParse((json['levelId'] as String).split('_').last) ??
+      1;
 
   static int _chapterOrder(String chapterId) =>
       int.tryParse(chapterId.replaceFirst('ch', '')) ?? 1 << 30;
@@ -63,7 +78,7 @@ class LevelRepository {
 
   Future<List<String>> levelIdsForChapter(String chapterId) async {
     await _ensureLoaded();
-    return List<String>.from(_chapterIds![chapterId] ?? []);
+    return List<String>.from(_chapterIds[chapterId] ?? const []);
   }
 
   Future<int> chapterLevelCount(String chapterId) async {
@@ -72,11 +87,14 @@ class LevelRepository {
 
   Future<LevelModel> loadLevel(String levelId) async {
     await _ensureLoaded();
-    final model = _cache[levelId];
-    if (model == null) {
+    final cached = _cache[levelId];
+    if (cached != null) return cached;
+
+    final json = _raw[levelId];
+    if (json == null) {
       throw StateError('Level not found: $levelId');
     }
-    return model;
+    return _cache[levelId] = LevelModel.fromJson(json);
   }
 
   Future<String?> nextLevelId(String currentId) async {
@@ -101,7 +119,7 @@ class LevelRepository {
 
   Future<List<ChapterInfo>> chapters() async {
     await _ensureLoaded();
-    final ids = _chapterIds!.keys.toList()
+    final ids = _chapterIds.keys.toList()
       ..sort((a, b) => _chapterOrder(a).compareTo(_chapterOrder(b)));
 
     return [
@@ -110,10 +128,10 @@ class LevelRepository {
           id: id,
           title: _chapterMeta[id]?.$1 ?? 'Chapter ${id.replaceFirst('ch', '')}',
           subtitle: _chapterMeta[id]?.$2 ??
-              '${_chapterIds![id]!.length} reflection puzzles',
-          levelIds: List<String>.from(_chapterIds![id]!),
-          levelCount: _chapterIds![id]!.length,
-          maxStars: _chapterIds![id]!.length * 3,
+              '${_chapterIds[id]!.length} reflection puzzles',
+          levelIds: List<String>.from(_chapterIds[id]!),
+          levelCount: _chapterIds[id]!.length,
+          maxStars: _chapterIds[id]!.length * 3,
         ),
     ];
   }

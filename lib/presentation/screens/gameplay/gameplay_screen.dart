@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mirror_logic/app/audio_scope.dart';
@@ -14,6 +13,7 @@ import 'package:mirror_logic/data/repositories/economy_repository.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/domain/beam/beam_alignment.dart';
 import 'package:mirror_logic/domain/beam/beam_types.dart';
+import 'package:mirror_logic/infrastructure/art/game_art.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/gameplay/gameplay_bloc.dart';
@@ -23,6 +23,7 @@ import 'package:mirror_logic/presentation/screens/gameplay/gameplay_fx_layer.dar
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_paint_snapshot.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_painter.dart';
 import 'package:mirror_logic/presentation/screens/level_complete/level_complete_screen.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_bronze_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_gameplay_hud.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_objective_banner.dart';
@@ -227,10 +228,13 @@ class _GameplayBody extends StatelessWidget {
               child: SafeArea(
                 child: Stack(
                   children: [
-                    Column(
+                    const Column(
                       children: [
-                        const _TopHud(),
-                        const Expanded(child: _BoardArea()),
+                        _TopHud(),
+                        Expanded(child: _BoardArea()),
+                        // Held open now so the board keeps the same size and
+                        // position once the banner is actually serving.
+                        SizedBox(height: GameConstants.adBannerHeight),
                       ],
                     ),
                     if (state.phase == GameplayPhase.paused)
@@ -251,9 +255,7 @@ class _TopHud extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GameplayBloc, GameplayState>(
       buildWhen: (p, c) =>
-          p.level?.levelId != c.level?.levelId ||
-          p.isSolved != c.isSolved ||
-          p.solutionRevealed != c.solutionRevealed,
+          p.level?.levelId != c.level?.levelId || p.isSolved != c.isSolved,
       builder: (context, gameplay) {
         final level = gameplay.level;
         final stars = gameplay.isSolved ? gameplay.computeStars() : 0;
@@ -268,11 +270,8 @@ class _TopHud extends StatelessWidget {
                 ),
           stars: stars,
           coins: coins,
-          // Already paid for on this board, so re-opening the panel is free.
-          hintCost: gameplay.solutionRevealed ? null : GameConstants.hintCost,
           onPause: () =>
               context.read<GameplayBloc>().add(const GameplayPaused()),
-          onHint: () => _requestHint(context),
           onAddCoins: () {
             MedievalToast.show(
               context,
@@ -327,13 +326,18 @@ class _BoardArea extends StatelessWidget {
       builder: (context, constraints) {
         final w = constraints.maxWidth;
         final h = constraints.maxHeight;
-        final short = h < 520;
+
+        // Fixed band above the board carrying the objective on the left and
+        // the hint on the right, so neither ever sits on top of the puzzle.
+        // Sized to the parchment banner, which is the taller of the two.
+        const headerH = 56.0;
+        const hintSize = 44.0;
 
         // Equal side padding so the board sits centered
         final padX = (w * 0.055).clamp(18.0, 36.0);
-        final padT = (h * (short ? 0.065 : 0.075)).clamp(32.0, 52.0);
-        final padB = (h * 0.035).clamp(14.0, 28.0);
-        final bannerW = (w * 0.62).clamp(180.0, 260.0);
+        const padT = headerH + 6;
+        final padB = (h * 0.03).clamp(10.0, 22.0);
+        final bannerW = (w * 0.58).clamp(160.0, 250.0);
 
         return Stack(
           children: [
@@ -379,10 +383,21 @@ class _BoardArea extends StatelessWidget {
             ),
             Positioned(
               left: padX + 4,
-              top: 2,
-              child: SizedBox(
-                width: bannerW,
+              top: 0,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: bannerW),
                 child: const _ObjectiveBanner(),
+              ),
+            ),
+            // Resting on the top-right corner of the board frame, so the hint
+            // reads as belonging to the puzzle rather than to the status bar.
+            Positioned(
+              right: padX + 2,
+              top: headerH - hintSize,
+              child: MedievalBronzeButton(
+                icon: Icons.lightbulb,
+                size: hintSize,
+                onPressed: () => _requestHint(context),
               ),
             ),
           ],
@@ -406,57 +421,17 @@ class _ObjectiveBanner extends StatelessWidget {
         );
       },
       builder: (context, data) {
-        // Keyed on the level so every board starts the banner over.
-        return _FadingBanner(key: ValueKey(data.$1), message: data.$2);
+        // The banner is pinned over the top-left of the board, so leaving it
+        // up hides whatever the level put in that corner. Keyed on the level
+        // so every board plays the fade again. It never accepts touches, so a
+        // mirror underneath it stays draggable throughout.
+        return IgnorePointer(
+          key: ValueKey(data.$1),
+          child: MedievalObjectiveBanner(message: data.$2)
+              .animate()
+              .fadeOut(delay: 4000.ms, duration: 700.ms),
+        );
       },
-    );
-  }
-}
-
-/// The objective, shown long enough to read and then faded out.
-///
-/// The banner is pinned over the top-left of the board, so leaving it up hides
-/// whatever the level put in that corner. It never accepts touches either way,
-/// so a mirror underneath it stays draggable.
-class _FadingBanner extends StatefulWidget {
-  const _FadingBanner({super.key, required this.message});
-
-  final String message;
-
-  @override
-  State<_FadingBanner> createState() => _FadingBannerState();
-}
-
-class _FadingBannerState extends State<_FadingBanner> {
-  static const _hold = Duration(seconds: 4);
-  static const _fade = Duration(milliseconds: 700);
-
-  Timer? _timer;
-  bool _visible = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer(_hold, () {
-      if (mounted) setState(() => _visible = false);
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: AnimatedOpacity(
-        opacity: _visible ? 1 : 0,
-        duration: _fade,
-        curve: Curves.easeOut,
-        child: MedievalObjectiveBanner(message: widget.message),
-      ),
     );
   }
 }
@@ -471,10 +446,6 @@ class _GameplayCanvas extends StatefulWidget {
 class _GameplayCanvasState extends State<_GameplayCanvas>
     with SingleTickerProviderStateMixin {
   late final AnimationController _anim;
-  ui.Image? _crystal;
-  ui.Image? _emitter;
-  ui.Image? _wallH;
-  ui.Image? _wallV;
 
   @override
   void initState() {
@@ -483,34 +454,7 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
       vsync: this,
       duration: const Duration(seconds: 8),
     )..repeat();
-    unawaited(_loadImages());
-  }
-
-  Future<void> _loadImages() async {
-    final results = await Future.wait<ui.Image?>([
-      _decodeAsset('assets/images/medieval/crystal_cut.png'),
-      _decodeAsset('assets/images/medieval/emitter_cut.png'),
-      _decodeAsset('assets/images/medieval/wall_h_cut.png'),
-      _decodeAsset('assets/images/medieval/wall_v_cut.png'),
-    ]);
-    if (!mounted) return;
-    setState(() {
-      _crystal = results[0];
-      _emitter = results[1];
-      _wallH = results[2];
-      _wallV = results[3];
-    });
-  }
-
-  Future<ui.Image?> _decodeAsset(String path) async {
-    try {
-      final data = await rootBundle.load(path);
-      final codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
-      final frame = await codec.getNextFrame();
-      return frame.image;
-    } catch (_) {
-      return null;
-    }
+    unawaited(GameArt.ensureLoaded());
   }
 
   @override
@@ -537,81 +481,73 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
         if (snapshot == null) return const SizedBox.shrink();
         final level = snapshot.level;
 
-        return AnimatedBuilder(
-          animation: _anim,
-          builder: (context, _) {
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                final size = Size(constraints.maxWidth, constraints.maxHeight);
-                return GestureDetector(
-                  onPanStart: (details) {
-                    final world = screenToWorld(
-                      local: details.localPosition,
-                      canvasSize: size,
-                      level: level,
-                    );
-                    if (world == null) return;
-                    final bloc = context.read<GameplayBloc>();
-                    final settings = context.read<SettingsCubit>().state;
-                    final id = hitTestMirror(
-                      world: world,
-                      level: level,
-                      angles: bloc.state.mirrorAngles,
-                      padding: settings.assistMode ? 72 : 42,
-                    );
-                    if (id == null) return;
-                    context.playSfx(Sfx.mirrorGrab);
-                    bloc.add(
-                      GameplayMirrorDragStarted(
-                        mirrorId: id,
-                        grabPoint: world,
-                      ),
-                    );
-                  },
-                  onPanUpdate: (details) {
-                    final bloc = context.read<GameplayBloc>();
-                    final active = bloc.state.activeMirrorId;
-                    if (active == null) return;
-                    final world = screenToWorld(
-                      local: details.localPosition,
-                      canvasSize: size,
-                      level: level,
-                      bounded: false,
-                    );
-                    if (world == null) return;
-                    bloc.add(
-                      GameplayMirrorDragged(
-                        mirrorId: active,
-                        worldPoint: world,
-                      ),
-                    );
-                  },
-                  onPanEnd: (_) {
-                    context
-                        .read<GameplayBloc>()
-                        .add(const GameplayMirrorDragEnded());
-                  },
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      RepaintBoundary(
-                        child: CustomPaint(
-                          size: size,
-                          painter: GameplayPainter(
-                            snapshot: snapshot,
-                            animTime: _anim.value * 8 * 3.14159,
-                            crystalImage: _crystal,
-                            emitterImage: _emitter,
-                            wallHorizontalImage: _wallH,
-                            wallVerticalImage: _wallV,
-                          ),
-                        ),
-                      ),
-                      GameplayFxLayer(canvasSize: size),
-                    ],
-                  ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final size = Size(constraints.maxWidth, constraints.maxHeight);
+            return GestureDetector(
+              onPanStart: (details) {
+                final world = screenToWorld(
+                  local: details.localPosition,
+                  canvasSize: size,
+                  level: level,
+                );
+                if (world == null) return;
+                final bloc = context.read<GameplayBloc>();
+                final settings = context.read<SettingsCubit>().state;
+                final id = hitTestMirror(
+                  world: world,
+                  level: level,
+                  angles: bloc.state.mirrorAngles,
+                  padding: settings.assistMode ? 72 : 42,
+                );
+                if (id == null) return;
+                context.playSfx(Sfx.mirrorGrab);
+                bloc.add(
+                  GameplayMirrorDragStarted(mirrorId: id, grabPoint: world),
                 );
               },
+              onPanUpdate: (details) {
+                final bloc = context.read<GameplayBloc>();
+                final active = bloc.state.activeMirrorId;
+                if (active == null) return;
+                final world = screenToWorld(
+                  local: details.localPosition,
+                  canvasSize: size,
+                  level: level,
+                  bounded: false,
+                );
+                if (world == null) return;
+                bloc.add(
+                  GameplayMirrorDragged(mirrorId: active, worldPoint: world),
+                );
+              },
+              onPanEnd: (_) {
+                context
+                    .read<GameplayBloc>()
+                    .add(const GameplayMirrorDragEnded());
+              },
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // The idle shimmer drives the painter directly. Rebuilding
+                  // this subtree every frame instead would re-run the gesture
+                  // detector and layout sixty times a second for nothing.
+                  RepaintBoundary(
+                    child: ValueListenableBuilder<GameArt?>(
+                      valueListenable: GameArt.notifier,
+                      builder: (context, art, _) => CustomPaint(
+                        size: size,
+                        painter: GameplayPainter(
+                          snapshot: snapshot,
+                          clock: _anim,
+                          art: art,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GameplayFxLayer(canvasSize: size),
+                ],
+              ),
             );
           },
         );

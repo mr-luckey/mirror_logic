@@ -27,30 +27,41 @@ class MedievalPressable extends StatefulWidget {
 }
 
 class _MedievalPressableState extends State<MedievalPressable> {
-  bool _pressed = false;
+  /// A notifier rather than `setState` so a press repaints only the scale
+  /// wrapper. Some of these wrap whole cards, and rebuilding one on every
+  /// touch is wasted work on a slow phone.
+  final _pressed = ValueNotifier(false);
 
   bool get _active => widget.enabled && widget.onPressed != null;
+
+  @override
+  void dispose() {
+    _pressed.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTapDown: _active ? (_) => setState(() => _pressed = true) : null,
+      onTapDown: _active ? (_) => _pressed.value = true : null,
       onTapUp: _active
           ? (_) {
-              setState(() => _pressed = false);
+              _pressed.value = false;
               if (widget.sfx != null) PressFeedback.fire(context, widget.sfx!);
               widget.onPressed?.call();
             }
           : null,
-      onTapCancel: () {
-        if (_pressed) setState(() => _pressed = false);
-      },
-      child: AnimatedScale(
-        scale: _pressed ? 0.92 : 1.0,
-        duration: const Duration(milliseconds: 90),
-        curve: Curves.easeOut,
+      onTapCancel: () => _pressed.value = false,
+      child: ValueListenableBuilder<bool>(
+        valueListenable: _pressed,
         child: widget.child,
+        builder: (context, pressed, child) => AnimatedScale(
+          scale: pressed ? 0.92 : 1.0,
+          duration: const Duration(milliseconds: 90),
+          curve: Curves.easeOut,
+          child: child,
+        ),
       ),
     );
   }
