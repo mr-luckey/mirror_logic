@@ -38,7 +38,8 @@ flutter:
   # which cost ~45 MB of APK for files the game never loads. Regenerate these
   # from the masters with `python3 tool/optimize_assets.py`.
   assets:
-    - assets/levels/levels.json
+    # Level catalog is split into 10-level batches (manifest.json + batch_XXX.json).
+    - assets/levels/
 
     - assets/images/medieval/crystal_cut.webp
     - assets/images/medieval/emitter_cut.webp

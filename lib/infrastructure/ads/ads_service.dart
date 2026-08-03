@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
+import 'package:mirror_logic/core/constants/game_constants.dart';
 
 /// How much of the interstitial cadence a placement agrees to wait for.
 enum InterstitialPolicy {
@@ -101,6 +102,11 @@ class AdsService {
   Future<void> init() => _bringUp ??= _initialize();
 
   Future<void> _initialize() async {
+    if (!GameConstants.adsEnabled) {
+      _ready = false;
+      debugPrint('AdsService disabled: GameConstants.adsEnabled is false');
+      return;
+    }
     try {
       await MobileAds.instance.initialize();
       _ready = true;

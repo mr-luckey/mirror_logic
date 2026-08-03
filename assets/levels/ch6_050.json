@@ -1,0 +1,1009 @@
+{
+  "levelId": "ch6_050",
+  "chapterId": "ch6",
+  "schemaVersion": 1,
+  "levelIndex": 50,
+  "title": "Labyrinth Gate 550",
+  "roomBounds": {
+    "width": 1080.0,
+    "height": 1920.0
+  },
+  "lightSources": [
+    {
+      "id": "ls1",
+      "position": [
+        380.0,
+        1790.0
+      ],
+      "direction": 270.0,
+      "locked": true
+    }
+  ],
+  "mirrors": [
+    {
+      "id": "m1",
+      "hingePosition": [
+        380,
+        1270
+      ],
+      "length": 145.0,
+      "initialAngle": 55.19795816193009,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m2",
+      "hingePosition": [
+        780,
+        1270
+      ],
+      "length": 145.0,
+      "initialAngle": 50.1269035532995,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m3",
+      "hingePosition": [
+        780,
+        620
+      ],
+      "length": 145.0,
+      "initialAngle": 120.9206204047751,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m4",
+      "hingePosition": [
+        230,
+        620
+      ],
+      "length": 145.0,
+      "initialAngle": 126.69262150617634,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m5",
+      "hingePosition": [
+        230,
+        270
+      ],
+      "length": 145.0,
+      "initialAngle": 50.1269035532995,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m6",
+      "hingePosition": [
+        580,
+        270
+      ],
+      "length": 145.0,
+      "initialAngle": 111.49657866418967,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m7",
+      "hingePosition": [
+        580,
+        970
+      ],
+      "length": 145.0,
+      "initialAngle": 50.1269035532995,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m8",
+      "hingePosition": [
+        180,
+        970
+      ],
+      "length": 145.0,
+      "initialAngle": 50.1269035532995,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m9",
+      "hingePosition": [
+        180,
+        1620
+      ],
+      "length": 145.0,
+      "initialAngle": 117.84343558917877,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "w0",
+      "polygon": [
+        [
+          464.0,
+          1704.0
+        ],
+        [
+          512.0,
+          1704.0
+        ],
+        [
+          512.0,
+          1920.0
+        ],
+        [
+          464.0,
+          1920.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w1",
+      "polygon": [
+        [
+          464.0,
+          1354.0
+        ],
+        [
+          512.0,
+          1354.0
+        ],
+        [
+          512.0,
+          1536.0
+        ],
+        [
+          464.0,
+          1536.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w2",
+      "polygon": [
+        [
+          248.0,
+          1704.0
+        ],
+        [
+          296.0,
+          1704.0
+        ],
+        [
+          296.0,
+          1920.0
+        ],
+        [
+          248.0,
+          1920.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w3",
+      "polygon": [
+        [
+          464.0,
+          1354.0
+        ],
+        [
+          912.0,
+          1354.0
+        ],
+        [
+          912.0,
+          1402.0
+        ],
+        [
+          464.0,
+          1402.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w4",
+      "polygon": [
+        [
+          264.0,
+          1138.0
+        ],
+        [
+          696.0,
+          1138.0
+        ],
+        [
+          696.0,
+          1186.0
+        ],
+        [
+          264.0,
+          1186.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w5",
+      "polygon": [
+        [
+          864.0,
+          488.0
+        ],
+        [
+          912.0,
+          488.0
+        ],
+        [
+          912.0,
+          1402.0
+        ],
+        [
+          864.0,
+          1402.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w6",
+      "polygon": [
+        [
+          648.0,
+          1054.0
+        ],
+        [
+          696.0,
+          1054.0
+        ],
+        [
+          696.0,
+          1186.0
+        ],
+        [
+          648.0,
+          1186.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w7",
+      "polygon": [
+        [
+          664.0,
+          488.0
+        ],
+        [
+          912.0,
+          488.0
+        ],
+        [
+          912.0,
+          536.0
+        ],
+        [
+          664.0,
+          536.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w8",
+      "polygon": [
+        [
+          314.0,
+          488.0
+        ],
+        [
+          496.0,
+          488.0
+        ],
+        [
+          496.0,
+          536.0
+        ],
+        [
+          314.0,
+          536.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w9",
+      "polygon": [
+        [
+          98.0,
+          704.0
+        ],
+        [
+          496.0,
+          704.0
+        ],
+        [
+          496.0,
+          752.0
+        ],
+        [
+          98.0,
+          752.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w10",
+      "polygon": [
+        [
+          314.0,
+          354.0
+        ],
+        [
+          362.0,
+          354.0
+        ],
+        [
+          362.0,
+          536.0
+        ],
+        [
+          314.0,
+          536.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w11",
+      "polygon": [
+        [
+          98.0,
+          138.0
+        ],
+        [
+          146.0,
+          138.0
+        ],
+        [
+          146.0,
+          752.0
+        ],
+        [
+          98.0,
+          752.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w12",
+      "polygon": [
+        [
+          314.0,
+          354.0
+        ],
+        [
+          496.0,
+          354.0
+        ],
+        [
+          496.0,
+          402.0
+        ],
+        [
+          314.0,
+          402.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w13",
+      "polygon": [
+        [
+          98.0,
+          138.0
+        ],
+        [
+          712.0,
+          138.0
+        ],
+        [
+          712.0,
+          186.0
+        ],
+        [
+          98.0,
+          186.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w14",
+      "polygon": [
+        [
+          448.0,
+          354.0
+        ],
+        [
+          496.0,
+          354.0
+        ],
+        [
+          496.0,
+          536.0
+        ],
+        [
+          448.0,
+          536.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w15",
+      "polygon": [
+        [
+          448.0,
+          704.0
+        ],
+        [
+          496.0,
+          704.0
+        ],
+        [
+          496.0,
+          886.0
+        ],
+        [
+          448.0,
+          886.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w16",
+      "polygon": [
+        [
+          664.0,
+          138.0
+        ],
+        [
+          712.0,
+          138.0
+        ],
+        [
+          712.0,
+          536.0
+        ],
+        [
+          664.0,
+          536.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w17",
+      "polygon": [
+        [
+          48.0,
+          838.0
+        ],
+        [
+          496.0,
+          838.0
+        ],
+        [
+          496.0,
+          886.0
+        ],
+        [
+          48.0,
+          886.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w18",
+      "polygon": [
+        [
+          264.0,
+          1054.0
+        ],
+        [
+          696.0,
+          1054.0
+        ],
+        [
+          696.0,
+          1102.0
+        ],
+        [
+          264.0,
+          1102.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w19",
+      "polygon": [
+        [
+          48.0,
+          838.0
+        ],
+        [
+          96.0,
+          838.0
+        ],
+        [
+          96.0,
+          1752.0
+        ],
+        [
+          48.0,
+          1752.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w20",
+      "polygon": [
+        [
+          264.0,
+          1054.0
+        ],
+        [
+          312.0,
+          1054.0
+        ],
+        [
+          312.0,
+          1186.0
+        ],
+        [
+          264.0,
+          1186.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w21",
+      "polygon": [
+        [
+          48.0,
+          1704.0
+        ],
+        [
+          296.0,
+          1704.0
+        ],
+        [
+          296.0,
+          1752.0
+        ],
+        [
+          48.0,
+          1752.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w22",
+      "polygon": [
+        [
+          464.0,
+          1704.0
+        ],
+        [
+          750.0,
+          1704.0
+        ],
+        [
+          750.0,
+          1752.0
+        ],
+        [
+          464.0,
+          1752.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w23",
+      "polygon": [
+        [
+          464.0,
+          1488.0
+        ],
+        [
+          750.0,
+          1488.0
+        ],
+        [
+          750.0,
+          1536.0
+        ],
+        [
+          464.0,
+          1536.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w24",
+      "polygon": [
+        [
+          750.0,
+          1620.0
+        ],
+        [
+          798.0,
+          1620.0
+        ],
+        [
+          798.0,
+          1752.0
+        ],
+        [
+          750.0,
+          1752.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w25",
+      "polygon": [
+        [
+          750.0,
+          1488.0
+        ],
+        [
+          798.0,
+          1488.0
+        ],
+        [
+          798.0,
+          1620.0
+        ],
+        [
+          750.0,
+          1620.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w26",
+      "polygon": [
+        [
+          480.0,
+          146.0
+        ],
+        [
+          680.0,
+          146.0
+        ],
+        [
+          680.0,
+          194.0
+        ],
+        [
+          480.0,
+          194.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w27",
+      "polygon": [
+        [
+          120.0,
+          846.0
+        ],
+        [
+          320.0,
+          846.0
+        ],
+        [
+          320.0,
+          894.0
+        ],
+        [
+          120.0,
+          894.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w28",
+      "polygon": [
+        [
+          656.0,
+          870.0
+        ],
+        [
+          704.0,
+          870.0
+        ],
+        [
+          704.0,
+          1070.0
+        ],
+        [
+          656.0,
+          1070.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    }
+  ],
+  "targetCrystals": [
+    {
+      "id": "c1",
+      "position": [
+        660,
+        1620
+      ],
+      "hitRadius": 44,
+      "groupId": "g1"
+    }
+  ],
+  "crystalGroups": [
+    {
+      "groupId": "g1",
+      "requiredCount": 1
+    }
+  ],
+  "doorPortals": [],
+  "requiredMirrorBounces": 9,
+  "intendedSolution": {
+    "mirrorAngles": {
+      "m1": 135.0,
+      "m2": 135.0,
+      "m3": 45.0,
+      "m4": 45.0,
+      "m5": 135.0,
+      "m6": 45.0,
+      "m7": 135.0,
+      "m8": 135.0,
+      "m9": 45.0
+    },
+    "toleranceDegrees": 3.64
+  },
+  "starThresholds": {
+    "threeStarMoveCount": 9,
+    "threeStarTimeSeconds": 120
+  },
+  "metadata": {
+    "designer": "canonical_v2",
+    "difficultyBand": "ch6",
+    "difficultyScore": 550.0,
+    "hardness": 0.5431,
+    "newConceptsIntroduced": [
+      "reflection",
+      "multi_mirror",
+      "corridor"
+    ],
+    "objective": "Follow the stone corridor \u2014 turn the beam at every post to reach the crystal.",
+    "hints": [
+      "The passage only opens where the beam is meant to turn.",
+      "Side pockets are dead ends \u2014 they never reach the crystal.",
+      "Set every mirror before you trace the run to the end."
+    ],
+    "roomType": "ubend_corridor",
+    "pathBias": "ubend",
+    "wallStyle": "corridor",
+    "globalIndex": 550,
+    "pillars": [
+      {
+        "position": [
+          380,
+          1270
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          780,
+          1270
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          780,
+          620
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          230,
+          620
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          230,
+          270
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          580,
+          270
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          580,
+          970
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          180,
+          970
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          180,
+          1620
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      }
+    ]
+  }
+}

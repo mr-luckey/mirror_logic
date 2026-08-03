@@ -18,11 +18,19 @@ void main() {
     const win = WinConditionEvaluator();
 
     setUpAll(() {
-      final raw = File('assets/levels/levels.json').readAsStringSync();
-      final root = jsonDecode(raw) as Map<String, dynamic>;
-      levels = (root['levels'] as List)
-          .map((e) => LevelModel.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final manifestRaw =
+          File('assets/levels/manifest.json').readAsStringSync();
+      final manifest = jsonDecode(manifestRaw) as Map<String, dynamic>;
+      final entries = (manifest['levels'] as List).cast<Map<String, dynamic>>();
+      levels = [
+        for (final entry in entries)
+          LevelModel.fromJson(
+            jsonDecode(
+                  File('assets/levels/${entry['file']}').readAsStringSync(),
+                )
+                as Map<String, dynamic>,
+          ),
+      ];
     });
 
     test('catalog is non-empty and every level id is unique', () {

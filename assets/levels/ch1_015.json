@@ -1,0 +1,363 @@
+{
+  "levelId": "ch1_015",
+  "chapterId": "ch1",
+  "schemaVersion": 1,
+  "levelIndex": 15,
+  "title": "Stone Bounce 15",
+  "roomBounds": {
+    "width": 1080.0,
+    "height": 1920.0
+  },
+  "lightSources": [
+    {
+      "id": "ls1",
+      "position": [
+        260.0,
+        1790.0
+      ],
+      "direction": 270.0,
+      "locked": true
+    }
+  ],
+  "mirrors": [
+    {
+      "id": "m1",
+      "hingePosition": [
+        260,
+        1470
+      ],
+      "length": 145.0,
+      "initialAngle": 88.48798423010773,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m2",
+      "hingePosition": [
+        710,
+        1470
+      ],
+      "length": 145.0,
+      "initialAngle": 171.94579986279103,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m3",
+      "hingePosition": [
+        710,
+        920
+      ],
+      "length": 145.0,
+      "initialAngle": 79.05437904083493,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m4",
+      "hingePosition": [
+        210,
+        920
+      ],
+      "length": 145.0,
+      "initialAngle": 90.53167834858766,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m5",
+      "hingePosition": [
+        210,
+        220
+      ],
+      "length": 145.0,
+      "initialAngle": 95.81529008999442,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    },
+    {
+      "id": "m6",
+      "hingePosition": [
+        560,
+        220
+      ],
+      "length": 145.0,
+      "initialAngle": 12.302386545408325,
+      "minAngle": 5.0,
+      "maxAngle": 175.0,
+      "snapIncrement": 0.0,
+      "isLocked": false,
+      "type": "standard"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "w0",
+      "polygon": [
+        [
+          136.0,
+          1370.0
+        ],
+        [
+          184.0,
+          1370.0
+        ],
+        [
+          184.0,
+          1570.0
+        ],
+        [
+          136.0,
+          1570.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w1",
+      "polygon": [
+        [
+          570.0,
+          1546.0
+        ],
+        [
+          770.0,
+          1546.0
+        ],
+        [
+          770.0,
+          1594.0
+        ],
+        [
+          570.0,
+          1594.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w2",
+      "polygon": [
+        [
+          786.0,
+          820.0
+        ],
+        [
+          834.0,
+          820.0
+        ],
+        [
+          834.0,
+          1020.0
+        ],
+        [
+          786.0,
+          1020.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w3",
+      "polygon": [
+        [
+          150.0,
+          996.0
+        ],
+        [
+          350.0,
+          996.0
+        ],
+        [
+          350.0,
+          1044.0
+        ],
+        [
+          150.0,
+          1044.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    },
+    {
+      "id": "w4",
+      "polygon": [
+        [
+          86.0,
+          120.0
+        ],
+        [
+          134.0,
+          120.0
+        ],
+        [
+          134.0,
+          320.0
+        ],
+        [
+          86.0,
+          320.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut_rotated",
+      "orientation": "vertical",
+      "thickness": 48.0
+    },
+    {
+      "id": "w5",
+      "polygon": [
+        [
+          500.0,
+          96.0
+        ],
+        [
+          700.0,
+          96.0
+        ],
+        [
+          700.0,
+          144.0
+        ],
+        [
+          500.0,
+          144.0
+        ]
+      ],
+      "isDecorative": false,
+      "renderAsset": "wall_h_cut",
+      "orientation": "horizontal",
+      "thickness": 48.0
+    }
+  ],
+  "targetCrystals": [
+    {
+      "id": "c1",
+      "position": [
+        560,
+        600
+      ],
+      "hitRadius": 44,
+      "groupId": "g1"
+    }
+  ],
+  "crystalGroups": [
+    {
+      "groupId": "g1",
+      "requiredCount": 1
+    }
+  ],
+  "doorPortals": [],
+  "requiredMirrorBounces": 6,
+  "intendedSolution": {
+    "mirrorAngles": {
+      "m1": 135.0,
+      "m2": 135.0,
+      "m3": 45.0,
+      "m4": 45.0,
+      "m5": 135.0,
+      "m6": 45.0
+    },
+    "toleranceDegrees": 5.0
+  },
+  "starThresholds": {
+    "threeStarMoveCount": 7,
+    "threeStarTimeSeconds": 160
+  },
+  "metadata": {
+    "designer": "canonical_v2",
+    "difficultyBand": "ch1",
+    "newConceptsIntroduced": [
+      "reflection",
+      "multi_mirror"
+    ],
+    "objective": "Bounce the beam through all 6 mirrors to light the crystal.",
+    "hints": [
+      "Walls close the wrong turns \u2014 aim for the next pillar.",
+      "Every mirror must reflect the beam.",
+      "Wrong tilt hits stone; correct tilt reaches the next post."
+    ],
+    "roomType": "meander_stoppers",
+    "pathBias": "meander",
+    "wallStyle": "stoppers",
+    "globalIndex": 15,
+    "pillars": [
+      {
+        "position": [
+          260,
+          1470
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          710,
+          1470
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          710,
+          920
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          210,
+          920
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          210,
+          220
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      },
+      {
+        "position": [
+          560,
+          220
+        ],
+        "asset": "wall_v_cut",
+        "size": 48.0
+      }
+    ],
+    "difficultyScore": 15.0
+  }
+}

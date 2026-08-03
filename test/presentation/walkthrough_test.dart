@@ -28,12 +28,12 @@ void main() {
   late LevelModel first;
 
   setUpAll(() {
-    final raw = File('assets/levels/levels.json').readAsStringSync();
-    final root = jsonDecode(raw) as Map<String, dynamic>;
-    final json = (root['levels'] as List)
-        .cast<Map<String, dynamic>>()
-        .firstWhere((l) => l['levelId'] == GameConstants.firstLevelId);
-    first = LevelModel.fromJson(json);
+    final raw = File(
+      'assets/levels/${GameConstants.firstLevelId}.json',
+    ).readAsStringSync();
+    first = LevelModel.fromJson(
+      jsonDecode(raw) as Map<String, dynamic>,
+    );
   });
 
   Future<GameplayBloc> startedBloc(LevelModel level) async {
