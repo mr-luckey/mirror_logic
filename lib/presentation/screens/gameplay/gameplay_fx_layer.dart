@@ -10,6 +10,7 @@ import 'package:mirror_logic/domain/level/level_model.dart';
 import 'package:mirror_logic/presentation/blocs/gameplay/gameplay_bloc.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_painter.dart'
     show worldToScreen;
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Short-lived sparks and bursts painted over the board.
 ///
@@ -143,6 +144,7 @@ class _GameplayFxLayerState extends State<GameplayFxLayer>
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return BlocListener<GameplayBloc, GameplayState>(
       listener: (context, state) => _onState(state),
       child: IgnorePointer(

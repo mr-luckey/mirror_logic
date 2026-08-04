@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// How a panel sits against the wood backdrop.
 enum MedievalPanelStyle {
@@ -32,14 +33,19 @@ class MedievalPanel extends StatelessWidget {
   /// Accent colour for a halo around the panel, marking it as the live one.
   final Color? glow;
 
-  static const LinearGradient _raisedFill = LinearGradient(
+  static LinearGradient get _raisedFill => LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFF5A4030), Color(0xFF3A2818), Color(0xFF1A1008)],
+    colors: [
+      MedievalColors.woodLight,
+      MedievalColors.woodMid,
+      MedievalColors.woodDeep,
+    ],
   );
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final inset = style == MedievalPanelStyle.inset;
     final accent = glow;
 
@@ -94,6 +100,7 @@ class MedievalDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return SizedBox(
       height: height,
       child: Center(

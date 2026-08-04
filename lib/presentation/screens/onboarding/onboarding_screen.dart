@@ -12,6 +12,7 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart'
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_screen_header.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -36,6 +37,7 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final gutter = Responsive.pageGutter(context);
     final diagramHeight = Responsive.hp(context, 0.2).clamp(110.0, 190.0);
 
@@ -132,6 +134,7 @@ class _StepRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return MedievalPanel(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
       child: Row(
@@ -219,7 +222,7 @@ class _TutorialPainter extends CustomPainter {
       hinge - arm,
       hinge + arm,
       Paint()
-        ..shader = const LinearGradient(
+        ..shader = LinearGradient(
           colors: [
             MedievalColors.bronzeHighlight,
             MedievalColors.crystal,
@@ -308,7 +311,7 @@ class _TutorialPainter extends CustomPainter {
       c,
       13,
       Paint()
-        ..shader = const RadialGradient(
+        ..shader = RadialGradient(
           colors: [MedievalColors.bronzeLight, MedievalColors.bronzeDark],
         ).createShader(Rect.fromCircle(center: c, radius: 13)),
     );
@@ -341,7 +344,7 @@ class _TutorialPainter extends CustomPainter {
     canvas.drawPath(
       gem,
       Paint()
-        ..shader = const LinearGradient(
+        ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [MedievalColors.laserCore, MedievalColors.crystalDeep],

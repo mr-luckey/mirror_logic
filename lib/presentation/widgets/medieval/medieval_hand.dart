@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Cartoon gauntlet-glove hand used to demonstrate a drag on the board.
 ///
@@ -23,6 +24,7 @@ class MedievalHand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return SizedBox(
       width: width,
       height: width * _aspect,
@@ -94,7 +96,7 @@ class _HandPainter extends CustomPainter {
     canvas.drawPath(
       glove,
       Paint()
-        ..shader = const LinearGradient(
+        ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [Color(0xFFFBF0D6), MedievalColors.parchment, MedievalColors.parchmentDark],

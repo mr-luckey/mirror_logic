@@ -9,6 +9,7 @@ import 'package:mirror_logic/presentation/screens/main_menu/main_menu_screen.dar
 import 'package:mirror_logic/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:mirror_logic/presentation/screens/settings/settings_screen.dart';
 import 'package:mirror_logic/presentation/screens/splash/splash_screen.dart';
+import 'package:mirror_logic/presentation/screens/theme_shop/theme_shop_screen.dart';
 
 abstract final class AppRouter {
   static final GlobalKey<NavigatorState> rootKey = GlobalKey<NavigatorState>();
@@ -57,6 +58,7 @@ abstract final class AppRouter {
       ),
       GoRoute(path: '/settings', builder: (_, _) => const SettingsScreen()),
       GoRoute(path: '/about', builder: (_, _) => const AboutScreen()),
+      GoRoute(path: '/themes', builder: (_, _) => const ThemeShopScreen()),
     ],
   );
 }

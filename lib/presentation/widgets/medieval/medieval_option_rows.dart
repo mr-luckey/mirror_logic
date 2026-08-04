@@ -4,6 +4,7 @@ import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// A titled group of options on a bronze-framed panel.
 ///
@@ -23,6 +24,7 @@ class MedievalSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return MedievalPanel(
       padding: const EdgeInsets.fromLTRB(14, 11, 14, 13),
       child: Column(
@@ -66,6 +68,7 @@ class MedievalRowLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -111,6 +114,7 @@ class MedievalLinkRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return MedievalPressable(
       onPressed: onTap,
       child: Padding(
@@ -143,6 +147,7 @@ class MedievalInfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 9),
       child: Row(

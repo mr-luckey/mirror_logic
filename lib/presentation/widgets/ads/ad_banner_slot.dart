@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// The wooden strip along the bottom of the app carrying a loaded banner.
 ///
@@ -14,6 +15,7 @@ class AdBannerSlot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return DecoratedBox(
       decoration: BoxDecoration(
         color: MedievalColors.woodDeep,

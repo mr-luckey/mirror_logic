@@ -14,6 +14,7 @@ import 'package:mirror_logic/presentation/screens/gameplay/gameplay_painter.dart
     show worldToScreen;
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_walkthrough.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_hand.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Plays the opening board for the player with a cartoon hand.
 ///
@@ -243,6 +244,7 @@ class _GameplayWalkthroughLayerState extends State<GameplayWalkthroughLayer>
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final hand = _hand;
     final caption = _caption;
 

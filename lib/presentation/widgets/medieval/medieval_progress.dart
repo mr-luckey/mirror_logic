@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Progress shown as molten bronze filling a carved channel.
 class MedievalProgressBar extends StatelessWidget {
@@ -17,6 +18,7 @@ class MedievalProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final fill = color ?? MedievalColors.bronzeLight;
     final clamped = value.isNaN ? 0.0 : value.clamp(0.0, 1.0);
 
@@ -75,11 +77,12 @@ class MedievalLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(
+          SizedBox(
             width: 34,
             height: 34,
             child: CircularProgressIndicator(

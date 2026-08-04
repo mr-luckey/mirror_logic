@@ -65,6 +65,32 @@ flutter:
     - assets/images/ui/tome_ch9.webp
     - assets/images/ui/tome_ch10.webp
 
+    - assets/images/themes/golden_sun/floor.webp
+    - assets/images/themes/golden_sun/wall_h.webp
+    - assets/images/themes/golden_sun/wall_v.webp
+    - assets/images/themes/golden_sun/thumb.webp
+    - assets/images/themes/moonlight_castle/floor.webp
+    - assets/images/themes/moonlight_castle/wall_h.webp
+    - assets/images/themes/moonlight_castle/wall_v.webp
+    - assets/images/themes/moonlight_castle/atmosphere.webp
+    - assets/images/themes/moonlight_castle/thumb.webp
+    - assets/images/themes/lava_forge/floor.webp
+    - assets/images/themes/lava_forge/wall_h.webp
+    - assets/images/themes/lava_forge/wall_v.webp
+    - assets/images/themes/lava_forge/atmosphere.webp
+    - assets/images/themes/lava_forge/crystal.webp
+    - assets/images/themes/lava_forge/thumb.webp
+    - assets/images/themes/frozen_kingdom/floor.webp
+    - assets/images/themes/frozen_kingdom/wall_h.webp
+    - assets/images/themes/frozen_kingdom/wall_v.webp
+    - assets/images/themes/frozen_kingdom/atmosphere.webp
+    - assets/images/themes/frozen_kingdom/thumb.webp
+    - assets/images/themes/celestial_heaven/floor.webp
+    - assets/images/themes/celestial_heaven/wall_h.webp
+    - assets/images/themes/celestial_heaven/wall_v.webp
+    - assets/images/themes/celestial_heaven/atmosphere.webp
+    - assets/images/themes/celestial_heaven/thumb.webp
+
     - assets/audio/music/gameplay.ogg
     - assets/audio/music/menu.ogg
 

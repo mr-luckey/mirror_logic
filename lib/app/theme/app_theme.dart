@@ -14,7 +14,7 @@ abstract final class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: MedievalColors.woodDeep,
-      colorScheme: const ColorScheme.dark(
+      colorScheme: ColorScheme.dark(
         primary: MedievalColors.bronzeLight,
         onPrimary: MedievalColors.woodDeep,
         secondary: MedievalColors.laserMid,
@@ -44,9 +44,9 @@ abstract final class AppTheme {
           letterSpacing: 2,
           color: MedievalColors.textGold,
         ),
-        iconTheme: const IconThemeData(color: MedievalColors.textGold),
+        iconTheme: IconThemeData(color: MedievalColors.textGold),
       ),
-      iconTheme: const IconThemeData(color: MedievalColors.textGold),
+      iconTheme: IconThemeData(color: MedievalColors.textGold),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           textStyle: MedievalTextStyles.cinzel(weight: FontWeight.w700),
@@ -74,7 +74,7 @@ abstract final class AppTheme {
         }),
         trackOutlineColor: WidgetStateProperty.all(MedievalColors.bronzeDark),
       ),
-      progressIndicatorTheme: const ProgressIndicatorThemeData(
+      progressIndicatorTheme: ProgressIndicatorThemeData(
         color: MedievalColors.bronzeLight,
         linearTrackColor: MedievalColors.woodDeep,
         circularTrackColor: Colors.transparent,
@@ -86,7 +86,7 @@ abstract final class AppTheme {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          side: const BorderSide(color: MedievalColors.bronze, width: 1.5),
+          side: BorderSide(color: MedievalColors.bronze, width: 1.5),
         ),
       ),
       dialogTheme: DialogThemeData(
@@ -101,7 +101,7 @@ abstract final class AppTheme {
         contentTextStyle: MedievalTextStyles.cinzel(size: 13, height: 1.35),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: MedievalColors.bronzeLight, width: 2),
+          side: BorderSide(color: MedievalColors.bronzeLight, width: 2),
         ),
       ),
       bottomSheetTheme: const BottomSheetThemeData(

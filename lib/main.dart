@@ -17,6 +17,7 @@ import 'package:mirror_logic/infrastructure/update/app_update_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/settings/settings_cubit.dart';
+import 'package:mirror_logic/presentation/blocs/theme/theme_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,9 +61,10 @@ Future<void> main() async {
   final adsService = sl<AdsService>();
   unawaited(adsService.init());
 
-  // Warm the board sprites while the player is still on the menu, so opening
-  // a level does not pay for four PNG decodes.
-  unawaited(GameArt.ensureLoaded());
+    unawaited(GameArt.loadForTheme(
+      // Prefer the saved hall so first paint matches the equipped theme.
+      sl<SaveRepository>().loadSave().selectedThemeId,
+    ));
 
   runApp(
     MultiRepositoryProvider(
@@ -89,6 +91,12 @@ Future<void> main() async {
             create: (_) =>
                 EconomyBloc(economyRepository: economyRepository)
                   ..add(const EconomyStarted()),
+          ),
+          BlocProvider(
+            create: (_) => ThemeCubit(
+              saveRepository: saveRepository,
+              economyRepository: economyRepository,
+            ),
           ),
         ],
         child: const MirrorLogicApp(),

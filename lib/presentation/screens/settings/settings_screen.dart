@@ -19,12 +19,14 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_screen_heade
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_toast.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_toggle.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     // Slider still asserts on a Material ancestor, and the wood backdrop is
     // only painted, not a Material surface.
     return Material(type: MaterialType.transparency, child: _body(context));
@@ -189,6 +191,7 @@ class _ToggleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => onChanged(!value),
@@ -223,6 +226,7 @@ class _SliderRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Column(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Cut-out illustration assets used by the menus.
 abstract final class MedievalArt {
@@ -55,6 +56,7 @@ class MedievalArtwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final halo = glow ?? MedievalColors.bronzeLight;
 
     return SizedBox(

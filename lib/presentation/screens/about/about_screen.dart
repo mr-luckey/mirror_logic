@@ -14,6 +14,7 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_toast.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Who made the game, which build this is, and how to reach anyone about it.
 class AboutScreen extends StatefulWidget {
@@ -84,6 +85,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final gutter = Responsive.pageGutter(context);
     final short = Responsive.isShort(context);
     final crest = Responsive.wp(
@@ -194,6 +196,7 @@ class _Masthead extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Column(
       children: [
         MedievalArtwork(

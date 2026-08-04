@@ -5,6 +5,7 @@ import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// A brief message on a bronze plaque.
 ///
@@ -74,6 +75,7 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final curve = CurvedAnimation(parent: _in, curve: Curves.easeOutBack);
 
     return Positioned(

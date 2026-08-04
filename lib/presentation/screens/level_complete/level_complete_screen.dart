@@ -18,6 +18,7 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart'
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_rate_dialog.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 class LevelCompleteArgs {
   const LevelCompleteArgs({
@@ -179,6 +180,7 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final time = args.timeSeconds;
     final timeLabel =
         '${time.floor() ~/ 60}:${(time.floor() % 60).toString().padLeft(2, '0')}';
@@ -373,6 +375,7 @@ class _Trophy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final starSize = size * 0.17;
 
     return SizedBox(
@@ -384,7 +387,8 @@ class _Trophy extends StatelessWidget {
           MedievalArtwork(
                 asset: MedievalArt.wreath,
                 size: size,
-                glowStrength: 0.22,
+                glow: MedievalColors.bronzeHighlight,
+                glowStrength: 0.48,
               )
               .animate()
               .fadeIn(duration: 500.ms)

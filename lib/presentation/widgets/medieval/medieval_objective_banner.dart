@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Torn parchment objective banner pinned to the board.
 class MedievalObjectiveBanner extends StatelessWidget {
@@ -17,6 +18,7 @@ class MedievalObjectiveBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return DecoratedBox(
       decoration: BoxDecoration(
         boxShadow: [
@@ -40,7 +42,7 @@ class MedievalObjectiveBanner extends StatelessWidget {
                 height: 28,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(3),
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [

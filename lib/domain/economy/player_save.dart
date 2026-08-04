@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
+import 'package:mirror_logic/domain/theme/theme_catalog.dart';
 
 class LevelProgress extends Equatable {
   const LevelProgress({
@@ -57,6 +58,14 @@ class PlayerSave extends Equatable {
     this.levelProgress = const {},
     this.lastPlayedLevelId,
     this.hintsUsedTotal = 0,
+    this.ownedThemeIds = const [
+      ThemeCatalog.starterId,
+      'moonlight_castle',
+      'frozen_kingdom',
+      'lava_forge',
+      'celestial_heaven',
+    ],
+    this.selectedThemeId = ThemeCatalog.starterId,
   });
 
   final int saveSchemaVersion;
@@ -71,6 +80,12 @@ class PlayerSave extends Equatable {
   final String? lastPlayedLevelId;
   final int hintsUsedTotal;
 
+  /// Theme packs the player has purchased (starter is always included).
+  final List<String> ownedThemeIds;
+
+  /// Currently equipped visual hall.
+  final String selectedThemeId;
+
   PlayerSave copyWith({
     bool? onboardingComplete,
     bool? walkthroughSeen,
@@ -79,6 +94,8 @@ class PlayerSave extends Equatable {
     Map<String, LevelProgress>? levelProgress,
     String? lastPlayedLevelId,
     int? hintsUsedTotal,
+    List<String>? ownedThemeIds,
+    String? selectedThemeId,
   }) {
     return PlayerSave(
       saveSchemaVersion: saveSchemaVersion,
@@ -89,8 +106,30 @@ class PlayerSave extends Equatable {
       levelProgress: levelProgress ?? this.levelProgress,
       lastPlayedLevelId: lastPlayedLevelId ?? this.lastPlayedLevelId,
       hintsUsedTotal: hintsUsedTotal ?? this.hintsUsedTotal,
+      ownedThemeIds: ownedThemeIds ?? this.ownedThemeIds,
+      selectedThemeId: selectedThemeId ?? this.selectedThemeId,
     );
   }
+
+  /// Highest continuous level number the player has opened (ch2_014 → 114).
+  int get highestDisplayLevel {
+    var best = 1;
+    for (final id in unlockedLevelIds) {
+      final n = displayLevelForId(id);
+      if (n > best) best = n;
+    }
+    return best;
+  }
+
+  static int displayLevelForId(String levelId) {
+    final match = RegExp(r'^ch(\d+)_(\d+)$').firstMatch(levelId);
+    if (match == null) return 1;
+    final chapter = int.parse(match.group(1)!);
+    final index = int.parse(match.group(2)!);
+    return (chapter - 1) * 100 + index;
+  }
+
+  bool ownsTheme(String themeId) => ownedThemeIds.contains(themeId);
 
   /// `startsWith` would make `ch1` swallow every `ch10_*` level, so fall back to
   /// matching the id's chapter segment exactly.
@@ -147,10 +186,28 @@ class PlayerSave extends Equatable {
     'levelProgress': levelProgress.map((k, v) => MapEntry(k, v.toJson())),
     'lastPlayedLevelId': lastPlayedLevelId,
     'hintsUsedTotal': hintsUsedTotal,
+    'ownedThemeIds': ownedThemeIds,
+    'selectedThemeId': selectedThemeId,
   };
 
   factory PlayerSave.fromJson(Map<String, dynamic> json) {
     final progressRaw = json['levelProgress'] as Map<String, dynamic>? ?? {};
+    final ownedRaw =
+        (json['ownedThemeIds'] as List<dynamic>? ??
+                const [ThemeCatalog.starterId])
+            .whereType<String>()
+            .where(ThemeCatalog.allIds.contains)
+            .toList();
+    if (!ownedRaw.contains(ThemeCatalog.starterId)) {
+      ownedRaw.insert(0, ThemeCatalog.starterId);
+    }
+    // Drop retired halls and fill any newly granted ones.
+    final owned = {...ownedRaw, ...ThemeCatalog.allIds}.toList();
+    final selectedRaw =
+        json['selectedThemeId'] as String? ?? ThemeCatalog.starterId;
+    final selected = ThemeCatalog.allIds.contains(selectedRaw)
+        ? selectedRaw
+        : ThemeCatalog.starterId;
     return PlayerSave(
       saveSchemaVersion: json['saveSchemaVersion'] as int? ?? 1,
       onboardingComplete: json['onboardingComplete'] as bool? ?? false,
@@ -170,6 +227,8 @@ class PlayerSave extends Equatable {
       },
       lastPlayedLevelId: json['lastPlayedLevelId'] as String?,
       hintsUsedTotal: (json['hintsUsedTotal'] as num?)?.toInt() ?? 0,
+      ownedThemeIds: owned,
+      selectedThemeId: selected,
     );
   }
 
@@ -183,6 +242,8 @@ class PlayerSave extends Equatable {
     levelProgress,
     lastPlayedLevelId,
     hintsUsedTotal,
+    ownedThemeIds,
+    selectedThemeId,
   ];
 }
 

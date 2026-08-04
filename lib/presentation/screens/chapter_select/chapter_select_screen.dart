@@ -16,6 +16,7 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_progress.dar
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_screen_header.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_star_row.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 class ChapterSelectScreen extends StatefulWidget {
   const ChapterSelectScreen({super.key});
@@ -33,6 +34,7 @@ class _ChapterSelectScreenState extends State<ChapterSelectScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final gutter = Responsive.pageGutter(context);
 
     return MedievalWoodBackground(
@@ -140,6 +142,7 @@ class _ChapterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final narrow = Responsive.isNarrow(context);
     final thumb = narrow ? 58.0 : 70.0;
     final ratio = chapter.maxStars == 0 ? 0.0 : stars / chapter.maxStars;
@@ -267,7 +270,7 @@ class _ChapterCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.lock_rounded,
                         size: 22,
                         color: MedievalColors.woodDeep,
@@ -299,6 +302,7 @@ class _Thumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return SizedBox(
       width: size,
       height: size,

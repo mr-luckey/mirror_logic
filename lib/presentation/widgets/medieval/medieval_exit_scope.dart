@@ -5,6 +5,7 @@ import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Guards the hardware back button on a root screen.
 ///
@@ -17,6 +18,7 @@ class MedievalExitScope extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -71,6 +73,7 @@ class MedievalConfirmDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Material(
       type: MaterialType.transparency,
       child: Center(

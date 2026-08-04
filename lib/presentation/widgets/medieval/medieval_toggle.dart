@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/press_feedback.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// A bronze stud sliding in a carved channel, standing in for Material's
 /// Switch so the settings screen keeps the same metal vocabulary.
@@ -21,6 +22,7 @@ class MedievalToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final knob = height - 6;
 
     return GestureDetector(
@@ -70,7 +72,7 @@ class MedievalToggle extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: value
                   ? MedievalColors.bronzeMetal
-                  : const LinearGradient(
+                  : LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [

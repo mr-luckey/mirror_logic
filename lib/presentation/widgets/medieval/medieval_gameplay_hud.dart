@@ -3,6 +3,7 @@ import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_bronze_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_resource_chip.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Top HUD: pause left, level centred, coins right, all on one line.
 ///
@@ -27,6 +28,7 @@ class MedievalGameplayHud extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 4, 10, 0),
       child: Row(
@@ -62,10 +64,11 @@ class _LevelShield extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     // Wider for three-digit global numbers (101…1000).
     final wide = levelIndex >= 100;
     return CustomPaint(
-      painter: const _ShieldPainter(),
+      painter: _ShieldPainter(themeId: MedievalColors.themeId),
       child: SizedBox(
         width: wide ? 72 : 60,
         height: 62,
@@ -108,7 +111,9 @@ class _LevelShield extends StatelessWidget {
 }
 
 class _ShieldPainter extends CustomPainter {
-  const _ShieldPainter();
+  _ShieldPainter({required this.themeId});
+
+  final String themeId;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -177,5 +182,6 @@ class _ShieldPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _ShieldPainter oldDelegate) =>
+      oldDelegate.themeId != themeId;
 }

@@ -1,43 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
+import 'package:mirror_logic/domain/theme/visual_theme.dart';
 
-/// Fantasy medieval wooden palette matching the gameplay screenshot.
+/// Fantasy palette for the active [VisualTheme].
+///
+/// Call sites stay as `MedievalColors.woodDeep` etc. Widgets that paint these
+/// tokens must call [ThemeController.watch] so [ThemeScope] can rebuild them
+/// when a hall is equipped — static getters alone do not register a dependency.
 abstract final class MedievalColors {
-  static const Color woodDeep = Color(0xFF1A0F08);
-  static const Color woodMid = Color(0xFF2D1B0D);
-  static const Color woodPlank = Color(0xFF3D2B1F);
-  static const Color woodLight = Color(0xFF4A3424);
+  static VisualTheme get _t => ThemeController.current;
 
-  static const Color bronzeDark = Color(0xFF5C3A1E);
-  static const Color bronze = Color(0xFF8B5E34);
-  static const Color bronzeMid = Color(0xFFA8723C);
-  static const Color bronzeLight = Color(0xFFD4AF37);
-  static const Color bronzeHighlight = Color(0xFFF3CF7A);
+  static Color get woodDeep => _t.woodDeep;
+  static Color get woodMid => _t.woodMid;
+  static Color get woodPlank => _t.woodPlank;
+  static Color get woodLight => _t.woodLight;
 
-  static const Color stoneDark = Color(0xFF1E1E1E);
-  static const Color stone = Color(0xFF2B2B2B);
-  static const Color stoneLight = Color(0xFF3A3A3A);
-  static const Color stoneGrout = Color(0xFF141414);
+  static Color get bronzeDark => _t.bronzeDark;
+  static Color get bronze => _t.bronze;
+  static Color get bronzeMid => _t.bronzeMid;
+  static Color get bronzeLight => _t.bronzeLight;
+  static Color get bronzeHighlight => _t.bronzeHighlight;
 
-  static const Color laserCore = Color(0xFFCCFFFF);
-  static const Color laserMid = Color(0xFF00F2FF);
-  static const Color laserGlow = Color(0xFF40C8FF);
-  static const Color crystal = Color(0xFF80D0FF);
-  static const Color crystalDeep = Color(0xFF2090C0);
+  static Color get stoneDark => _t.stoneDark;
+  static Color get stone => _t.stone;
+  static Color get stoneLight => _t.stoneLight;
+  static Color get stoneGrout => _t.stoneGrout;
 
-  static const Color parchment = Color(0xFFD4C4A0);
-  static const Color parchmentDark = Color(0xFFB8A47A);
-  static const Color parchmentInk = Color(0xFF3A2A18);
+  static Color get laserCore => _t.laserCore;
+  static Color get laserMid => _t.laserMid;
+  static Color get laserGlow => _t.laserGlow;
+  static Color get crystal => _t.crystal;
+  static Color get crystalDeep => _t.crystalDeep;
 
-  static const Color textGold = Color(0xFFF3CF7A);
-  static const Color textCream = Color(0xFFE5E5E5);
-  static const Color textMuted = Color(0xFFB8A888);
+  static Color get parchment => _t.parchment;
+  static Color get parchmentDark => _t.parchmentDark;
+  static Color get parchmentInk => _t.parchmentInk;
 
-  static const Color torchOrange = Color(0xFFFF8C22);
-  static const Color torchYellow = Color(0xFFFFD060);
-  static const Color torchCore = Color(0xFFFFF0A0);
+  static Color get textGold => _t.textGold;
+  static Color get textCream => _t.textCream;
+  static Color get textMuted => _t.textMuted;
+
+  static Color get torchOrange => _t.torchOrange;
+  static Color get torchYellow => _t.torchYellow;
+  static Color get torchCore => _t.torchCore;
 
   static const Color greenPlus = Color(0xFF4CAF50);
-  static const Color vineGreen = Color(0xFF2E5A2E);
+  static Color get vineGreen => _t.vineGreen;
 
   /// A hit that does not count: the beam reached the crystal by a route the
   /// puzzle rejects.
@@ -45,20 +53,12 @@ abstract final class MedievalColors {
   static const Color rejectMid = Color(0xFFFF3B30);
   static const Color rejectGlow = Color(0xFFC01818);
 
-  static const LinearGradient bronzeMetal = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [bronzeHighlight, bronzeLight, bronze, bronzeDark],
-    stops: [0.0, 0.25, 0.65, 1.0],
-  );
+  static LinearGradient get bronzeMetal => _t.bronzeMetal;
+  static LinearGradient get woodPanel => _t.woodPanel;
+  static LinearGradient get laserGradient => _t.laserGradient;
 
-  static const LinearGradient woodPanel = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [woodLight, woodMid, woodDeep],
-  );
-
-  static const LinearGradient laserGradient = LinearGradient(
-    colors: [laserCore, laserMid, laserGlow],
-  );
+  static Color get wallTint => _t.wallTint;
+  static Color? get accentGlow => _t.accentGlow;
+  static String? get atmosphereAsset => _t.atmosphereAsset;
+  static String get themeId => _t.id;
 }

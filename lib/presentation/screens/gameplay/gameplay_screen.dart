@@ -18,6 +18,7 @@ import 'package:mirror_logic/domain/beam/beam_types.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 import 'package:mirror_logic/infrastructure/art/game_art.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/gameplay/gameplay_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
@@ -44,6 +45,7 @@ class GameplayScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return BlocProvider(
       create: (context) =>
           GameplayBloc(levelRepository: context.read<LevelRepository>())
@@ -58,6 +60,7 @@ class _GameplayBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return MultiBlocListener(
       listeners: [
         // One cue per lock: the drag settling onto a mirror centre or a
@@ -169,7 +172,7 @@ class _GameplayBody extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, GameplayState state) {
     if (state.phase == GameplayPhase.loading) {
-      return const MedievalWoodBackground(
+      return MedievalWoodBackground(
         child: Center(
           child: CircularProgressIndicator(
             color: MedievalColors.bronzeHighlight,
@@ -255,6 +258,7 @@ class _TopHud extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return BlocBuilder<GameplayBloc, GameplayState>(
       buildWhen: (p, c) =>
           p.level?.levelId != c.level?.levelId || p.isSolved != c.isSolved,
@@ -274,13 +278,7 @@ class _TopHud extends StatelessWidget {
           coins: coins,
           onPause: () =>
               context.read<GameplayBloc>().add(const GameplayPaused()),
-          onAddCoins: () {
-            MedievalToast.show(
-              context,
-              'Earn coin by clearing levels',
-              icon: Icons.monetization_on_rounded,
-            );
-          },
+          onAddCoins: () => context.push('/themes'),
         );
       },
     );
@@ -360,6 +358,7 @@ class _BoardArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         final w = constraints.maxWidth;
@@ -450,6 +449,7 @@ class _ObjectiveBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return BlocSelector<GameplayBloc, GameplayState, (String, String)>(
       selector: (state) {
         final meta = state.level?.metadata.objective ?? '';
@@ -499,7 +499,7 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
       duration: const Duration(seconds: 8),
     )..repeat();
     _walkthrough = !context.read<ProgressBloc>().state.save.walkthroughSeen;
-    unawaited(GameArt.ensureLoaded());
+    unawaited(GameArt.loadForTheme(ThemeController.current.id));
   }
 
   @override
@@ -510,6 +510,7 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final showAngle = context.select<SettingsCubit, bool>(
       (cubit) => cubit.state.angleReadout,
     );
@@ -630,6 +631,7 @@ class _PauseOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final maxWidth = (Responsive.widthOf(context) * 0.86).clamp(240.0, 340.0);
     return ColoredBox(
       color: Colors.black.withValues(alpha: 0.7),
@@ -769,6 +771,7 @@ class _HintOverlayState extends State<_HintOverlay> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final gutter = Responsive.pageGutter(context);
 
     return Align(
@@ -795,7 +798,7 @@ class _HintOverlayState extends State<_HintOverlay> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.auto_fix_high_rounded,
                       size: 17,
                       color: MedievalColors.bronzeDark,

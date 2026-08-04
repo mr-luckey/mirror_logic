@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
 
@@ -25,6 +26,7 @@ class MedievalBronzeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return MedievalPressable(
       onPressed: onPressed,
       sfx: sfx,
@@ -40,7 +42,7 @@ class MedievalBronzeButton extends StatelessWidget {
                 Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [

@@ -14,6 +14,7 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_progress.dar
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_screen_header.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_star_row.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 class LevelSelectScreen extends StatefulWidget {
   const LevelSelectScreen({super.key, required this.chapterId});
@@ -55,6 +56,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final gutter = Responsive.pageGutter(context);
 
     return MedievalWoodBackground(
@@ -193,6 +195,7 @@ class _ChapterProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Row(
       children: [
         Text(
@@ -242,6 +245,7 @@ class _LevelCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final narrow = Responsive.isNarrow(context);
 
     return MedievalPressable(
@@ -254,19 +258,22 @@ class _LevelCell extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: unlocked
-                ? const [
-                    MedievalColors.stoneLight,
-                    MedievalColors.stone,
-                    MedievalColors.stoneDark,
+                ? [
+                    MedievalColors.woodLight,
+                    MedievalColors.woodMid,
+                    MedievalColors.woodDeep,
                   ]
-                : [MedievalColors.stoneDark, MedievalColors.stoneGrout],
+                : [
+                    MedievalColors.woodDeep,
+                    Color.lerp(MedievalColors.woodDeep, Colors.black, 0.45)!,
+                  ],
           ),
           border: Border.all(
             color: highlighted
                 ? MedievalColors.bronzeHighlight
                 : unlocked
-                ? MedievalColors.bronzeDark.withValues(alpha: 0.85)
-                : Colors.black.withValues(alpha: 0.5),
+                ? MedievalColors.bronze.withValues(alpha: 0.9)
+                : MedievalColors.bronzeDark.withValues(alpha: 0.55),
             width: highlighted ? 2.2 : 1.4,
           ),
           boxShadow: [
@@ -299,13 +306,12 @@ class _LevelCell extends StatelessWidget {
                               size: Responsive.sp(context, 17),
                               color: highlighted
                                   ? MedievalColors.bronzeHighlight
-                                  : MedievalColors.textCream,
+                                  : MedievalColors.textGold,
                             ).copyWith(
                               shadows: const [
-                                // Carved into the stone rather than sitting on it.
                                 Shadow(
                                   color: Colors.black,
-                                  blurRadius: 0,
+                                  blurRadius: 2,
                                   offset: Offset(0, 1.2),
                                 ),
                               ],
@@ -328,7 +334,7 @@ class _LevelCell extends StatelessWidget {
                     MedievalArt.padlock,
                     width: narrow ? 20 : 24,
                     filterQuality: FilterQuality.medium,
-                    errorBuilder: (_, _, _) => const Icon(
+                    errorBuilder: (_, _, _) => Icon(
                       Icons.lock_rounded,
                       color: MedievalColors.textMuted,
                     ),

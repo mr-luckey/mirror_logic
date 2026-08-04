@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Coin or hint chip with an optional green + action.
 class MedievalResourceChip extends StatelessWidget {
@@ -31,6 +32,7 @@ class MedievalResourceChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final height = 34.0 * scale;
 
     final chip = Container(
@@ -41,7 +43,7 @@ class MedievalResourceChip extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(height / 2),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [MedievalColors.bronzeMid, MedievalColors.bronzeDark],

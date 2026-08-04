@@ -9,12 +9,14 @@ import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final short = Responsive.isShort(context);
     final crestSize = Responsive.wp(
       context,
@@ -84,6 +86,7 @@ class GameTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return FittedBox(
       fit: BoxFit.scaleDown,
       child: Column(
@@ -126,6 +129,7 @@ class _ForgeBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Responsive.wp(context, 0.1)),
       child: Container(
@@ -141,7 +145,7 @@ class _ForgeBar extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(4),
-          child: const LinearProgressIndicator(
+          child: LinearProgressIndicator(
             minHeight: 4,
             backgroundColor: Colors.transparent,
             color: MedievalColors.bronzeHighlight,

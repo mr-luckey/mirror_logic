@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Earned stars as glowing gold, unearned as hollow bronze sockets.
 class MedievalStarRow extends StatelessWidget {
@@ -18,6 +19,7 @@ class MedievalStarRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(total, (i) {

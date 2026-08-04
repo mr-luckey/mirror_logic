@@ -4,6 +4,7 @@ import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_bronze_button.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Carved title bar with a bronze back button, used at the top of every
 /// non-gameplay screen so they all read as the same place.
@@ -23,6 +24,7 @@ class MedievalScreenHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final scale = Responsive.scaleOf(context);
     final back = onBack;
 
@@ -92,6 +94,7 @@ class _RuleWithDiamond extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     Widget rule(bool flip) => Expanded(
       child: Container(
         height: 1.4,

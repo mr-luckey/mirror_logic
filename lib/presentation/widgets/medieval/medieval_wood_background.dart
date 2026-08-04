@@ -1,10 +1,11 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
+import 'package:mirror_logic/app/theme/medieval_colors.dart';
 
-/// Dark carved-wood backdrop with depth, planks, and corner vines.
+/// Theme-colored carved backdrop with optional atmosphere cutouts.
 class MedievalWoodBackground extends StatelessWidget {
   const MedievalWoodBackground({super.key, required this.child});
 
@@ -12,30 +13,33 @@ class MedievalWoodBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Depend on ThemeScope so the backdrop (and hall chrome) never goes stale.
+    ThemeController.watch(context);
+    final themeId = MedievalColors.themeId;
+    final atmosphere = MedievalColors.atmosphereAsset;
+    final accent = MedievalColors.accentGlow;
+    final size = MediaQuery.sizeOf(context);
+
     return Stack(
       fit: StackFit.expand,
       children: [
-        // Boundaried so a busy board above it never forces the planks,
-        // gradients and grain to be rasterised again.
-        const RepaintBoundary(
+        RepaintBoundary(
           child: CustomPaint(
-            painter: _WoodPlankPainter(),
-            child: SizedBox.expand(),
+            painter: _WoodPlankPainter(themeId: themeId),
+            child: const SizedBox.expand(),
           ),
         ),
-        // Top-right vine
-        Positioned(
-          top: -6,
-          right: -4,
-          child: IgnorePointer(
-            child: Opacity(
-              opacity: 0.78,
-              child: Transform.rotate(
-                angle: 0.28,
+        if (atmosphere != null) ...[
+          Positioned(
+            top: -4,
+            right: -8,
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.82,
                 child: Image.asset(
-                  MedievalArt.vine,
-                  width: MediaQuery.sizeOf(context).width * 0.28,
-                  height: MediaQuery.sizeOf(context).width * 0.28,
+                  atmosphere,
+                  width: size.width * 0.42,
+                  height: size.width * 0.42,
                   fit: BoxFit.contain,
                   filterQuality: FilterQuality.medium,
                   errorBuilder: (_, _, _) => const SizedBox.shrink(),
@@ -43,29 +47,84 @@ class MedievalWoodBackground extends StatelessWidget {
               ),
             ),
           ),
-        ),
-        // Bottom-left vine
-        Positioned(
-          bottom: 8,
-          left: -12,
-          child: IgnorePointer(
-            child: Opacity(
-              opacity: 0.7,
-              child: Transform.rotate(
-                angle: math.pi + 0.15,
-                child: Image.asset(
-                  MedievalArt.vine,
-                  width: MediaQuery.sizeOf(context).width * 0.26,
-                  height: MediaQuery.sizeOf(context).width * 0.26,
-                  fit: BoxFit.contain,
-                  filterQuality: FilterQuality.medium,
-                  errorBuilder: (_, _, _) => const SizedBox.shrink(),
+          Positioned(
+            bottom: 4,
+            left: -16,
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.55,
+                child: Transform.rotate(
+                  angle: math.pi + 0.2,
+                  child: Image.asset(
+                    atmosphere,
+                    width: size.width * 0.34,
+                    height: size.width * 0.34,
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.medium,
+                    errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        // Soft top light so HUD area feels lit
+        ] else ...[
+          Positioned(
+            top: -6,
+            right: -4,
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.78,
+                child: Transform.rotate(
+                  angle: 0.28,
+                  child: Image.asset(
+                    MedievalArt.vine,
+                    width: size.width * 0.28,
+                    height: size.width * 0.28,
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.medium,
+                    errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 8,
+            left: -12,
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.7,
+                child: Transform.rotate(
+                  angle: math.pi + 0.15,
+                  child: Image.asset(
+                    MedievalArt.vine,
+                    width: size.width * 0.26,
+                    height: size.width * 0.26,
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.medium,
+                    errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+        if (accent != null)
+          IgnorePointer(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: const Alignment(0.55, -0.65),
+                  radius: 0.85,
+                  colors: [
+                    accent.withValues(alpha: 0.14),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+              child: const SizedBox.expand(),
+            ),
+          ),
         IgnorePointer(
           child: DecoratedBox(
             decoration: BoxDecoration(
@@ -88,7 +147,9 @@ class MedievalWoodBackground extends StatelessWidget {
 }
 
 class _WoodPlankPainter extends CustomPainter {
-  const _WoodPlankPainter();
+  const _WoodPlankPainter({required this.themeId});
+
+  final String themeId;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -99,10 +160,10 @@ class _WoodPlankPainter extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            const Color(0xFF4A3426),
+            MedievalColors.woodLight,
             MedievalColors.woodMid,
             MedievalColors.woodDeep,
-            const Color(0xFF0C0704),
+            Color.lerp(MedievalColors.woodDeep, Colors.black, 0.55)!,
           ],
           stops: const [0.0, 0.25, 0.7, 1.0],
         ).createShader(Offset.zero & size),
@@ -117,7 +178,6 @@ class _WoodPlankPainter extends CustomPainter {
         Paint()..color = tone.withValues(alpha: 0.28),
       );
 
-      // Plank bevel highlight
       canvas.drawLine(
         Offset(x + 2, 0),
         Offset(x + 2, size.height),
@@ -142,7 +202,6 @@ class _WoodPlankPainter extends CustomPainter {
       }
     }
 
-    // Outer carved frame shadow around screen edges
     final edge = Paint()
       ..shader = LinearGradient(
         begin: Alignment.centerLeft,
@@ -170,5 +229,6 @@ class _WoodPlankPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _WoodPlankPainter oldDelegate) =>
+      oldDelegate.themeId != themeId;
 }

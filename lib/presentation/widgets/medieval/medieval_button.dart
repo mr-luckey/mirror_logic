@@ -5,6 +5,7 @@ import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_pressable.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 enum MedievalButtonStyle {
   /// The one thing the screen wants you to do. Forged bronze, gold rim, glow.
@@ -39,6 +40,7 @@ class MedievalButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final primary = style == MedievalButtonStyle.primary;
     final enabled = onPressed != null;
     final scale = Responsive.scaleOf(context);

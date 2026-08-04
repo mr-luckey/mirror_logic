@@ -7,6 +7,7 @@ import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Invitation to rate the game, framed like the rest of the keep.
 ///
@@ -28,6 +29,7 @@ class MedievalRateDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Material(
       type: MaterialType.transparency,
       child: Center(
@@ -97,6 +99,7 @@ class _StarRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(5, (i) {

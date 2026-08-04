@@ -7,13 +7,15 @@ import 'package:mirror_logic/domain/beam/beam_types.dart';
 import 'package:mirror_logic/domain/beam/reflection_math.dart';
 import 'package:mirror_logic/domain/beam/vec2.dart';
 import 'package:mirror_logic/domain/level/level_model.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 import 'package:mirror_logic/infrastructure/art/game_art.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_paint_snapshot.dart';
 
 /// Medieval stone-board painter: tiles, bronze frame, laser, entities.
 class GameplayPainter extends CustomPainter {
   GameplayPainter({required this.snapshot, required this.clock, this.art})
-    : super(repaint: clock);
+    : themeId = ThemeController.current.id,
+      super(repaint: Listenable.merge([clock, ThemeController.notifier]));
 
   final GameplayPaintSnapshot snapshot;
 
@@ -23,10 +25,14 @@ class GameplayPainter extends CustomPainter {
 
   final GameArt? art;
 
+  /// Captured at construction so [shouldRepaint] can detect hall swaps.
+  final String themeId;
+
   ui.Image? get crystalImage => art?.crystal;
   ui.Image? get emitterImage => art?.emitter;
   ui.Image? get wallHorizontalImage => art?.wallHorizontal;
   ui.Image? get wallVerticalImage => art?.wallVertical;
+  ui.Image? get floorImage => art?.floor;
 
   double get animTime => clock.value * 8 * math.pi * 2;
 
@@ -223,81 +229,165 @@ class GameplayPainter extends CustomPainter {
   void _drawStoneTiles(Canvas canvas, LevelModel level) {
     final w = level.roomBounds.x;
     final h = level.roomBounds.y;
-    const cols = 10;
-    const rows = 10;
-    final tileW = w / cols;
-    final tileH = h / rows;
+    final room = Rect.fromLTWH(0, 0, w, h);
 
     canvas.save();
-    canvas.clipRect(Rect.fromLTWH(0, 0, w, h));
+    canvas.clipRect(room);
 
-    for (var row = 0; row < rows; row++) {
-      for (var col = 0; col < cols; col++) {
-        final rect = Rect.fromLTWH(col * tileW, row * tileH, tileW, tileH);
-        final base = ((row + col) % 2 == 0)
-            ? MedievalColors.stone
-            : MedievalColors.stoneLight;
-
-        // Beveled stone face
-        canvas.drawRect(
-          rect,
-          Paint()
-            ..shader = LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.lerp(base, Colors.white, 0.12)!,
-                base,
-                Color.lerp(base, Colors.black, 0.22)!,
-              ],
-            ).createShader(rect),
-        );
-
-        // Top/left highlight edge
-        canvas.drawLine(
-          rect.topLeft + const Offset(3, 3),
-          rect.topRight + const Offset(-3, 3),
-          Paint()
-            ..color = Colors.white.withValues(alpha: 0.08)
-            ..strokeWidth = 2,
-        );
-        canvas.drawLine(
-          rect.topLeft + const Offset(3, 3),
-          rect.bottomLeft + const Offset(3, -3),
-          Paint()
-            ..color = Colors.white.withValues(alpha: 0.06)
-            ..strokeWidth = 2,
-        );
-
-        // Bottom/right shadow edge
-        canvas.drawLine(
-          rect.bottomLeft + const Offset(3, -3),
-          rect.bottomRight + const Offset(-3, -3),
-          Paint()
-            ..color = Colors.black.withValues(alpha: 0.35)
-            ..strokeWidth = 2.5,
-        );
-
-        canvas.drawRect(
-          rect,
-          Paint()
-            ..color = MedievalColors.stoneGrout
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 4,
-        );
+    final floor = floorImage;
+    if (floor != null) {
+      // Tile the hall floor texture across the maze.
+      const cols = 4;
+      const rows = 7;
+      final tileW = w / cols;
+      final tileH = h / rows;
+      final src = Rect.fromLTWH(
+        0,
+        0,
+        floor.width.toDouble(),
+        floor.height.toDouble(),
+      );
+      final paint = Paint()..filterQuality = FilterQuality.medium;
+      for (var row = 0; row < rows; row++) {
+        for (var col = 0; col < cols; col++) {
+          canvas.drawImageRect(
+            floor,
+            src,
+            Rect.fromLTWH(col * tileW, row * tileH, tileW + 1, tileH + 1),
+            paint,
+          );
+        }
+      }
+    } else {
+      const cols = 10;
+      const rows = 10;
+      final tileW = w / cols;
+      final tileH = h / rows;
+      for (var row = 0; row < rows; row++) {
+        for (var col = 0; col < cols; col++) {
+          final rect = Rect.fromLTWH(col * tileW, row * tileH, tileW, tileH);
+          final base = ((row + col) % 2 == 0)
+              ? MedievalColors.stone
+              : MedievalColors.stoneLight;
+          canvas.drawRect(
+            rect,
+            Paint()
+              ..shader = LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.lerp(base, Colors.white, 0.12)!,
+                  base,
+                  Color.lerp(base, Colors.black, 0.22)!,
+                ],
+              ).createShader(rect),
+          );
+          canvas.drawRect(
+            rect,
+            Paint()
+              ..color = MedievalColors.stoneGrout
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 4,
+          );
+        }
       }
     }
 
+    // Theme-specific ambient wash (sun rays, fog, neon bloom…).
+    _drawThemeAmbience(canvas, room);
+
     canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
+      room,
       Paint()
         ..shader = RadialGradient(
           center: Alignment.center,
           radius: 0.9,
-          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.4)],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.35)],
+        ).createShader(room),
     );
     canvas.restore();
+  }
+
+  void _drawThemeAmbience(Canvas canvas, Rect room) {
+    final id = themeId;
+    switch (id) {
+      case 'golden_sun':
+        for (var i = 0; i < 5; i++) {
+          final t = i / 5;
+          final path = Path()
+            ..moveTo(room.width * (-0.05 + t * 0.08), -20)
+            ..lineTo(room.width * (0.35 + t * 0.12), room.height * 0.55)
+            ..lineTo(room.width * (0.42 + t * 0.12), room.height * 0.55)
+            ..close();
+          canvas.drawPath(
+            path,
+            Paint()
+              ..color = MedievalColors.laserMid.withValues(alpha: 0.045)
+              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
+          );
+        }
+        break;
+      case 'moonlight_castle':
+        canvas.drawRect(
+          room,
+          Paint()
+            ..shader = LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.center,
+              colors: [
+                MedievalColors.laserGlow.withValues(alpha: 0.18),
+                Colors.transparent,
+              ],
+            ).createShader(room),
+        );
+        break;
+      case 'lava_forge':
+        canvas.drawRect(
+          room,
+          Paint()
+            ..shader = RadialGradient(
+              center: const Alignment(0.7, -0.6),
+              radius: 0.7,
+              colors: [
+                MedievalColors.laserMid.withValues(alpha: 0.22),
+                Colors.transparent,
+              ],
+            ).createShader(room),
+        );
+        break;
+      case 'frozen_kingdom':
+        canvas.drawRect(
+          room,
+          Paint()
+            ..shader = LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.white.withValues(alpha: 0.12),
+                Colors.transparent,
+                MedievalColors.laserGlow.withValues(alpha: 0.1),
+              ],
+              stops: const [0.0, 0.45, 1.0],
+            ).createShader(room),
+        );
+        break;
+      case 'celestial_heaven':
+        canvas.drawRect(
+          room,
+          Paint()
+            ..shader = LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Colors.white.withValues(alpha: 0.16),
+                Colors.transparent,
+              ],
+            ).createShader(room),
+        );
+        break;
+      default:
+        break;
+    }
   }
 
   void _drawObstacles(Canvas canvas, LevelModel level) {
@@ -338,6 +428,8 @@ class GameplayPainter extends CustomPainter {
     }
   }
 
+  Paint get _wallPaint => Paint()..filterQuality = FilterQuality.high;
+
   /// A post is one sprite fitted to a square, never tiled into a strip.
   void _drawPillar(Canvas canvas, Rect bounds, ui.Image image) {
     final iw = image.width.toDouble();
@@ -358,7 +450,7 @@ class GameplayPainter extends CustomPainter {
       image,
       Rect.fromLTWH(0, 0, iw, ih),
       Rect.fromCenter(center: bounds.center, width: side, height: side),
-      Paint()..filterQuality = FilterQuality.high,
+      _wallPaint,
     );
   }
 
@@ -368,7 +460,7 @@ class GameplayPainter extends CustomPainter {
     ui.Image image, {
     required bool horizontal,
   }) {
-    final paint = Paint()..filterQuality = FilterQuality.high;
+    final paint = _wallPaint;
     final iw = image.width.toDouble();
     final ih = image.height.toDouble();
     if (iw < 1 || ih < 1) return;
@@ -595,7 +687,7 @@ class GameplayPainter extends CustomPainter {
         canvas.drawRRect(
           body,
           Paint()
-            ..shader = const LinearGradient(
+            ..shader = LinearGradient(
               colors: [
                 MedievalColors.bronzeDark,
                 MedievalColors.bronzeHighlight,
@@ -769,7 +861,7 @@ class GameplayPainter extends CustomPainter {
       canvas.drawRRect(
         plate.inflate(5),
         Paint()
-          ..shader = const LinearGradient(
+          ..shader = LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
@@ -1117,7 +1209,7 @@ class GameplayPainter extends CustomPainter {
     final text = TextPainter(
       text: TextSpan(
         text: '${angle.round()}°',
-        style: const TextStyle(
+        style: TextStyle(
           color: MedievalColors.textGold,
           fontSize: 30,
           fontWeight: FontWeight.w700,
@@ -1183,15 +1275,37 @@ class GameplayPainter extends CustomPainter {
       final aura =
           c.hitRadius * (1.6 + 0.3 * pulse) * (lit || rejected ? 1.2 : 0.9);
 
-      // Magical bloom
+      // Magical bloom — hall-coloured so each theme's crystal reads differently.
+      final glow = rejected
+          ? MedievalColors.rejectMid
+          : MedievalColors.crystal;
+      final mid = rejected
+          ? MedievalColors.rejectGlow
+          : MedievalColors.laserMid;
+      final core = rejected
+          ? MedievalColors.rejectCore
+          : MedievalColors.laserCore;
+
       canvas.drawCircle(
         center,
-        aura,
+        aura * 1.4,
         Paint()
-          ..color =
-              (rejected ? MedievalColors.rejectMid : MedievalColors.laserMid)
-                  .withValues(alpha: lit || rejected ? 0.4 * pulse : 0.14)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+          ..color = glow.withValues(alpha: lit || rejected ? 0.65 * pulse : 0.48)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 34),
+      );
+      canvas.drawCircle(
+        center,
+        aura * 0.9,
+        Paint()
+          ..color = mid.withValues(alpha: lit || rejected ? 0.58 * pulse : 0.4)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
+      );
+      canvas.drawCircle(
+        center,
+        aura * 0.5,
+        Paint()
+          ..color = core.withValues(alpha: lit || rejected ? 0.55 : 0.36)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 9),
       );
 
       // Contact shadow under pedestal
@@ -1209,14 +1323,15 @@ class GameplayPainter extends CustomPainter {
       if (crystalImage != null) {
         final h = c.hitRadius * 3.6;
         final w = c.hitRadius * 2.4;
-        // Sit pedestal slightly below hit center so crystal tip is target.
+        final rect = Rect.fromCenter(
+          center: center.translate(0, c.hitRadius * 0.15),
+          width: w,
+          height: h,
+        );
+        // Bright base, then hall tint so lava/ice/moon crystals look distinct.
         paintImage(
           canvas: canvas,
-          rect: Rect.fromCenter(
-            center: center.translate(0, c.hitRadius * 0.15),
-            width: w,
-            height: h,
-          ),
+          rect: rect,
           image: crystalImage!,
           fit: BoxFit.contain,
           filterQuality: FilterQuality.high,
@@ -1225,8 +1340,37 @@ class GameplayPainter extends CustomPainter {
                   MedievalColors.rejectMid,
                   BlendMode.modulate,
                 )
-              : null,
+              : art?.usesThemeCrystal == true
+              ? null
+              : ColorFilter.mode(
+                  Color.lerp(
+                    MedievalColors.laserCore,
+                    MedievalColors.crystal,
+                    0.7,
+                  )!,
+                  BlendMode.modulate,
+                ),
         );
+        if (!rejected) {
+          canvas.drawCircle(
+            center.translate(0, -c.hitRadius * 0.15),
+            c.hitRadius * 0.55,
+            Paint()
+              ..shader = RadialGradient(
+                colors: [
+                  core.withValues(alpha: 0.55 + 0.2 * pulse),
+                  glow.withValues(alpha: 0.2),
+                  Colors.transparent,
+                ],
+                stops: const [0.0, 0.45, 1.0],
+              ).createShader(
+                Rect.fromCircle(
+                  center: center.translate(0, -c.hitRadius * 0.15),
+                  radius: c.hitRadius * 0.55,
+                ),
+              ),
+          );
+        }
       } else {
         _drawFallbackCrystal(canvas, center, c.hitRadius, lit);
       }
@@ -1256,7 +1400,7 @@ class GameplayPainter extends CustomPainter {
           canvas.drawCircle(
             spark,
             3 + pulse * 2,
-            Paint()..color = Colors.white.withValues(alpha: 0.7),
+            Paint()..color = MedievalColors.laserCore.withValues(alpha: 0.85),
           );
         }
       }
@@ -1340,10 +1484,12 @@ class GameplayPainter extends CustomPainter {
     );
   }
 
-  /// The clock repaints us on its own; this only covers board changes.
+  /// The clock / theme notifier repaint us; this covers board / theme swaps.
   @override
   bool shouldRepaint(covariant GameplayPainter oldDelegate) {
-    return oldDelegate.snapshot != snapshot || oldDelegate.art != art;
+    return oldDelegate.snapshot != snapshot ||
+        oldDelegate.art != art ||
+        oldDelegate.themeId != themeId;
   }
 }
 

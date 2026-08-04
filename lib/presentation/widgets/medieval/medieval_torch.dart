@@ -1,12 +1,13 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
+import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
 /// Metal wall torch with a live flame sitting in the cup.
 ///
-/// The flame is drawn, not an image: particle tongues that rise, flicker and
-/// die so the home-screen lamps feel lit rather than stickered.
+/// Flame colors follow the equipped hall so lamps match the theme.
 class MedievalTorch extends StatelessWidget {
   const MedievalTorch({
     super.key,
@@ -21,6 +22,7 @@ class MedievalTorch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController.watch(context);
     final torch = SizedBox(
       width: width,
       height: height,
@@ -28,17 +30,20 @@ class MedievalTorch extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           Positioned.fill(
-            child: Image.asset(
-              MedievalArt.torchBase,
-              fit: BoxFit.fill,
-              filterQuality: FilterQuality.high,
-              errorBuilder: (_, _, _) =>
-                  Image.asset(MedievalArt.torch, fit: BoxFit.contain),
+            child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                MedievalColors.bronze.withValues(alpha: 0.4),
+                BlendMode.modulate,
+              ),
+              child: Image.asset(
+                MedievalArt.torchBase,
+                fit: BoxFit.fill,
+                filterQuality: FilterQuality.high,
+                errorBuilder: (_, _, _) =>
+                    Image.asset(MedievalArt.torch, fit: BoxFit.contain),
+              ),
             ),
           ),
-          // The sprite's top ~40% is transparent and the bowl rim sits at
-          // x 0.56..0.99, y 0.41 of the box. Anchor the flame to those
-          // measured bounds so it burns inside the cup, not above it.
           Positioned(
             left: width * 0.565,
             right: width * 0.01,
@@ -83,9 +88,7 @@ class _TorchFlameState extends State<_TorchFlame>
 
   @override
   Widget build(BuildContext context) {
-    // Boundaried: the flame runs every frame for as long as the menu is up,
-    // and without this it would drag the crest, title and buttons along with
-    // it on each tick.
+    ThemeController.watch(context);
     return RepaintBoundary(
       child: CustomPaint(painter: _FlamePainter(clock: _tick)),
     );
@@ -93,7 +96,10 @@ class _TorchFlameState extends State<_TorchFlame>
 }
 
 class _FlamePainter extends CustomPainter {
-  _FlamePainter({required this.clock}) : super(repaint: clock);
+  _FlamePainter({required this.clock})
+    : super(
+        repaint: Listenable.merge([clock, ThemeController.notifier]),
+      );
 
   final Animation<double> clock;
 
@@ -102,35 +108,34 @@ class _FlamePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final cx = size.width * 0.5;
-    // The base sits low in the box so the flame roots inside the bowl.
     final baseY = size.height * 0.95;
     final rng = math.Random(7);
+    final outer = MedievalColors.torchOrange;
+    final mid = MedievalColors.torchYellow;
+    final core = MedievalColors.torchCore;
 
-    // Firelight spilling onto the bracket and the wall behind it.
     canvas.drawCircle(
       Offset(cx, baseY - size.height * 0.06),
       size.width * 0.95,
       Paint()
-        ..color = const Color(0xFFFF7A18).withValues(alpha: 0.20)
+        ..color = outer.withValues(alpha: 0.20)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
     );
     canvas.drawCircle(
       Offset(cx, baseY - size.height * 0.10),
       size.width * 0.5,
       Paint()
-        ..color = const Color(0xFFFFB43C).withValues(alpha: 0.35)
+        ..color = mid.withValues(alpha: 0.35)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
     );
 
-    // Layered tongues: outer orange, mid yellow, core white-hot. Each one is
-    // a bit shorter and narrower, which is what gives fire its depth.
     _tongue(
       canvas,
       cx: cx,
       baseY: baseY,
       height: size.height * 0.9,
       width: size.width * 0.78,
-      color: const Color(0xFFD8400A),
+      color: Color.lerp(outer, Colors.black, 0.25)!,
       wobble: 0.0,
       time: time,
       alpha: 0.85,
@@ -141,7 +146,7 @@ class _FlamePainter extends CustomPainter {
       baseY: baseY,
       height: size.height * 0.74,
       width: size.width * 0.56,
-      color: const Color(0xFFF97A10),
+      color: outer,
       wobble: 1.1,
       time: time,
       alpha: 0.92,
@@ -152,7 +157,7 @@ class _FlamePainter extends CustomPainter {
       baseY: baseY,
       height: size.height * 0.55,
       width: size.width * 0.4,
-      color: const Color(0xFFFFC02A),
+      color: mid,
       wobble: 2.3,
       time: time,
       alpha: 0.95,
@@ -163,14 +168,12 @@ class _FlamePainter extends CustomPainter {
       baseY: baseY,
       height: size.height * 0.34,
       width: size.width * 0.22,
-      color: const Color(0xFFFFF6D0),
+      color: core,
       wobble: 3.4,
       time: time,
       alpha: 0.9,
     );
 
-    // Hot pool where the flame meets the fuel, so it does not look like it is
-    // hovering above the cup.
     canvas.drawOval(
       Rect.fromCenter(
         center: Offset(cx, baseY - size.height * 0.02),
@@ -178,11 +181,10 @@ class _FlamePainter extends CustomPainter {
         height: size.height * 0.1,
       ),
       Paint()
-        ..color = const Color(0xFFFFD98A).withValues(alpha: 0.75)
+        ..color = core.withValues(alpha: 0.75)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
     );
 
-    // Rising embers — the detail that sells "real fire" at a glance.
     for (var i = 0; i < 9; i++) {
       final phase = (time * (0.7 + i * 0.09) + i * 0.9) % (math.pi * 2);
       final life = (math.sin(phase) + 1) * 0.5;
@@ -196,8 +198,8 @@ class _FlamePainter extends CustomPainter {
         r,
         Paint()
           ..color = Color.lerp(
-            const Color(0xFFFFEE88),
-            const Color(0xFFFF4400),
+            core,
+            outer,
             life,
           )!.withValues(alpha: 0.9 * (1 - life * 0.7)),
       );
@@ -244,7 +246,6 @@ class _FlamePainter extends CustomPainter {
     canvas.drawPath(path, Paint()..color = color.withValues(alpha: alpha));
   }
 
-  /// The clock drives repaints; nothing else about the flame ever changes.
   @override
   bool shouldRepaint(covariant _FlamePainter oldDelegate) => false;
 }
