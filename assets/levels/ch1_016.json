@@ -642,7 +642,7 @@
         260,
         1720
       ],
-      "hitRadius": 44,
+      "hitRadius": 34,
       "groupId": "g1"
     }
   ],
@@ -665,21 +665,22 @@
       "m7": 45.0,
       "m8": 135.0
     },
-    "toleranceDegrees": 5.0
+    "toleranceDegrees": 3.0
   },
   "starThresholds": {
     "threeStarMoveCount": 8,
-    "threeStarTimeSeconds": 157
+    "threeStarTimeSeconds": 95
   },
   "metadata": {
     "designer": "canonical_v2",
     "difficultyBand": "ch1",
     "difficultyScore": 16.0,
-    "hardness": 0.001,
+    "hardness": 0.18,
     "newConceptsIntroduced": [
       "reflection",
       "multi_mirror",
-      "corridor"
+      "corridor",
+      "tight_tolerance"
     ],
     "objective": "Follow the stone corridor \u2014 turn the beam at every post to reach the crystal.",
     "hints": [

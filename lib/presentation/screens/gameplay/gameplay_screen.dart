@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -287,8 +288,6 @@ class _TopHud extends StatelessWidget {
 }
 
 /// How the player is paying for the solved board.
-enum _HintPayment { video, coin }
-
 /// Buys and shows the solved board.
 ///
 /// The tiered counsel sheet is gone: the player wanted the answer, and making
@@ -310,47 +309,20 @@ Future<void> _requestHint(BuildContext context) async {
 /// Takes payment for the hint, and reports whether it was paid.
 Future<bool> _payForHint(BuildContext context) async {
   final ads = context.ads;
-  // Only offer the video when one is already cached and starts on the tap. A
-  // button that has to go and fetch thirty megabytes first sits dead long
-  // enough to read as broken — so if nothing is ready, ask for one and let this
-  // board be paid for in coin.
-  final canWatch = ads != null && ads.hasRewardedAd;
-  if (ads != null && !canWatch) ads.warmUp();
-  if (!canWatch) return _spendCoinOnHint(context);
-
-  final coins = context.read<EconomyBloc>().state.coins;
-  final choice = await _askHowToPay(
-    context,
-    canAffordCoin: coins >= GameConstants.hintCost,
-  );
-  if (choice == null || !context.mounted) return false;
-
-  switch (choice) {
-    case _HintPayment.coin:
-      return _spendCoinOnHint(context);
-    case _HintPayment.video:
-      return _watchForHint(context, ads);
-  }
-}
-
-Future<bool> _spendCoinOnHint(BuildContext context) async {
-  final economy = context.read<EconomyBloc>();
-  final progress = context.read<ProgressBloc>();
-  final spent = await context.read<EconomyRepository>().spendCoins(
-    GameConstants.hintCost,
-  );
-  if (!context.mounted) return false;
-  if (spent == null) {
-    MedievalToast.show(
-      context,
-      'Not enough coin — clear levels to earn more',
-      icon: Icons.lock_rounded,
-    );
+  if (ads == null) return false;
+  if (!await _hasInternetConnection()) {
+    if (context.mounted) {
+      MedievalToast.show(
+        context,
+        'No internet — connect to watch hint video',
+        icon: Icons.wifi_off_rounded,
+      );
+    }
     return false;
   }
-  economy.add(EconomyCoinsChanged(spent.coins));
-  progress.add(const ProgressRefresh());
-  return true;
+  if (!context.mounted) return false;
+  if (!ads.hasRewardedAd) ads.warmUp();
+  return _watchForHint(context, ads);
 }
 
 /// Plays a rewarded video and pays out only if the player sat through it.
@@ -378,97 +350,9 @@ Future<bool> _watchForHint(BuildContext context, AdsService ads) async {
   }
 }
 
-Future<_HintPayment?> _askHowToPay(
-  BuildContext context, {
-  required bool canAffordCoin,
-}) {
-  return showDialog<_HintPayment>(
-    context: context,
-    barrierColor: Colors.black.withValues(alpha: 0.72),
-    builder: (_) => _HintPaymentSheet(canAffordCoin: canAffordCoin),
-  );
-}
-
-/// Asks whether the solved board is being paid for in coin or in patience.
-class _HintPaymentSheet extends StatelessWidget {
-  const _HintPaymentSheet({required this.canAffordCoin});
-
-  final bool canAffordCoin;
-
-  @override
-  Widget build(BuildContext context) {
-    final maxWidth = (Responsive.widthOf(context) * 0.86).clamp(240.0, 340.0);
-
-    return Center(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: Responsive.pageGutter(context),
-          vertical: 16,
-        ),
-        child: Container(
-          width: maxWidth,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            gradient: MedievalColors.woodPanel,
-            border: Border.all(color: MedievalColors.bronzeLight, width: 2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.5),
-                blurRadius: 16,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'REVEAL THE BOARD',
-                style: MedievalTextStyles.cinzel(
-                  size: Responsive.sp(context, 18),
-                  weight: FontWeight.w700,
-                  letterSpacing: 2,
-                  color: MedievalColors.textGold,
-                ),
-              ),
-              const MedievalDivider(height: 18),
-              Text(
-                'Every mirror will show its finished angle. '
-                'A board you were shown clears for one star.',
-                textAlign: TextAlign.center,
-                style: MedievalTextStyles.imFell(
-                  size: Responsive.sp(context, 13.5),
-                  height: 1.35,
-                ),
-              ),
-              const SizedBox(height: 16),
-              MedievalButton(
-                label: 'Watch a Video',
-                style: MedievalButtonStyle.primary,
-                icon: Icons.play_circle_outline_rounded,
-                onPressed: () => Navigator.of(context).pop(_HintPayment.video),
-              ),
-              const SizedBox(height: 9),
-              MedievalButton(
-                label: 'Spend ${GameConstants.hintCost} Coin',
-                icon: Icons.monetization_on_rounded,
-                onPressed: canAffordCoin
-                    ? () => Navigator.of(context).pop(_HintPayment.coin)
-                    : null,
-              ),
-              const SizedBox(height: 9),
-              MedievalButton(
-                label: 'Not Yet',
-                icon: Icons.close_rounded,
-                sfx: Sfx.back,
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+Future<bool> _hasInternetConnection() async {
+  final status = await Connectivity().checkConnectivity();
+  return status.any((s) => s != ConnectivityResult.none);
 }
 
 class _BoardArea extends StatelessWidget {

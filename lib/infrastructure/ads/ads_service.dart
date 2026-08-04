@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
@@ -125,7 +126,13 @@ class AdsService {
   /// Both ads are fetched well ahead of the tap that shows them: a rewarded
   /// video is tens of megabytes, and fetching it on demand would put the wait
   /// between the player's decision and their reward.
-  void warmUp() => unawaited(init().then((_) => _fillCaches()));
+  void warmUp() => unawaited(_warmUpIfOnline());
+
+  Future<void> _warmUpIfOnline() async {
+    if (!await _hasInternet()) return;
+    await init();
+    _fillCaches();
+  }
 
   void _fillCaches() {
     if (!_ready) return;
@@ -172,6 +179,7 @@ class AdsService {
   Future<bool> showInterstitial({
     InterstitialPolicy policy = InterstitialPolicy.levelBreak,
   }) async {
+    if (!await _hasInternet()) return false;
     if (!_ready || !interstitialAllowed(policy: policy)) return false;
 
     var ad = _interstitial;
@@ -224,6 +232,7 @@ class AdsService {
   /// Only ever shows an already-cached ad, so the video starts on the tap that
   /// asked for it.
   Future<RewardedAdOutcome> showRewarded() async {
+    if (!await _hasInternet()) return RewardedAdOutcome.unavailable;
     if (!_ready) return RewardedAdOutcome.unavailable;
     final ad = _rewarded;
     if (ad == null) {
@@ -270,6 +279,7 @@ class AdsService {
   ///
   /// Ownership passes to the caller: whoever mounts the ad disposes it.
   Future<BannerAd?> loadBanner(AdSize size) async {
+    if (!await _hasInternet()) return null;
     await init();
     if (!_ready) return null;
     return _waterfall(
@@ -350,7 +360,8 @@ class AdsService {
     return null;
   }
 
-  Future<void> _fillInterstitial() {
+  Future<void> _fillInterstitial() async {
+    if (!await _hasInternet()) return;
     if (!_ready || _interstitial != null) return Future<void>.value();
     // A second caller joins the request in flight rather than racing a parallel
     // waterfall down the same list and throwing one of the two ads away.
@@ -363,7 +374,8 @@ class AdsService {
     );
   }
 
-  Future<void> _fillRewarded() {
+  Future<void> _fillRewarded() async {
+    if (!await _hasInternet()) return;
     if (!_ready || _rewarded != null) return Future<void>.value();
     return _rewardedFill ??= _runFill(
       () async =>
@@ -380,6 +392,15 @@ class AdsService {
       await fill();
     } finally {
       onDone();
+    }
+  }
+
+  Future<bool> _hasInternet() async {
+    try {
+      final status = await Connectivity().checkConnectivity();
+      return status.any((s) => s != ConnectivityResult.none);
+    } catch (_) {
+      return false;
     }
   }
 
