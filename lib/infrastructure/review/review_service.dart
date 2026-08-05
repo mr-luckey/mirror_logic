@@ -2,7 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:mirror_logic/core/constants/app_info.dart';
 import 'package:mirror_logic/infrastructure/storage/local_storage_service.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+/// Signature of `launchUrl`, so tests can stand in for the store intent.
+typedef UrlLauncher = Future<bool> Function(Uri uri, {LaunchMode mode});
 
 /// Decides when to ask for a Play Store rating, and does the asking.
 ///
@@ -19,6 +24,7 @@ class ReviewService {
     required LocalStorageService storage,
     InAppReview? review,
     Random? random,
+    UrlLauncher? launcher,
     this.levelsBeforeFirstAsk = 4,
     this.levelsBetweenAsks = 12,
     this.cooldown = const Duration(days: 5),
@@ -26,11 +32,13 @@ class ReviewService {
     this.askChance = 0.3,
   }) : _storage = storage,
        _review = review ?? InAppReview.instance,
-       _random = random ?? Random();
+       _random = random ?? Random(),
+       _launcher = launcher ?? launchUrl;
 
   final LocalStorageService _storage;
   final InAppReview _review;
   final Random _random;
+  final UrlLauncher _launcher;
 
   /// Clears a player owes before the first ask. Nobody who has solved three
   /// boards knows yet whether they like the game.
@@ -149,6 +157,30 @@ class ReviewService {
       return true;
     } catch (error, stack) {
       debugPrint('store listing failed: $error\n$stack');
+      return false;
+    }
+  }
+
+  /// Puts the player on the listing's review section, where they can write one.
+  ///
+  /// [requestReview] is not used here. Play's in-app sheet is silent when the
+  /// device quota is spent or the build did not come from Play, and a player
+  /// who just tapped "Rate" reads that silence as a broken button. Each step
+  /// below is a weaker way of reaching the same page: the Play app opened at
+  /// the reviews, the Play app opened at the listing, then the web listing.
+  Future<bool> openReviewPage() async {
+    const target = 'details?id=${AppInfo.playStoreId}&showAllReviews=true';
+
+    if (await _launch(Uri.parse('market://$target'))) return true;
+    if (await openStoreListing()) return true;
+    return _launch(Uri.parse('https://play.google.com/store/apps/$target'));
+  }
+
+  Future<bool> _launch(Uri uri) async {
+    try {
+      return await _launcher(uri, mode: LaunchMode.externalApplication);
+    } catch (error, stack) {
+      debugPrint('review page failed for $uri: $error\n$stack');
       return false;
     }
   }

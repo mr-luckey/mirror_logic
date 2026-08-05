@@ -1,8 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mirror_logic/core/constants/app_info.dart';
 import 'package:mirror_logic/infrastructure/review/review_service.dart';
 import 'package:mirror_logic/infrastructure/storage/local_storage_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../support/memory_box.dart';
 
@@ -110,6 +112,26 @@ void main() {
 
     test('an eligible moment with a winning roll asks', () {
       expect(build().shouldAskNow(levelsCleared: 40), isTrue);
+    });
+  });
+
+  group('openReviewPage', () {
+    test('opens the Play review intent with the app id', () async {
+      Uri? launched;
+      final review = ReviewService(
+        storage: LocalStorageService(MemoryBox()),
+        launcher: (uri, {mode = LaunchMode.platformDefault}) {
+          launched = uri;
+          return Future.value(true);
+        },
+      );
+
+      final ok = await review.openReviewPage();
+
+      expect(ok, isTrue);
+      expect(launched, isNotNull);
+      expect(launched!.toString(), contains(AppInfo.playStoreId));
+      expect(launched.toString(), contains('showAllReviews=true'));
     });
   });
 }

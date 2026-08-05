@@ -17,6 +17,7 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_rate_dialog.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_toast.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 import 'package:mirror_logic/domain/theme/theme_controller.dart';
 
@@ -126,10 +127,13 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
     final accepted = await showMedievalRateDialog(context);
     if (!accepted || !mounted) return;
 
-    // Play's own sheet takes over from here. It reports nothing back about what
-    // the player did, so this is the last time we ask either way.
+    // The player is handed off to Play from here, which reports nothing back
+    // about what they did, so this is the last time we ask either way.
     await review.markSettled();
-    await review.requestReview();
+    final opened = await review.openReviewPage();
+    if (!opened && mounted) {
+      MedievalToast.show(context, 'Could not open the Play Store');
+    }
   }
 
   /// Leaves the results screen, giving an interstitial the gap on the way out.
@@ -318,6 +322,19 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
                             ),
                           ],
                         ).animate().fadeIn(delay: 1000.ms),
+                        const SizedBox(height: 10),
+                        // Without this the only way back to the menu is walking
+                        // the whole level/chapter stack back up.
+                        MedievalButton(
+                          label: 'Home',
+                          icon: Icons.home_rounded,
+                          sfx: Sfx.back,
+                          onPressed: () => _leave(
+                            '/menu',
+                            replace: false,
+                            policy: InterstitialPolicy.always,
+                          ),
+                        ).animate().fadeIn(delay: 1050.ms),
                       ],
                     ),
                   ),

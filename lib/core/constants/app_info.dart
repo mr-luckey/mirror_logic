@@ -5,6 +5,10 @@ abstract final class AppInfo {
   static const developer = 'Appware Tech';
   static const supportEmail = 'contact@appwaretech.com';
 
+  /// Play listing id. Must match `applicationId` in android/app/build.gradle.kts
+  /// — the rate links resolve to nothing if the two drift apart.
+  static const playStoreId = 'com.appwaretech.mirrorlogic';
+
   /// Blurb under the crest on the About screen.
   static const summary =
       'An optical puzzle set in a candlelit keep. Turn the mirrors, bend the '
