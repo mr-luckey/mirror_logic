@@ -230,15 +230,15 @@ Future<void> showMedievalInsufficientCoinsDialog(
               // The carousel may be previewing this locked hall; the board has
               // to open in the hall the player actually owns.
               context.read<ThemeCubit>().restoreEquippedTheme();
-              final last = context
+              final resume = context
                   .read<ProgressBloc>()
                   .state
                   .save
-                  .lastPlayedLevelId;
+                  .continueLevelId;
               final router = GoRouter.of(context);
               Navigator.pop(dialogContext);
               if (closeHostScreen) router.pop();
-              router.push('/play/${last ?? GameConstants.firstLevelId}');
+              router.push('/play/$resume');
             },
             onWatchAd: () =>
                 context.read<RewardedCoinsCubit>().watchAdForCoins(),

@@ -129,6 +129,23 @@ class PlayerSave extends Equatable {
     return best;
   }
 
+  /// Where Continue should land: the furthest board the player has opened.
+  ///
+  /// Not [lastPlayedLevelId] — that is whatever they touched last, so it points
+  /// at a cleared board after a win and at an old one after a replay.
+  String get continueLevelId {
+    var best = GameConstants.firstLevelId;
+    var bestNumber = displayLevelForId(best);
+    for (final id in unlockedLevelIds) {
+      final number = displayLevelForId(id);
+      if (number > bestNumber) {
+        bestNumber = number;
+        best = id;
+      }
+    }
+    return best;
+  }
+
   static int displayLevelForId(String levelId) {
     final match = RegExp(r'^ch(\d+)_(\d+)$').firstMatch(levelId);
     if (match == null) return 1;

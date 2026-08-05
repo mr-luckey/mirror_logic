@@ -7,7 +7,6 @@ import 'package:mirror_logic/app/app_update_gate.dart';
 import 'package:mirror_logic/app/audio_scope.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
-import 'package:mirror_logic/core/constants/game_constants.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
 import 'package:mirror_logic/domain/theme/theme_catalog.dart';
 import 'package:mirror_logic/domain/theme/theme_controller.dart';
@@ -482,7 +481,8 @@ class _PlayButtons extends StatelessWidget {
             final hallLocked = !themeState.owns(hall.id);
             return BlocBuilder<ProgressBloc, ProgressState>(
               buildWhen: (p, c) =>
-                  p.save.lastPlayedLevelId != c.save.lastPlayedLevelId,
+                  p.save.lastPlayedLevelId != c.save.lastPlayedLevelId ||
+                  p.save.continueLevelId != c.save.continueLevelId,
               builder: (context, progress) {
                 final last = progress.save.lastPlayedLevelId;
 
@@ -505,7 +505,7 @@ class _PlayButtons extends StatelessWidget {
                               coins: themeState.coins,
                             )
                           : () => context.push(
-                              '/play/${last ?? GameConstants.firstLevelId}',
+                              '/play/${progress.save.continueLevelId}',
                             ),
                     ),
                     if (!hallLocked) ...[
