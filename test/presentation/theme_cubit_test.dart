@@ -36,6 +36,25 @@ void main() {
     expect(cubit.state.owns(lockedId), isFalse);
   });
 
+  test('a coin sync does not cancel an open preview', () {
+    const lockedId = 'moonlight_castle';
+    cubit.previewHall(lockedId);
+
+    cubit.syncFromSave(saves.loadSave().copyWith(coins: 999));
+
+    expect(ThemeController.current.id, lockedId);
+    expect(cubit.state.selectedThemeId, ThemeCatalog.starterId);
+  });
+
+  test('restoreEquippedTheme drops a locked preview', () {
+    cubit.previewHall('moonlight_castle');
+
+    cubit.restoreEquippedTheme();
+
+    expect(ThemeController.current.id, cubit.state.selectedThemeId);
+    expect(ThemeController.current.id, ThemeCatalog.starterId);
+  });
+
   test('equipFromCarousel ignores unowned halls', () async {
     const lockedId = 'frozen_kingdom';
 

@@ -22,7 +22,9 @@ import 'package:mirror_logic/presentation/screens/splash/splash_screen.dart'
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_bronze_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_exit_scope.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_insufficient_coins_dialog.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_resource_chip.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_toast.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_torch.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 
@@ -171,7 +173,10 @@ class _MainMenuViewState extends State<_MainMenuView> {
                                       ThemeCubitState
                                     >(
                                       buildWhen: (p, c) =>
-                                          p.owns(theme.id) != c.owns(theme.id),
+                                          p.owns(theme.id) !=
+                                              c.owns(theme.id) ||
+                                          p.selectedThemeId !=
+                                              c.selectedThemeId,
                                       builder: (context, themeState) {
                                         final owned = themeState.owns(theme.id);
                                         return AnimatedScale(
@@ -187,6 +192,7 @@ class _MainMenuViewState extends State<_MainMenuView> {
                                               height: heroHeight,
                                               cacheWidth: cacheWidth,
                                               locked: !owned,
+                                              equipped: themeState.selected,
                                               onTap: () {
                                                 if (!owned) {
                                                   context.push('/themes');
@@ -291,6 +297,7 @@ class _ThemeHeroCard extends StatelessWidget {
     required this.height,
     required this.cacheWidth,
     required this.locked,
+    required this.equipped,
     required this.onTap,
   });
 
@@ -299,6 +306,11 @@ class _ThemeHeroCard extends StatelessWidget {
   final double height;
   final int cacheWidth;
   final bool locked;
+
+  /// Hall the player actually owns. The seal is painted from this rather than
+  /// the previewed hall, so browsing locked halls never recolours the lock.
+  final VisualTheme equipped;
+
   final VoidCallback onTap;
 
   @override
@@ -325,7 +337,7 @@ class _ThemeHeroCard extends StatelessWidget {
                     gaplessPlayback: true,
                     errorBuilder: (_, _, _) => const SizedBox.shrink(),
                   ),
-                  if (locked) const _ChapterStyleLockSeal(),
+                  if (locked) _ChapterStyleLockSeal(equipped: equipped),
                 ],
               ),
             ),
@@ -338,19 +350,21 @@ class _ThemeHeroCard extends StatelessWidget {
 
 /// Same bronze seal used on locked chapter cards (scaled for home hero thumbs).
 class _ChapterStyleLockSeal extends StatelessWidget {
-  const _ChapterStyleLockSeal();
+  const _ChapterStyleLockSeal({required this.equipped});
+
+  final VisualTheme equipped;
 
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: MedievalColors.woodDeep.withValues(alpha: 0.45),
+      color: equipped.woodDeep.withValues(alpha: 0.45),
       child: Center(
         child: Container(
           padding: const EdgeInsets.all(30),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: MedievalColors.bronzeMetal,
-            border: Border.all(color: MedievalColors.bronzeDark, width: 2.6),
+            gradient: equipped.bronzeMetal,
+            border: Border.all(color: equipped.bronzeDark, width: 2.6),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.5),
@@ -359,11 +373,7 @@ class _ChapterStyleLockSeal extends StatelessWidget {
               ),
             ],
           ),
-          child: Icon(
-            Icons.lock_rounded,
-            size: 64,
-            color: MedievalColors.woodDeep,
-          ),
+          child: Icon(Icons.lock_rounded, size: 64, color: equipped.woodDeep),
         ),
       ),
     );
@@ -466,7 +476,8 @@ class _PlayButtons extends StatelessWidget {
         final hall =
             ThemeCatalog.all[page.clamp(0, ThemeCatalog.all.length - 1)];
         return BlocBuilder<ThemeCubit, ThemeCubitState>(
-          buildWhen: (p, c) => p.owns(hall.id) != c.owns(hall.id),
+          buildWhen: (p, c) =>
+              p.owns(hall.id) != c.owns(hall.id) || p.coins != c.coins,
           builder: (context, themeState) {
             final hallLocked = !themeState.owns(hall.id);
             return BlocBuilder<ProgressBloc, ProgressState>(
@@ -488,7 +499,11 @@ class _PlayButtons extends StatelessWidget {
                       shimmer: !hallLocked,
                       brightWhenDisabled: hallLocked,
                       onPressed: hallLocked
-                          ? null
+                          ? () => _unlockHall(
+                              context,
+                              hall: hall,
+                              coins: themeState.coins,
+                            )
                           : () => context.push(
                               '/play/${last ?? GameConstants.firstLevelId}',
                             ),
@@ -509,6 +524,34 @@ class _PlayButtons extends StatelessWidget {
         );
       },
     );
+  }
+
+  /// Buys the hall outright when the purse allows, and otherwise opens the
+  /// same earn-coins dialog the shop uses.
+  Future<void> _unlockHall(
+    BuildContext context, {
+    required VisualTheme hall,
+    required int coins,
+  }) async {
+    if (coins < hall.coinPrice) {
+      context.playSfx(Sfx.reject);
+      await showMedievalInsufficientCoinsDialog(context, theme: hall);
+      return;
+    }
+
+    final themeCubit = context.read<ThemeCubit>();
+    final result = await themeCubit.selectOrBuy(hall.id);
+    if (!context.mounted) return;
+
+    context.read<ProgressBloc>().add(const ProgressRefresh());
+    context.read<EconomyBloc>().add(
+      EconomyCoinsChanged(themeCubit.state.coins),
+    );
+
+    if (result == ThemeActionResult.purchased) {
+      context.playSfx(Sfx.unlock);
+      MedievalToast.show(context, 'Hall unlocked');
+    }
   }
 }
 

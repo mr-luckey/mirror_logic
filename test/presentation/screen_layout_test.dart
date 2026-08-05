@@ -8,8 +8,10 @@ import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/data/repositories/save_repository.dart';
 import 'package:mirror_logic/infrastructure/storage/local_storage_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
+import 'package:mirror_logic/presentation/blocs/economy/rewarded_coins_cubit.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/settings/settings_cubit.dart';
+import 'package:mirror_logic/presentation/blocs/theme/theme_cubit.dart';
 import 'package:mirror_logic/presentation/screens/about/about_screen.dart';
 import 'package:mirror_logic/presentation/screens/chapter_select/chapter_select_screen.dart';
 import 'package:mirror_logic/presentation/screens/level_complete/level_complete_screen.dart';
@@ -62,6 +64,17 @@ void main() {
                   EconomyBloc(economyRepository: EconomyRepository(saves)),
             ),
             BlocProvider(create: (_) => SettingsCubit(saveRepository: saves)),
+            BlocProvider(
+              create: (_) => ThemeCubit(
+                saveRepository: saves,
+                economyRepository: EconomyRepository(saves),
+              ),
+            ),
+            BlocProvider(
+              create: (_) => RewardedCoinsCubit(
+                economyRepository: EconomyRepository(saves),
+              ),
+            ),
           ],
           child: MaterialApp(theme: AppTheme.dark, home: screen),
         ),

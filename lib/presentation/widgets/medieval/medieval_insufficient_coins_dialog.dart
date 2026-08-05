@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +13,9 @@ import 'package:mirror_logic/domain/theme/visual_theme.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/rewarded_coins_cubit.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
+import 'package:mirror_logic/presentation/blocs/theme/theme_cubit.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_coins_earned_dialog.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_toast.dart';
 
@@ -180,9 +184,14 @@ class _CoinRow extends StatelessWidget {
   }
 }
 
+/// Puts the earn-coins dialog up for [theme].
+///
+/// [closeHostScreen] pops the screen underneath on the way to the board, which
+/// the shop wants and the home carousel does not.
 Future<void> showMedievalInsufficientCoinsDialog(
   BuildContext context, {
   required VisualTheme theme,
+  bool closeHostScreen = false,
 }) {
   return showDialog<void>(
     context: context,
@@ -190,43 +199,65 @@ Future<void> showMedievalInsufficientCoinsDialog(
     builder: (dialogContext) =>
         BlocListener<RewardedCoinsCubit, RewardedCoinsState>(
           listenWhen: (p, c) => p.lastFeedback != c.lastFeedback,
-          listener: (context, state) {
+          listener: (listenerContext, state) {
             final feedback = state.lastFeedback;
             if (feedback == null) return;
 
             switch (feedback) {
               case RewardedCoinsFeedback.earned:
-                context.playSfx(Sfx.unlock);
-                MedievalToast.show(
-                  context,
-                  '+${GameConstants.coinsPerRewardedAd} coins earned',
+                listenerContext.playSfx(Sfx.unlock);
+                unawaited(
+                  _celebrateReward(
+                    dialogContext,
+                    coins: state.coins,
+                    price: theme.coinPrice,
+                  ),
                 );
-                if (state.coins >= theme.coinPrice) {
-                  Navigator.pop(dialogContext);
-                }
               case RewardedCoinsFeedback.skipped:
-                context.playSfx(Sfx.reject);
-                MedievalToast.show(context, 'Ad skipped');
+                listenerContext.playSfx(Sfx.reject);
+                MedievalToast.show(listenerContext, 'Ad skipped');
               case RewardedCoinsFeedback.unavailable:
-                context.playSfx(Sfx.reject);
-                MedievalToast.show(context, 'Ad unavailable right now');
+                listenerContext.playSfx(Sfx.reject);
+                MedievalToast.show(listenerContext, 'Ad unavailable right now');
               case RewardedCoinsFeedback.quotaReached:
-                context.playSfx(Sfx.reject);
-                MedievalToast.show(context, 'Daily ad limit reached');
+                listenerContext.playSfx(Sfx.reject);
+                MedievalToast.show(listenerContext, 'Daily ad limit reached');
             }
           },
           child: MedievalInsufficientCoinsDialog(
             theme: theme,
             onPlayGame: () {
-              final progress = context.read<ProgressBloc>().state.save;
-              final last = progress.lastPlayedLevelId;
+              // The carousel may be previewing this locked hall; the board has
+              // to open in the hall the player actually owns.
+              context.read<ThemeCubit>().restoreEquippedTheme();
+              final last = context
+                  .read<ProgressBloc>()
+                  .state
+                  .save
+                  .lastPlayedLevelId;
+              final router = GoRouter.of(context);
               Navigator.pop(dialogContext);
-              context.pop();
-              context.push('/play/${last ?? GameConstants.firstLevelId}');
+              if (closeHostScreen) router.pop();
+              router.push('/play/${last ?? GameConstants.firstLevelId}');
             },
             onWatchAd: () =>
                 context.read<RewardedCoinsCubit>().watchAdForCoins(),
           ),
         ),
   );
+}
+
+/// Shows the reward receipt, then clears the way once the hall is affordable.
+Future<void> _celebrateReward(
+  BuildContext dialogContext, {
+  required int coins,
+  required int price,
+}) async {
+  await showMedievalCoinsEarnedDialog(
+    dialogContext,
+    earned: GameConstants.coinsPerRewardedAd,
+    totalCoins: coins,
+  );
+  if (!dialogContext.mounted) return;
+  if (coins >= price) Navigator.pop(dialogContext);
 }

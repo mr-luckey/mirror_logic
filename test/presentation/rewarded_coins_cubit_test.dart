@@ -20,10 +20,7 @@ void main() {
   });
 
   RewardedCoinsCubit buildCubit({AdsService? ads}) {
-    return RewardedCoinsCubit(
-      economyRepository: economy,
-      adsService: ads,
-    );
+    return RewardedCoinsCubit(economyRepository: economy, adsService: ads);
   }
 
   test('bootstrap loads persisted quota and coins', () async {
@@ -41,7 +38,10 @@ void main() {
 
     expect(cubit.state.coins, 33);
     expect(cubit.state.adsWatched, 4);
-    expect(cubit.state.quotaLabel, '4/${GameConstants.maxRewardedAdsPerWindow}');
+    expect(
+      cubit.state.quotaLabel,
+      '4/${GameConstants.maxRewardedAdsPerWindow}',
+    );
     expect(cubit.state.canWatchAd, isTrue);
 
     await cubit.close();

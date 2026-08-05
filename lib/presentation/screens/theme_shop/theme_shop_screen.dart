@@ -207,7 +207,11 @@ class _ThemeCard extends StatelessWidget {
 
   Future<void> _showInsufficientCoins(BuildContext context) async {
     context.playSfx(Sfx.reject);
-    await showMedievalInsufficientCoinsDialog(context, theme: theme);
+    await showMedievalInsufficientCoinsDialog(
+      context,
+      theme: theme,
+      closeHostScreen: true,
+    );
   }
 
   Future<void> _act(BuildContext context, String themeId) async {
