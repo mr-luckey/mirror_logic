@@ -295,8 +295,8 @@ class AppSettings extends Equatable {
     this.musicVolume = 0.7,
     this.sfxVolume = 1.0,
     this.haptics = true,
-    this.assistMode = false,
-    this.angleReadout = false,
+    this.assistMode = true,
+    this.angleReadout = true,
   });
 
   final double musicVolume;
@@ -334,8 +334,8 @@ class AppSettings extends Equatable {
       musicVolume: (json['musicVolume'] as num?)?.toDouble() ?? 0.7,
       sfxVolume: (json['sfxVolume'] as num?)?.toDouble() ?? 1.0,
       haptics: json['haptics'] as bool? ?? true,
-      assistMode: json['assistMode'] as bool? ?? false,
-      angleReadout: json['angleReadout'] as bool? ?? false,
+      assistMode: json['assistMode'] as bool? ?? true,
+      angleReadout: json['angleReadout'] as bool? ?? true,
     );
   }
 

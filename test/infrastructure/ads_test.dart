@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/app/ad_banner_host.dart';
 import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
+import 'package:mirror_logic/infrastructure/ads/ads_remote_config.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 
 const MethodChannel _adChannel = MethodChannel(
@@ -121,6 +122,49 @@ void main() {
       ads.releaseFullScreenSlot(shown: false);
       expect(ads.interstitialDue, isTrue);
     });
+
+    test('Remote Config can allow the first clear to show', () {
+      final ads = AdsService(
+        remoteConfig: _FakeAdsConfig(interstitialSkipFirst: false),
+        levelsBetweenInterstitials: 3,
+      );
+
+      ads.registerLevelCleared();
+      expect(ads.interstitialDue, isTrue);
+    });
+
+    test('Remote Config supplies the quiet period', () {
+      final ads = AdsService(
+        remoteConfig: _FakeAdsConfig(
+          interstitialMinInterval: const Duration(minutes: 1),
+        ),
+        levelsBetweenInterstitials: 1,
+      );
+      ads.registerLevelCleared();
+      expect(ads.interstitialDue, isTrue);
+
+      ads.claimFullScreenSlot();
+      ads.releaseFullScreenSlot(shown: true);
+      expect(ads.interstitialDue, isFalse);
+    });
+  });
+
+  group('Remote Config ad gates', () {
+    test('banner and interstitial controls can be disabled independently', () {
+      final ads = AdsService(
+        remoteConfig: _FakeAdsConfig(
+          bannerAdsEnabled: false,
+          interstitialAdsEnabled: false,
+        ),
+      );
+
+      expect(ads.bannerAdsEnabled, isFalse);
+      expect(ads.interstitialAdsEnabled, isFalse);
+      expect(
+        ads.interstitialAllowed(policy: InterstitialPolicy.always),
+        isFalse,
+      );
+    });
   });
 
   group('leaving the board from the pause menu', () {
@@ -198,4 +242,31 @@ void main() {
       expect(AdBannerHost.showsBannerAt('/onboarding'), isFalse);
     });
   });
+}
+
+class _FakeAdsConfig implements AdsConfig {
+  _FakeAdsConfig({
+    this.bannerAdsEnabled = true,
+    this.interstitialAdsEnabled = true,
+    this.interstitialMinInterval = const Duration(seconds: 45),
+    this.interstitialSkipFirst = true,
+  });
+
+  @override
+  final bool bannerAdsEnabled;
+
+  @override
+  final bool interstitialAdsEnabled;
+
+  @override
+  final Duration interstitialMinInterval;
+
+  @override
+  final bool interstitialSkipFirst;
+
+  @override
+  Future<void> ensureInitialized() async {}
+
+  @override
+  Future<void> refreshIfNeeded() async {}
 }

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
+import 'package:mirror_logic/infrastructure/ads/ads_remote_config.dart';
 
 /// How much of the interstitial cadence a placement agrees to wait for.
 enum InterstitialPolicy {
@@ -42,11 +43,16 @@ enum RewardedAdOutcome {
 /// caller, and none of them are on a path the player cannot complete without.
 class AdsService {
   AdsService({
+    AdsConfig? remoteConfig,
     this.levelsBetweenInterstitials = 3,
-    this.minGapBetweenFullScreenAds = const Duration(seconds: 45),
+    Duration? minGapBetweenFullScreenAds,
     this.requestTimeout = const Duration(seconds: 10),
     this.forcedFillWait = const Duration(seconds: 4),
-  });
+  }) : _remoteConfig = remoteConfig ?? AdsRemoteConfig.instance,
+       _minGapOverride = minGapBetweenFullScreenAds;
+
+  final AdsConfig _remoteConfig;
+  final Duration? _minGapOverride;
 
   /// Level clears between two interstitials. The counter starts at zero every
   /// launch, so the opening boards of any session are always quiet.
@@ -55,7 +61,16 @@ class AdsService {
   /// Quiet period after any full-screen ad, rewarded ones included: a player
   /// who just sat through a video to buy a hint should not meet an interstitial
   /// the moment they finish the board.
-  final Duration minGapBetweenFullScreenAds;
+  Duration get minGapBetweenFullScreenAds =>
+      _minGapOverride ?? _remoteConfig.interstitialMinInterval;
+
+  /// Whether Remote Config currently permits banner requests.
+  bool get bannerAdsEnabled =>
+      GameConstants.adsEnabled && _remoteConfig.bannerAdsEnabled;
+
+  /// Whether Remote Config currently permits interstitial requests and shows.
+  bool get interstitialAdsEnabled =>
+      GameConstants.adsEnabled && _remoteConfig.interstitialAdsEnabled;
 
   /// How long one unit gets to fill before the waterfall moves down a slot.
   final Duration requestTimeout;
@@ -73,6 +88,7 @@ class AdsService {
   bool _fullScreenShowing = false;
   DateTime? _lastFullScreenAt;
   int _clearsSinceInterstitial = 0;
+  bool _hasShownInterstitial = false;
   Future<void>? _bringUp;
 
   InterstitialAd? _interstitial;
@@ -108,6 +124,7 @@ class AdsService {
       debugPrint('AdsService disabled: GameConstants.adsEnabled is false');
       return;
     }
+    await _remoteConfig.ensureInitialized();
     try {
       await MobileAds.instance.initialize();
       _ready = true;
@@ -136,8 +153,19 @@ class AdsService {
 
   void _fillCaches() {
     if (!_ready) return;
-    unawaited(_fillInterstitial());
+    if (interstitialAdsEnabled) unawaited(_fillInterstitial());
     unawaited(_fillRewarded());
+  }
+
+  /// Refreshes the cached controls and immediately applies any ad kill switch.
+  Future<void> refreshRemoteConfig() async {
+    await _remoteConfig.refreshIfNeeded();
+    if (!interstitialAdsEnabled) {
+      await _interstitial?.dispose();
+      _interstitial = null;
+      return;
+    }
+    if (_ready) unawaited(_fillInterstitial());
   }
 
   /// Counts a cleared board towards the next interstitial.
@@ -158,6 +186,7 @@ class AdsService {
   /// need to wait for the third clear.
   @visibleForTesting
   bool interstitialAllowed({required InterstitialPolicy policy}) {
+    if (!interstitialAdsEnabled) return false;
     if (policy == InterstitialPolicy.always) return true;
 
     final last = _lastFullScreenAt;
@@ -165,8 +194,12 @@ class AdsService {
         DateTime.now().difference(last) < minGapBetweenFullScreenAds) {
       return false;
     }
+    final requiredClears =
+        !_hasShownInterstitial && !_remoteConfig.interstitialSkipFirst
+        ? 1
+        : levelsBetweenInterstitials;
     if (policy == InterstitialPolicy.levelBreak &&
-        _clearsSinceInterstitial < levelsBetweenInterstitials) {
+        _clearsSinceInterstitial < requiredClears) {
       return false;
     }
     return true;
@@ -179,6 +212,7 @@ class AdsService {
   Future<bool> showInterstitial({
     InterstitialPolicy policy = InterstitialPolicy.levelBreak,
   }) async {
+    if (!interstitialAdsEnabled) return false;
     if (!await _hasInternet()) return false;
     if (!_ready || !interstitialAllowed(policy: policy)) return false;
 
@@ -202,6 +236,7 @@ class AdsService {
     ad.fullScreenContentCallback = FullScreenContentCallback(
       onAdDismissedFullScreenContent: (ad) {
         ad.dispose();
+        _hasShownInterstitial = true;
         releaseFullScreenSlot(shown: true);
         _settle(closed);
         unawaited(_fillInterstitial());
@@ -279,9 +314,9 @@ class AdsService {
   ///
   /// Ownership passes to the caller: whoever mounts the ad disposes it.
   Future<BannerAd?> loadBanner(AdSize size) async {
-    if (!await _hasInternet()) return null;
     await init();
-    if (!_ready) return null;
+    if (!_ready || !bannerAdsEnabled) return null;
+    if (!await _hasInternet()) return null;
     return _waterfall(
       AdPlacement.banner,
       (unitId) => _requestBanner(unitId, size),
@@ -361,8 +396,13 @@ class AdsService {
   }
 
   Future<void> _fillInterstitial() async {
+    if (!interstitialAdsEnabled) {
+      await _interstitial?.dispose();
+      _interstitial = null;
+      return;
+    }
+    if (!_ready || _interstitial != null) return;
     if (!await _hasInternet()) return;
-    if (!_ready || _interstitial != null) return Future<void>.value();
     // A second caller joins the request in flight rather than racing a parallel
     // waterfall down the same list and throwing one of the two ads away.
     return _interstitialFill ??= _runFill(

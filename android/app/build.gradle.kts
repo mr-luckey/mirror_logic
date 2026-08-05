@@ -7,6 +7,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Firebase remains optional for local builds. Once the Firebase Console file is
+// present, this processes it into the Android resources consumed by Firebase.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
 // Upload key for the Play Store, kept out of the repository. Without this file
 // a release build falls back to the debug key, which Play rejects on upload
 // rather than accepting under the wrong certificate.

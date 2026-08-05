@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mirror_logic/data/repositories/economy_repository.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/data/repositories/save_repository.dart';
+import 'package:mirror_logic/infrastructure/ads/ads_remote_config.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/infrastructure/review/review_service.dart';
@@ -25,7 +26,8 @@ Future<void> configureDependencies() async {
   final economyRepository = EconomyRepository(saveRepository);
   final levelRepository = LevelRepository();
   final audioService = AudioService();
-  final adsService = AdsService();
+  final adsRemoteConfig = AdsRemoteConfig.instance;
+  final adsService = AdsService(remoteConfig: adsRemoteConfig);
   final reviewService = ReviewService(storage: storage);
   final updateService = AppUpdateService(storage: storage);
 
@@ -34,6 +36,7 @@ Future<void> configureDependencies() async {
   _services[EconomyRepository] = economyRepository;
   _services[LevelRepository] = levelRepository;
   _services[AudioService] = audioService;
+  _services[AdsRemoteConfig] = adsRemoteConfig;
   _services[AdsService] = adsService;
   _services[ReviewService] = reviewService;
   _services[AppUpdateService] = updateService;

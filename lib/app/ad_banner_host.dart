@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/app/ads_scope.dart';
@@ -30,7 +32,8 @@ class AdBannerHost extends StatefulWidget {
   State<AdBannerHost> createState() => _AdBannerHostState();
 }
 
-class _AdBannerHostState extends State<AdBannerHost> {
+class _AdBannerHostState extends State<AdBannerHost>
+    with WidgetsBindingObserver {
   /// Fixed 320x50 rather than an adaptive size, which returns anything from 50
   /// to 90 points tall depending on the device. The strip is a constant height,
   /// and a constant slot can only honestly hold a constant ad.
@@ -58,6 +61,7 @@ class _AdBannerHostState extends State<AdBannerHost> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     AppRouter.router.routerDelegate.addListener(_sync);
   }
 
@@ -73,9 +77,24 @@ class _AdBannerHostState extends State<AdBannerHost> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     AppRouter.router.routerDelegate.removeListener(_sync);
     _ad?.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_refreshRemoteConfig());
+    }
+  }
+
+  Future<void> _refreshRemoteConfig() async {
+    final ads = context.ads;
+    if (ads == null) return;
+    await ads.refreshRemoteConfig();
+    if (mounted && !ads.bannerAdsEnabled) _clearBanner();
   }
 
   static String get _location =>
@@ -101,10 +120,21 @@ class _AdBannerHostState extends State<AdBannerHost> {
   /// tries again, without limit.
   Future<void> _load(AdsService ads) async {
     while (mounted) {
+      if (!ads.bannerAdsEnabled) {
+        _clearBanner();
+        await Future<void>.delayed(_retryDelay);
+        continue;
+      }
       final ad = await ads.loadBanner(_size);
       if (!mounted) {
         await ad?.dispose();
         return;
+      }
+      if (!ads.bannerAdsEnabled) {
+        await ad?.dispose();
+        _clearBanner();
+        await Future<void>.delayed(_retryDelay);
+        continue;
       }
       if (ad == null) {
         await Future<void>.delayed(_retryDelay);
@@ -126,6 +156,13 @@ class _AdBannerHostState extends State<AdBannerHost> {
     final outgoing = _ad;
     setState(() => _ad = ad);
     if (outgoing == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) => outgoing.dispose());
+  }
+
+  void _clearBanner() {
+    final outgoing = _ad;
+    if (outgoing == null || !mounted) return;
+    setState(() => _ad = null);
     WidgetsBinding.instance.addPostFrameCallback((_) => outgoing.dispose());
   }
 
