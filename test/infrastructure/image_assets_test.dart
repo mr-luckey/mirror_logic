@@ -9,10 +9,7 @@ void main() {
   // each file rather than the folder so the masters stay out of the APK. Both
   // the board painter and the menu widgets treat a missing image as a soft
   // failure, so nothing but these checks would catch a file left unbundled.
-  final assets = [
-    ...GameArt.assetPaths,
-    ...MedievalArt.all,
-  ];
+  final assets = [...GameArt.assetPaths, ...MedievalArt.all];
 
   group('image assets', () {
     test('there is something to check', () {

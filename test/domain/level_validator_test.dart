@@ -18,8 +18,9 @@ void main() {
     const win = WinConditionEvaluator();
 
     setUpAll(() {
-      final manifestRaw =
-          File('assets/levels/manifest.json').readAsStringSync();
+      final manifestRaw = File(
+        'assets/levels/manifest.json',
+      ).readAsStringSync();
       final manifest = jsonDecode(manifestRaw) as Map<String, dynamic>;
       final entries = (manifest['levels'] as List).cast<Map<String, dynamic>>();
       levels = [

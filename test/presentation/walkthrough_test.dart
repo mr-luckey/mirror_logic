@@ -31,9 +31,7 @@ void main() {
     final raw = File(
       'assets/levels/${GameConstants.firstLevelId}.json',
     ).readAsStringSync();
-    first = LevelModel.fromJson(
-      jsonDecode(raw) as Map<String, dynamic>,
-    );
+    first = LevelModel.fromJson(jsonDecode(raw) as Map<String, dynamic>);
   });
 
   Future<GameplayBloc> startedBloc(LevelModel level) async {

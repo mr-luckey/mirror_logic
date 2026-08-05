@@ -61,6 +61,8 @@ class SaveRepository {
         walkthroughSeen: current.walkthroughSeen,
         ownedThemeIds: current.ownedThemeIds,
         selectedThemeId: current.selectedThemeId,
+        rewardedAdsWatched: current.rewardedAdsWatched,
+        rewardedAdsWindowStartMs: current.rewardedAdsWindowStartMs,
       ).toJson(),
     );
   }

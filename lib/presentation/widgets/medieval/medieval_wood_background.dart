@@ -116,10 +116,7 @@ class MedievalWoodBackground extends StatelessWidget {
                 gradient: RadialGradient(
                   center: const Alignment(0.55, -0.65),
                   radius: 0.85,
-                  colors: [
-                    accent.withValues(alpha: 0.14),
-                    Colors.transparent,
-                  ],
+                  colors: [accent.withValues(alpha: 0.14), Colors.transparent],
                 ),
               ),
               child: const SizedBox.expand(),

@@ -11,7 +11,13 @@ import 'package:mirror_logic/domain/theme/theme_controller.dart';
 import 'package:mirror_logic/domain/theme/visual_theme.dart';
 import 'package:mirror_logic/infrastructure/art/game_art.dart';
 
-enum ThemeActionResult { equipped, purchased, locked, unaffordable, alreadyOwned }
+enum ThemeActionResult {
+  equipped,
+  purchased,
+  locked,
+  unaffordable,
+  alreadyOwned,
+}
 
 class ThemeCubitState extends Equatable {
   const ThemeCubitState({
@@ -146,10 +152,7 @@ class ThemeCubit extends Cubit<ThemeCubitState> {
 
     final owned = List<String>.from(spent.ownedThemeIds);
     if (!owned.contains(themeId)) owned.add(themeId);
-    final next = spent.copyWith(
-      ownedThemeIds: owned,
-      selectedThemeId: themeId,
-    );
+    final next = spent.copyWith(ownedThemeIds: owned, selectedThemeId: themeId);
     await _saveRepository.persistSave(next);
     ThemeController.applyById(themeId);
     unawaited(GameArt.loadForTheme(themeId));
@@ -163,16 +166,11 @@ class ThemeCubit extends Cubit<ThemeCubitState> {
       return _equip(themeId);
     }
     final owned = List<String>.from(save.ownedThemeIds)..add(themeId);
-    final next = save.copyWith(
-      ownedThemeIds: owned,
-      selectedThemeId: themeId,
-    );
+    final next = save.copyWith(ownedThemeIds: owned, selectedThemeId: themeId);
     await _saveRepository.persistSave(next);
     ThemeController.applyById(themeId);
     unawaited(GameArt.loadForTheme(themeId));
-    emit(
-      _fromSave(next).copyWith(lastResult: ThemeActionResult.purchased),
-    );
+    emit(_fromSave(next).copyWith(lastResult: ThemeActionResult.purchased));
     return ThemeActionResult.purchased;
   }
 

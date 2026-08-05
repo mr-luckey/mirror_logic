@@ -82,8 +82,10 @@ class _MainMenuViewState extends State<_MainMenuView> {
     context.read<HomeCubit>().setPage(index);
     HapticFeedback.selectionClick();
     context.playSfx(Sfx.tap);
-    // Theme applies once on settle — never mid-drag (that was the lag).
-    unawaitedEquip(_halls[index].id);
+    final themeId = _halls[index].id;
+    // Preview every hall on settle; only owned halls are persisted.
+    context.read<ThemeCubit>().previewHall(themeId);
+    unawaitedEquip(themeId);
   }
 
   void unawaitedEquip(String themeId) {
@@ -491,15 +493,14 @@ class _PlayButtons extends StatelessWidget {
                               '/play/${last ?? GameConstants.firstLevelId}',
                             ),
                     ),
-                    const SizedBox(height: 11),
-                    MedievalButton(
-                      label: 'Chapters',
-                      icon: Icons.menu_book_rounded,
-                      brightWhenDisabled: hallLocked,
-                      onPressed: hallLocked
-                          ? null
-                          : () => context.push('/chapters'),
-                    ),
+                    if (!hallLocked) ...[
+                      const SizedBox(height: 11),
+                      MedievalButton(
+                        label: 'Chapters',
+                        icon: Icons.menu_book_rounded,
+                        onPressed: () => context.push('/chapters'),
+                      ),
+                    ],
                   ],
                 );
               },

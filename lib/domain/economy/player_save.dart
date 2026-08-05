@@ -60,6 +60,8 @@ class PlayerSave extends Equatable {
     this.hintsUsedTotal = 0,
     this.ownedThemeIds = const [ThemeCatalog.starterId],
     this.selectedThemeId = ThemeCatalog.starterId,
+    this.rewardedAdsWatched = 0,
+    this.rewardedAdsWindowStartMs = 0,
   });
 
   final int saveSchemaVersion;
@@ -80,6 +82,12 @@ class PlayerSave extends Equatable {
   /// Currently equipped visual hall.
   final String selectedThemeId;
 
+  /// Rewarded ads watched in the current rolling 24-hour window.
+  final int rewardedAdsWatched;
+
+  /// Epoch ms when the current rewarded-ad window started. Zero means idle.
+  final int rewardedAdsWindowStartMs;
+
   PlayerSave copyWith({
     int? saveSchemaVersion,
     bool? onboardingComplete,
@@ -91,6 +99,8 @@ class PlayerSave extends Equatable {
     int? hintsUsedTotal,
     List<String>? ownedThemeIds,
     String? selectedThemeId,
+    int? rewardedAdsWatched,
+    int? rewardedAdsWindowStartMs,
   }) {
     return PlayerSave(
       saveSchemaVersion: saveSchemaVersion ?? this.saveSchemaVersion,
@@ -103,6 +113,9 @@ class PlayerSave extends Equatable {
       hintsUsedTotal: hintsUsedTotal ?? this.hintsUsedTotal,
       ownedThemeIds: ownedThemeIds ?? this.ownedThemeIds,
       selectedThemeId: selectedThemeId ?? this.selectedThemeId,
+      rewardedAdsWatched: rewardedAdsWatched ?? this.rewardedAdsWatched,
+      rewardedAdsWindowStartMs:
+          rewardedAdsWindowStartMs ?? this.rewardedAdsWindowStartMs,
     );
   }
 
@@ -183,6 +196,8 @@ class PlayerSave extends Equatable {
     'hintsUsedTotal': hintsUsedTotal,
     'ownedThemeIds': ownedThemeIds,
     'selectedThemeId': selectedThemeId,
+    'rewardedAdsWatched': rewardedAdsWatched,
+    'rewardedAdsWindowStartMs': rewardedAdsWindowStartMs,
   };
 
   factory PlayerSave.fromJson(Map<String, dynamic> json) {
@@ -235,6 +250,9 @@ class PlayerSave extends Equatable {
       hintsUsedTotal: (json['hintsUsedTotal'] as num?)?.toInt() ?? 0,
       ownedThemeIds: owned,
       selectedThemeId: selected,
+      rewardedAdsWatched: (json['rewardedAdsWatched'] as num?)?.toInt() ?? 0,
+      rewardedAdsWindowStartMs:
+          (json['rewardedAdsWindowStartMs'] as num?)?.toInt() ?? 0,
     );
   }
 
@@ -250,6 +268,8 @@ class PlayerSave extends Equatable {
     hintsUsedTotal,
     ownedThemeIds,
     selectedThemeId,
+    rewardedAdsWatched,
+    rewardedAdsWindowStartMs,
   ];
 }
 

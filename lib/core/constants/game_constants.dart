@@ -29,8 +29,14 @@ abstract final class GameConstants {
   /// Set to false before shipping. When true, all chapters/levels are playable.
   static const bool unlockAllLevelsForTesting = false;
 
-  /// Rewarded-ad coin grant (wired later — ads stay off until then).
-  static const int coinsPerRewardedAd = 15;
+  /// Coins granted for each fully watched rewarded ad.
+  static const int coinsPerRewardedAd = 5;
+
+  /// Rewarded ads a player may earn coins from per rolling window.
+  static const int maxRewardedAdsPerWindow = 20;
+
+  /// Rolling window starts on the first earned ad and resets after this.
+  static const Duration rewardedAdsWindow = Duration(hours: 24);
 
   /// Set to true before shipping. When false, ads never init, load, or show.
   static const bool adsEnabled = true;

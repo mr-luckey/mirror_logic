@@ -13,6 +13,7 @@ import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/theme/theme_cubit.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_insufficient_coins_dialog.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_panel.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_resource_chip.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_screen_header.dart';
@@ -69,13 +70,13 @@ class ThemeShopScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final theme = ThemeCatalog.all[index];
                         return _ThemeCard(
-                          theme: theme,
-                          index: index + 1,
-                          owned: themeState.owns(theme.id),
-                          selected: themeState.selectedThemeId == theme.id,
-                          levelUnlocked: themeState.isLevelUnlocked(theme),
-                          coins: themeState.coins,
-                        )
+                              theme: theme,
+                              index: index + 1,
+                              owned: themeState.owns(theme.id),
+                              selected: themeState.selectedThemeId == theme.id,
+                              levelUnlocked: themeState.isLevelUnlocked(theme),
+                              coins: themeState.coins,
+                            )
                             .animate()
                             .fadeIn(delay: (40 * index).ms)
                             .slideY(begin: 0.08, end: 0);
@@ -145,8 +146,8 @@ class _ThemeCard extends StatelessWidget {
                       locked
                           ? 'Unlock at Level ${theme.unlockLevel}'
                           : owned
-                              ? (selected ? 'Equipped' : 'Owned')
-                              : '${theme.coinPrice} coins',
+                          ? (selected ? 'Equipped' : 'Owned')
+                          : '${theme.coinPrice} coins',
                       style: MedievalTextStyles.cinzel(
                         size: Responsive.sp(context, 10),
                         color: MedievalColors.textMuted,
@@ -180,24 +181,33 @@ class _ThemeCard extends StatelessWidget {
                   ? MedievalButtonStyle.secondary
                   : MedievalButtonStyle.primary,
               icon: selected ? Icons.check_rounded : Icons.palette_rounded,
-              onPressed: selected
-                  ? null
-                  : () => _act(context, theme.id),
+              onPressed: selected ? null : () => _act(context, theme.id),
             )
           else
             MedievalButton(
               label: canBuy
-                  ? (afford ? 'Buy · ${theme.coinPrice}' : 'Need ${theme.coinPrice}')
+                  ? (afford
+                        ? 'Buy · ${theme.coinPrice}'
+                        : 'Need ${theme.coinPrice}')
                   : 'Buy',
               style: MedievalButtonStyle.primary,
               icon: Icons.monetization_on_rounded,
               shimmer: afford,
               brightWhenDisabled: canBuy && !afford,
-              onPressed: afford ? () => _act(context, theme.id) : null,
+              onPressed: canBuy
+                  ? () => afford
+                        ? _act(context, theme.id)
+                        : _showInsufficientCoins(context)
+                  : null,
             ),
         ],
       ),
     );
+  }
+
+  Future<void> _showInsufficientCoins(BuildContext context) async {
+    context.playSfx(Sfx.reject);
+    await showMedievalInsufficientCoinsDialog(context, theme: theme);
   }
 
   Future<void> _act(BuildContext context, String themeId) async {
@@ -245,10 +255,7 @@ class _IndexBadge extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            color,
-            Color.lerp(color, Colors.black, 0.35)!,
-          ],
+          colors: [color, Color.lerp(color, Colors.black, 0.35)!],
         ),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.35),

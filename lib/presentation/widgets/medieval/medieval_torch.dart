@@ -97,9 +97,7 @@ class _TorchFlameState extends State<_TorchFlame>
 
 class _FlamePainter extends CustomPainter {
   _FlamePainter({required this.clock})
-    : super(
-        repaint: Listenable.merge([clock, ThemeController.notifier]),
-      );
+    : super(repaint: Listenable.merge([clock, ThemeController.notifier]));
 
   final Animation<double> clock;
 

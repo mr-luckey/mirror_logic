@@ -44,10 +44,16 @@ class _HandPainter extends CustomPainter {
     final h = size.height;
     if (w <= 0 || h <= 0) return;
 
-    Path box(double l, double t, double r, double b, double radius) =>
-        Path()..addRRect(
-          RRect.fromLTRBR(l * w, t * h, r * w, b * h, Radius.circular(radius * w)),
-        );
+    Path box(double l, double t, double r, double b, double radius) => Path()
+      ..addRRect(
+        RRect.fromLTRBR(
+          l * w,
+          t * h,
+          r * w,
+          b * h,
+          Radius.circular(radius * w),
+        ),
+      );
 
     // One glove silhouette: pointing finger, curled knuckles, palm, thumb.
     var glove = Path.combine(
@@ -99,7 +105,11 @@ class _HandPainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFFBF0D6), MedievalColors.parchment, MedievalColors.parchmentDark],
+          colors: [
+            Color(0xFFFBF0D6),
+            MedievalColors.parchment,
+            MedievalColors.parchmentDark,
+          ],
         ).createShader(Rect.fromLTWH(0, 0, w, h)),
     );
 

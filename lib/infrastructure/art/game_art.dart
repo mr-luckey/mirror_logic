@@ -71,12 +71,8 @@ class GameArt {
 
   static Future<void> _load(String themeId) async {
     final theme = ThemeCatalog.byId(themeId);
-    _sharedCrystal ??= await _decode(
-      'assets/images/medieval/crystal_cut.webp',
-    );
-    _sharedEmitter ??= await _decode(
-      'assets/images/medieval/emitter_cut.webp',
-    );
+    _sharedCrystal ??= await _decode('assets/images/medieval/crystal_cut.webp');
+    _sharedEmitter ??= await _decode('assets/images/medieval/emitter_cut.webp');
 
     final themedCrystal = theme.crystalAsset != null
         ? await _decode(theme.crystalAsset!)

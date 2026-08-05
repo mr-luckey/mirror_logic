@@ -136,9 +136,8 @@ class VisualTheme {
     colors: [woodLight, woodMid, woodDeep],
   );
 
-  LinearGradient get laserGradient => LinearGradient(
-    colors: [laserCore, laserMid, laserGlow],
-  );
+  LinearGradient get laserGradient =>
+      LinearGradient(colors: [laserCore, laserMid, laserGlow]);
 
   static String _pack(String id, String file) =>
       'assets/images/themes/$id/$file';

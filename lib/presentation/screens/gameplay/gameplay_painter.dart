@@ -1276,9 +1276,7 @@ class GameplayPainter extends CustomPainter {
           c.hitRadius * (1.6 + 0.3 * pulse) * (lit || rejected ? 1.2 : 0.9);
 
       // Magical bloom — hall-coloured so each theme's crystal reads differently.
-      final glow = rejected
-          ? MedievalColors.rejectMid
-          : MedievalColors.crystal;
+      final glow = rejected ? MedievalColors.rejectMid : MedievalColors.crystal;
       final mid = rejected
           ? MedievalColors.rejectGlow
           : MedievalColors.laserMid;
@@ -1290,7 +1288,9 @@ class GameplayPainter extends CustomPainter {
         center,
         aura * 1.4,
         Paint()
-          ..color = glow.withValues(alpha: lit || rejected ? 0.65 * pulse : 0.48)
+          ..color = glow.withValues(
+            alpha: lit || rejected ? 0.65 * pulse : 0.48,
+          )
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 34),
       );
       canvas.drawCircle(
@@ -1356,19 +1356,20 @@ class GameplayPainter extends CustomPainter {
             center.translate(0, -c.hitRadius * 0.15),
             c.hitRadius * 0.55,
             Paint()
-              ..shader = RadialGradient(
-                colors: [
-                  core.withValues(alpha: 0.55 + 0.2 * pulse),
-                  glow.withValues(alpha: 0.2),
-                  Colors.transparent,
-                ],
-                stops: const [0.0, 0.45, 1.0],
-              ).createShader(
-                Rect.fromCircle(
-                  center: center.translate(0, -c.hitRadius * 0.15),
-                  radius: c.hitRadius * 0.55,
-                ),
-              ),
+              ..shader =
+                  RadialGradient(
+                    colors: [
+                      core.withValues(alpha: 0.55 + 0.2 * pulse),
+                      glow.withValues(alpha: 0.2),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.45, 1.0],
+                  ).createShader(
+                    Rect.fromCircle(
+                      center: center.translate(0, -c.hitRadius * 0.15),
+                      radius: c.hitRadius * 0.55,
+                    ),
+                  ),
           );
         }
       } else {

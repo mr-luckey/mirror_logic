@@ -36,10 +36,10 @@ class AdBannerSlot extends StatelessWidget {
               width: ad.size.width.toDouble(),
               height: ad.size.height.toDouble(),
               // Keyed by the ad itself. `AdWidget` reads its ad once, in
-            // initState, and never looks again — handed a replacement through
-            // the same element it would keep the retired banner's platform view
-            // on screen, so the refresh has to bring a new element with it.
-            child: AdWidget(key: ValueKey(ad), ad: ad),
+              // initState, and never looks again — handed a replacement through
+              // the same element it would keep the retired banner's platform view
+              // on screen, so the refresh has to bring a new element with it.
+              child: AdWidget(key: ValueKey(ad), ad: ad),
             ),
           ),
         ),

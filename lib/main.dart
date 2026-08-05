@@ -15,6 +15,7 @@ import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/infrastructure/review/review_service.dart';
 import 'package:mirror_logic/infrastructure/update/app_update_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
+import 'package:mirror_logic/presentation/blocs/economy/rewarded_coins_cubit.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/settings/settings_cubit.dart';
 import 'package:mirror_logic/presentation/blocs/theme/theme_cubit.dart';
@@ -61,10 +62,12 @@ Future<void> main() async {
   final adsService = sl<AdsService>();
   unawaited(adsService.init());
 
-    unawaited(GameArt.loadForTheme(
+  unawaited(
+    GameArt.loadForTheme(
       // Prefer the saved hall so first paint matches the equipped theme.
       sl<SaveRepository>().loadSave().selectedThemeId,
-    ));
+    ),
+  );
 
   runApp(
     MultiRepositoryProvider(
@@ -96,6 +99,12 @@ Future<void> main() async {
             create: (_) => ThemeCubit(
               saveRepository: saveRepository,
               economyRepository: economyRepository,
+            ),
+          ),
+          BlocProvider(
+            create: (_) => RewardedCoinsCubit(
+              economyRepository: economyRepository,
+              adsService: adsService,
             ),
           ),
         ],

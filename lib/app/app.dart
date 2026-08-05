@@ -13,6 +13,7 @@ import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/infrastructure/review/review_service.dart';
 import 'package:mirror_logic/infrastructure/update/app_update_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
+import 'package:mirror_logic/presentation/blocs/economy/rewarded_coins_cubit.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/theme/theme_cubit.dart';
 
@@ -43,8 +44,17 @@ class MirrorLogicApp extends StatelessWidget {
         ),
         BlocListener<EconomyBloc, EconomyState>(
           listenWhen: (p, c) => p.coins != c.coins,
-          listener: (context, state) =>
-              context.read<ThemeCubit>().syncCoins(state.coins),
+          listener: (context, state) {
+            context.read<ThemeCubit>().syncCoins(state.coins);
+            context.read<RewardedCoinsCubit>().syncCoins(state.coins);
+          },
+        ),
+        BlocListener<RewardedCoinsCubit, RewardedCoinsState>(
+          listenWhen: (p, c) => p.coins != c.coins,
+          listener: (context, state) {
+            context.read<EconomyBloc>().add(EconomyCoinsChanged(state.coins));
+            context.read<ProgressBloc>().add(const ProgressRefresh());
+          },
         ),
       ],
       child: AdsScope(
