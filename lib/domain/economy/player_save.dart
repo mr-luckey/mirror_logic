@@ -50,7 +50,7 @@ class LevelProgress extends Equatable {
 
 class PlayerSave extends Equatable {
   const PlayerSave({
-    this.saveSchemaVersion = 1,
+    this.saveSchemaVersion = 2,
     this.onboardingComplete = false,
     this.walkthroughSeen = false,
     this.coins = 0,
@@ -58,13 +58,7 @@ class PlayerSave extends Equatable {
     this.levelProgress = const {},
     this.lastPlayedLevelId,
     this.hintsUsedTotal = 0,
-    this.ownedThemeIds = const [
-      ThemeCatalog.starterId,
-      'moonlight_castle',
-      'frozen_kingdom',
-      'lava_forge',
-      'celestial_heaven',
-    ],
+    this.ownedThemeIds = const [ThemeCatalog.starterId],
     this.selectedThemeId = ThemeCatalog.starterId,
   });
 
@@ -87,6 +81,7 @@ class PlayerSave extends Equatable {
   final String selectedThemeId;
 
   PlayerSave copyWith({
+    int? saveSchemaVersion,
     bool? onboardingComplete,
     bool? walkthroughSeen,
     int? coins,
@@ -98,7 +93,7 @@ class PlayerSave extends Equatable {
     String? selectedThemeId,
   }) {
     return PlayerSave(
-      saveSchemaVersion: saveSchemaVersion,
+      saveSchemaVersion: saveSchemaVersion ?? this.saveSchemaVersion,
       onboardingComplete: onboardingComplete ?? this.onboardingComplete,
       walkthroughSeen: walkthroughSeen ?? this.walkthroughSeen,
       coins: coins ?? this.coins,
@@ -201,15 +196,26 @@ class PlayerSave extends Equatable {
     if (!ownedRaw.contains(ThemeCatalog.starterId)) {
       ownedRaw.insert(0, ThemeCatalog.starterId);
     }
-    // Drop retired halls and fill any newly granted ones.
-    final owned = {...ownedRaw, ...ThemeCatalog.allIds}.toList();
-    final selectedRaw =
+
+    var schema = json['saveSchemaVersion'] as int? ?? 1;
+    var owned = List<String>.from(ownedRaw);
+    var selectedRaw =
         json['selectedThemeId'] as String? ?? ThemeCatalog.starterId;
-    final selected = ThemeCatalog.allIds.contains(selectedRaw)
+
+    // v2: stop auto-granting every hall. Testing saves that owned the full
+    // catalog are reset to the free starter — paid halls must be bought.
+    if (schema < 2) {
+      owned = [ThemeCatalog.starterId];
+      selectedRaw = ThemeCatalog.starterId;
+      schema = 2;
+    }
+
+    final selected = owned.contains(selectedRaw)
         ? selectedRaw
         : ThemeCatalog.starterId;
+
     return PlayerSave(
-      saveSchemaVersion: json['saveSchemaVersion'] as int? ?? 1,
+      saveSchemaVersion: schema,
       onboardingComplete: json['onboardingComplete'] as bool? ?? false,
       walkthroughSeen: json['walkthroughSeen'] as bool? ?? false,
       coins: (json['coins'] as num?)?.toInt() ?? 0,

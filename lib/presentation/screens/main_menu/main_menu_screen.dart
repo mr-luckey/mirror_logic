@@ -161,28 +161,42 @@ class _MainMenuViewState extends State<_MainMenuView> {
                               itemBuilder: (context, index) {
                                 final theme = _halls[index];
                                 return BlocBuilder<HomeCubit, int>(
-                                  buildWhen: (p, c) =>
-                                      p == index || c == index,
+                                  buildWhen: (p, c) => p == index || c == index,
                                   builder: (context, page) {
                                     final active = page == index;
-                                    return AnimatedScale(
-                                      scale: active ? 1.0 : 0.94,
-                                      duration: const Duration(
-                                        milliseconds: 180,
-                                      ),
-                                      curve: Curves.easeOutCubic,
-                                      child: Center(
-                                        child: _ThemeHeroCard(
-                                          theme: theme,
-                                          width: cardWidth,
-                                          height: heroHeight,
-                                          cacheWidth: cacheWidth,
-                                          onTap: () {
-                                            if (active) return;
-                                            _goTo(index);
-                                          },
-                                        ),
-                                      ),
+                                    return BlocBuilder<
+                                      ThemeCubit,
+                                      ThemeCubitState
+                                    >(
+                                      buildWhen: (p, c) =>
+                                          p.owns(theme.id) != c.owns(theme.id),
+                                      builder: (context, themeState) {
+                                        final owned = themeState.owns(theme.id);
+                                        return AnimatedScale(
+                                          scale: active ? 1.0 : 0.94,
+                                          duration: const Duration(
+                                            milliseconds: 180,
+                                          ),
+                                          curve: Curves.easeOutCubic,
+                                          child: Center(
+                                            child: _ThemeHeroCard(
+                                              theme: theme,
+                                              width: cardWidth,
+                                              height: heroHeight,
+                                              cacheWidth: cacheWidth,
+                                              locked: !owned,
+                                              onTap: () {
+                                                if (!owned) {
+                                                  context.push('/themes');
+                                                  return;
+                                                }
+                                                if (active) return;
+                                                _goTo(index);
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     );
                                   },
                                 );
@@ -229,10 +243,8 @@ class _MainMenuViewState extends State<_MainMenuView> {
                         children: [
                           const SizedBox(height: 10),
                           BlocBuilder<HomeCubit, int>(
-                            builder: (context, page) => _PageDots(
-                              count: _halls.length,
-                              index: page,
-                            ),
+                            builder: (context, page) =>
+                                _PageDots(count: _halls.length, index: page),
                           ),
                           SizedBox(height: short ? 14 : 20),
                           const _PlayButtons(),
@@ -246,13 +258,7 @@ class _MainMenuViewState extends State<_MainMenuView> {
                             constraints: BoxConstraints(
                               minHeight: constraints.maxHeight,
                             ),
-                            child: Column(
-                              children: [
-                                header,
-                                carousel,
-                                footer,
-                              ],
-                            ),
+                            child: Column(children: [header, carousel, footer]),
                           ),
                         );
                       }
@@ -282,6 +288,7 @@ class _ThemeHeroCard extends StatelessWidget {
     required this.width,
     required this.height,
     required this.cacheWidth,
+    required this.locked,
     required this.onTap,
   });
 
@@ -289,6 +296,7 @@ class _ThemeHeroCard extends StatelessWidget {
   final double width;
   final double height;
   final int cacheWidth;
+  final bool locked;
   final VoidCallback onTap;
 
   @override
@@ -299,13 +307,60 @@ class _ThemeHeroCard extends StatelessWidget {
         child: SizedBox(
           width: width,
           height: height,
-          child: Image.asset(
-            theme.thumbAsset,
+          child: FittedBox(
             fit: BoxFit.contain,
-            filterQuality: FilterQuality.medium,
-            cacheWidth: cacheWidth,
-            gaplessPlayback: true,
-            errorBuilder: (_, _, _) => const SizedBox.shrink(),
+            child: SizedBox(
+              width: 1024,
+              height: 682,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    theme.thumbAsset,
+                    fit: BoxFit.fill,
+                    filterQuality: FilterQuality.medium,
+                    cacheWidth: cacheWidth,
+                    gaplessPlayback: true,
+                    errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                  ),
+                  if (locked) const _ChapterStyleLockSeal(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Same bronze seal used on locked chapter cards (scaled for home hero thumbs).
+class _ChapterStyleLockSeal extends StatelessWidget {
+  const _ChapterStyleLockSeal();
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: MedievalColors.woodDeep.withValues(alpha: 0.45),
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.all(30),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: MedievalColors.bronzeMetal,
+            border: Border.all(color: MedievalColors.bronzeDark, width: 2.6),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 14,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Icon(
+            Icons.lock_rounded,
+            size: 64,
+            color: MedievalColors.woodDeep,
           ),
         ),
       ),
@@ -404,29 +459,52 @@ class _PlayButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeController.watch(context);
-    return BlocBuilder<ProgressBloc, ProgressState>(
-      buildWhen: (p, c) => p.save.lastPlayedLevelId != c.save.lastPlayedLevelId,
-      builder: (context, progress) {
-        final last = progress.save.lastPlayedLevelId;
+    return BlocBuilder<HomeCubit, int>(
+      builder: (context, page) {
+        final hall =
+            ThemeCatalog.all[page.clamp(0, ThemeCatalog.all.length - 1)];
+        return BlocBuilder<ThemeCubit, ThemeCubitState>(
+          buildWhen: (p, c) => p.owns(hall.id) != c.owns(hall.id),
+          builder: (context, themeState) {
+            final hallLocked = !themeState.owns(hall.id);
+            return BlocBuilder<ProgressBloc, ProgressState>(
+              buildWhen: (p, c) =>
+                  p.save.lastPlayedLevelId != c.save.lastPlayedLevelId,
+              builder: (context, progress) {
+                final last = progress.save.lastPlayedLevelId;
 
-        return Column(
-          children: [
-            MedievalButton(
-              label: last == null ? 'Play' : 'Continue',
-              style: MedievalButtonStyle.primary,
-              icon: Icons.play_arrow_rounded,
-              shimmer: true,
-              onPressed: () => context.push(
-                '/play/${last ?? GameConstants.firstLevelId}',
-              ),
-            ),
-            const SizedBox(height: 11),
-            MedievalButton(
-              label: 'Chapters',
-              icon: Icons.menu_book_rounded,
-              onPressed: () => context.push('/chapters'),
-            ),
-          ],
+                return Column(
+                  children: [
+                    MedievalButton(
+                      label: hallLocked
+                          ? 'Locked · ${hall.coinPrice} coins'
+                          : (last == null ? 'Play' : 'Continue'),
+                      style: MedievalButtonStyle.primary,
+                      icon: hallLocked
+                          ? Icons.lock_rounded
+                          : Icons.play_arrow_rounded,
+                      shimmer: !hallLocked,
+                      brightWhenDisabled: hallLocked,
+                      onPressed: hallLocked
+                          ? null
+                          : () => context.push(
+                              '/play/${last ?? GameConstants.firstLevelId}',
+                            ),
+                    ),
+                    const SizedBox(height: 11),
+                    MedievalButton(
+                      label: 'Chapters',
+                      icon: Icons.menu_book_rounded,
+                      brightWhenDisabled: hallLocked,
+                      onPressed: hallLocked
+                          ? null
+                          : () => context.push('/chapters'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         );
       },
     );
@@ -477,12 +555,6 @@ class _TopStatusBar extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            MedievalBronzeButton(
-              icon: Icons.palette_rounded,
-              size: 34,
-              onPressed: () => context.push('/themes'),
-            ),
-            const SizedBox(width: 8),
             MedievalBronzeButton(
               icon: Icons.settings_rounded,
               size: 34,

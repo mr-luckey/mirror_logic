@@ -25,6 +25,7 @@ class MedievalButton extends StatelessWidget {
     this.icon,
     this.expand = true,
     this.shimmer = false,
+    this.brightWhenDisabled = false,
     this.sfx = Sfx.tap,
   });
 
@@ -37,6 +38,9 @@ class MedievalButton extends StatelessWidget {
 
   /// Sweeps a highlight across the face to pull the eye to the main CTA.
   final bool shimmer;
+
+  /// Keeps a disabled face readable (Need / Locked CTAs) instead of fading out.
+  final bool brightWhenDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +128,7 @@ class MedievalButton extends StatelessWidget {
     }
 
     return Opacity(
-      opacity: enabled ? 1 : 0.45,
+      opacity: enabled ? 1 : (brightWhenDisabled ? 0.88 : 0.45),
       child: MedievalPressable(
         onPressed: onPressed,
         enabled: enabled,

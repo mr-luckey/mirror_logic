@@ -71,8 +71,7 @@ class ThemeCubit extends Cubit<ThemeCubitState> {
   }) : _saveRepository = saveRepository,
        _economyRepository = economyRepository,
        super(_fromSave(saveRepository.loadSave())) {
-    // Existing saves may only own the starter — grant the full hall set once.
-    unawaited(_ensureAllThemesOwned());
+    unawaited(_ensureStarterOwned());
     ThemeController.applyById(state.selectedThemeId);
   }
 
@@ -88,16 +87,27 @@ class ThemeCubit extends Cubit<ThemeCubitState> {
     );
   }
 
-  Future<void> _ensureAllThemesOwned() async {
+  /// Starter hall is always owned; paid halls stay locked until bought.
+  Future<void> _ensureStarterOwned() async {
     final save = _saveRepository.loadSave();
-    final owned = {...save.ownedThemeIds, ...ThemeCatalog.allIds}.toList();
-    if (owned.length == save.ownedThemeIds.length &&
-        ThemeCatalog.allIds.every(save.ownedThemeIds.contains)) {
+    if (save.ownsTheme(ThemeCatalog.starterId) &&
+        save.ownsTheme(save.selectedThemeId)) {
       return;
     }
-    final next = save.copyWith(ownedThemeIds: owned);
+    final owned = save.ownsTheme(ThemeCatalog.starterId)
+        ? save.ownedThemeIds
+        : [ThemeCatalog.starterId, ...save.ownedThemeIds];
+    final selected = owned.contains(save.selectedThemeId)
+        ? save.selectedThemeId
+        : ThemeCatalog.starterId;
+    final next = save.copyWith(
+      saveSchemaVersion: 2,
+      ownedThemeIds: owned,
+      selectedThemeId: selected,
+    );
     await _saveRepository.persistSave(next);
     emit(_fromSave(next).copyWith(clearResult: true));
+    ThemeController.applyById(selected);
   }
 
   /// Sync from ProgressBloc after a level clear or coin change.
@@ -192,12 +202,9 @@ class ThemeCubit extends Cubit<ThemeCubitState> {
 
   /// Persist the settled carousel page as the equipped hall (quiet — no toast).
   /// Applies colors immediately; save write is fire-and-forget so the swipe
-  /// never waits on disk.
+  /// never waits on disk. Unowned halls are ignored (buy from the shop).
   Future<void> equipFromCarousel(String themeId) async {
-    if (!state.owns(themeId)) {
-      await selectOrBuy(themeId);
-      return;
-    }
+    if (!state.owns(themeId)) return;
     if (ThemeController.current.id != themeId) {
       ThemeController.applyById(themeId);
       unawaited(GameArt.loadForTheme(themeId));

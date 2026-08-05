@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:mirror_logic/domain/economy/player_save.dart';
 import 'package:mirror_logic/infrastructure/storage/local_storage_service.dart';
 
@@ -13,7 +15,13 @@ class SaveRepository {
     if (json == null) return const PlayerSave();
     // Losing progress is bad; refusing to launch is worse.
     try {
-      return PlayerSave.fromJson(json);
+      final save = PlayerSave.fromJson(json);
+      final diskSchema = json['saveSchemaVersion'] as int? ?? 1;
+      // Persist v2 theme-lock migration so free-granted halls stay locked.
+      if (diskSchema < save.saveSchemaVersion) {
+        unawaited(persistSave(save));
+      }
+      return save;
     } catch (_) {
       return const PlayerSave();
     }

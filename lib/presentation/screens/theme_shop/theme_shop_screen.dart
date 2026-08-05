@@ -164,12 +164,13 @@ class _ThemeCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          _ThemePreview(theme: theme, locked: locked),
+          _ThemePreview(theme: theme, locked: !owned),
           const SizedBox(height: 12),
           if (locked)
             MedievalButton(
               label: 'Locked · Lv ${theme.unlockLevel}',
               icon: Icons.lock_rounded,
+              brightWhenDisabled: true,
               onPressed: null,
             )
           else if (owned)
@@ -191,6 +192,7 @@ class _ThemeCard extends StatelessWidget {
               style: MedievalButtonStyle.primary,
               icon: Icons.monetization_on_rounded,
               shimmer: afford,
+              brightWhenDisabled: canBuy && !afford,
               onPressed: afford ? () => _act(context, theme.id) : null,
             ),
         ],
@@ -281,166 +283,56 @@ class _ThemePreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeController.watch(context);
-    final h = Responsive.hp(context, 0.14).clamp(96.0, 140.0);
+    final w = MediaQuery.sizeOf(context).width;
+    final h = (w * 0.42).clamp(120.0, 168.0);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: SizedBox(
         height: h,
+        width: double.infinity,
         child: Stack(
           fit: StackFit.expand,
           children: [
-            DecoratedBox(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(theme.floorAsset),
-                  fit: BoxFit.cover,
-                  onError: (_, _) {},
-                ),
-              ),
-            ),
-            // Soft tint so the mini maze still reads on busy floors.
-            ColoredBox(color: theme.stoneDark.withValues(alpha: 0.28)),
-            CustomPaint(painter: _MiniMazePainter(theme: theme)),
-            if (theme.atmosphereAsset != null)
-              Positioned(
-                top: 4,
-                right: 4,
-                child: Image.asset(
-                  theme.atmosphereAsset!,
-                  width: h * 0.55,
-                  height: h * 0.55,
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, _, _) => const SizedBox.shrink(),
-                ),
-              ),
-            // Soft beam sample
-            CustomPaint(painter: _MiniBeamPainter(theme: theme)),
-            Positioned(
-              left: 10,
-              bottom: 10,
-              child: Container(
-                width: 14,
-                height: 22,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [theme.laserCore, theme.crystal, theme.crystalDeep],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: theme.laserGlow.withValues(alpha: 0.7),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-              ),
+            Image.asset(
+              theme.thumbAsset,
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+              filterQuality: FilterQuality.high,
+              errorBuilder: (_, _, _) => ColoredBox(color: theme.woodDeep),
             ),
             if (locked)
               ColoredBox(
-                color: Colors.black.withValues(alpha: 0.55),
+                color: MedievalColors.woodDeep.withValues(alpha: 0.45),
                 child: Center(
-                  child: Icon(
-                    Icons.lock_rounded,
-                    color: theme.bronzeHighlight.withValues(alpha: 0.9),
-                    size: 34,
+                  child: Container(
+                    padding: const EdgeInsets.all(9),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: MedievalColors.bronzeMetal,
+                      border: Border.all(
+                        color: MedievalColors.bronzeDark,
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.lock_rounded,
+                      size: 22,
+                      color: MedievalColors.woodDeep,
+                    ),
                   ),
                 ),
               ),
-            // Gold frame rim
-            IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: theme.bronzeHighlight.withValues(alpha: 0.65),
-                    width: 2,
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
     );
   }
-}
-
-class _MiniMazePainter extends CustomPainter {
-  _MiniMazePainter({required this.theme});
-
-  final VisualTheme theme;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = theme.stoneLight.withValues(alpha: 0.55)
-      ..strokeWidth = 10
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.square;
-
-    final path = Path()
-      ..moveTo(size.width * 0.2, size.height * 0.25)
-      ..lineTo(size.width * 0.75, size.height * 0.25)
-      ..lineTo(size.width * 0.75, size.height * 0.7)
-      ..lineTo(size.width * 0.35, size.height * 0.7)
-      ..lineTo(size.width * 0.35, size.height * 0.45);
-    canvas.drawPath(path, paint);
-
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = theme.wallTint.withValues(alpha: 0.25)
-        ..strokeWidth = 10
-        ..style = PaintingStyle.stroke,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _MiniMazePainter oldDelegate) =>
-      oldDelegate.theme.id != theme.id;
-}
-
-class _MiniBeamPainter extends CustomPainter {
-  _MiniBeamPainter({required this.theme});
-
-  final VisualTheme theme;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = Path()
-      ..moveTo(size.width * 0.82, size.height * 0.85)
-      ..lineTo(size.width * 0.82, size.height * 0.4)
-      ..lineTo(size.width * 0.22, size.height * 0.4)
-      ..lineTo(size.width * 0.22, size.height * 0.72);
-
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = theme.laserGlow.withValues(alpha: 0.35)
-        ..strokeWidth = 8
-        ..style = PaintingStyle.stroke
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
-    );
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = theme.laserMid
-        ..strokeWidth = 3.2
-        ..style = PaintingStyle.stroke,
-    );
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = theme.laserCore
-        ..strokeWidth = 1.4
-        ..style = PaintingStyle.stroke,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _MiniBeamPainter oldDelegate) =>
-      oldDelegate.theme.id != theme.id;
 }
