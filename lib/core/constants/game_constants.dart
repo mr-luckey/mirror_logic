@@ -27,7 +27,7 @@ abstract final class GameConstants {
   static const int starsToUnlockNextChapter = 300;
 
   /// Set to false before shipping. When true, all chapters/levels are playable.
-  static const bool unlockAllLevelsForTesting = true;
+  static const bool unlockAllLevelsForTesting = false;
 
   /// Set to false before shipping. When true, every hall is owned and equippable
   /// without level gates or coin spend.
@@ -43,7 +43,7 @@ abstract final class GameConstants {
   static const Duration rewardedAdsWindow = Duration(hours: 24);
 
   /// Set to true before shipping. When false, ads never init, load, or show.
-  static const bool adsEnabled = false;
+  static const bool adsEnabled = true;
 
   static const String chapter1Id = 'ch1';
   static const String chapter2Id = 'ch2';
