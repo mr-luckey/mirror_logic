@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mirror_logic/app/app_update_gate.dart';
 import 'package:mirror_logic/app/audio_scope.dart';
+import 'package:mirror_logic/app/router.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/app/theme/medieval_text_styles.dart';
 import 'package:mirror_logic/core/utils/responsive.dart';
@@ -50,10 +51,14 @@ class _MainMenuView extends StatefulWidget {
   State<_MainMenuView> createState() => _MainMenuViewState();
 }
 
-class _MainMenuViewState extends State<_MainMenuView> {
+class _MainMenuViewState extends State<_MainMenuView> with RouteAware {
   static final List<VisualTheme> _halls = ThemeCatalog.all;
 
   late final PageController _pageController;
+  bool _routeSubscribed = false;
+
+  /// True while [PageController] is jumped from code, not a finger swipe.
+  bool _programmaticPage = false;
 
   @override
   void initState() {
@@ -67,9 +72,51 @@ class _MainMenuViewState extends State<_MainMenuView> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_routeSubscribed) return;
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      AppRouter.routeObserver.subscribe(this, route);
+      _routeSubscribed = true;
+    }
+  }
+
+  @override
   void dispose() {
+    if (_routeSubscribed) {
+      AppRouter.routeObserver.unsubscribe(this);
+    }
     _pageController.dispose();
     super.dispose();
+  }
+
+  /// Returning from play / chapters with no open preview → permanent hall.
+  /// Returning from settings while previewing a locked hall → keep that preview.
+  @override
+  void didPopNext() {
+    _reconcileCarouselAfterReturn();
+  }
+
+  void _reconcileCarouselAfterReturn() {
+    if (!mounted) return;
+    final theme = context.read<ThemeCubit>();
+    if (theme.isPreviewing) return;
+
+    final equippedId = theme.state.selectedThemeId;
+    final index = HomeCubit.indexOf(equippedId);
+    context.read<HomeCubit>().snapToTheme(equippedId);
+    _jumpCarouselTo(index);
+    theme.restoreEquippedTheme();
+  }
+
+  void _jumpCarouselTo(int index) {
+    if (!_pageController.hasClients) return;
+    final current = _pageController.page?.round() ?? index;
+    if (current == index) return;
+    _programmaticPage = true;
+    _pageController.jumpToPage(index);
+    _programmaticPage = false;
   }
 
   void _precacheThumbs() {
@@ -81,6 +128,7 @@ class _MainMenuViewState extends State<_MainMenuView> {
 
   void _onPageChanged(int index) {
     context.read<HomeCubit>().setPage(index);
+    if (_programmaticPage) return;
     HapticFeedback.selectionClick();
     context.playSfx(Sfx.tap);
     // Preview only — permanent selection waits for Continue / Play.
@@ -105,177 +153,188 @@ class _MainMenuViewState extends State<_MainMenuView> {
 
     return AppUpdateGate(
       child: MedievalExitScope(
-        child: MedievalWoodBackground(
-          child: Stack(
-            children: [
-              const _WallTorches(),
-              SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(gutter, 8, gutter, 16),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final compact = constraints.maxHeight < 620;
-                      final cardWidth = (size.width * 0.86).clamp(
-                        260.0,
-                        compact ? 340.0 : 380.0,
-                      );
-                      final heroHeight = cardWidth * 0.68;
-                      final dpr = MediaQuery.devicePixelRatioOf(context);
-                      final cacheWidth = (cardWidth * dpr).round();
+        child: BlocListener<HomeCubit, int>(
+          listenWhen: (p, c) => p != c,
+          listener: (context, page) => _jumpCarouselTo(page),
+          child: MedievalWoodBackground(
+            child: Stack(
+              children: [
+                const _WallTorches(),
+                SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(gutter, 8, gutter, 16),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final compact = constraints.maxHeight < 620;
+                        final cardWidth = (size.width * 0.86).clamp(
+                          260.0,
+                          compact ? 340.0 : 380.0,
+                        );
+                        final heroHeight = cardWidth * 0.68;
+                        final dpr = MediaQuery.devicePixelRatioOf(context);
+                        final cacheWidth = (cardWidth * dpr).round();
 
-                      final header = Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const _TopStatusBar(),
-                          SizedBox(height: short ? 6 : 10),
-                          const GameTitle()
-                              .animate()
-                              .fadeIn(duration: 450.ms)
-                              .slideY(begin: -0.08, end: 0),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Swipe to choose a hall',
-                            style: MedievalTextStyles.cinzel(
-                              color: MedievalColors.textMuted,
-                              letterSpacing: 1.4,
-                              size: Responsive.sp(context, 11),
-                            ),
-                          ),
-                          SizedBox(height: short ? 10 : 14),
-                        ],
-                      );
-
-                      final carousel = SizedBox(
-                        height: heroHeight + 10,
-                        child: Stack(
-                          alignment: Alignment.center,
+                        final header = Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            PageView.builder(
-                              controller: _pageController,
-                              itemCount: _halls.length,
-                              allowImplicitScrolling: true,
-                              onPageChanged: _onPageChanged,
-                              itemBuilder: (context, index) {
-                                final theme = _halls[index];
-                                return BlocBuilder<HomeCubit, int>(
-                                  buildWhen: (p, c) => p == index || c == index,
-                                  builder: (context, page) {
-                                    final active = page == index;
-                                    return BlocBuilder<
-                                      ThemeCubit,
-                                      ThemeCubitState
-                                    >(
-                                      buildWhen: (p, c) =>
-                                          p.owns(theme.id) !=
-                                              c.owns(theme.id) ||
-                                          p.selectedThemeId !=
-                                              c.selectedThemeId,
-                                      builder: (context, themeState) {
-                                        final owned = themeState.owns(theme.id);
-                                        return AnimatedScale(
-                                          scale: active ? 1.0 : 0.94,
-                                          duration: const Duration(
-                                            milliseconds: 180,
-                                          ),
-                                          curve: Curves.easeOutCubic,
+                            const _TopStatusBar(),
+                            SizedBox(height: short ? 6 : 10),
+                            const GameTitle()
+                                .animate()
+                                .fadeIn(duration: 450.ms)
+                                .slideY(begin: -0.08, end: 0),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Swipe to choose a hall',
+                              style: MedievalTextStyles.cinzel(
+                                color: MedievalColors.textMuted,
+                                letterSpacing: 1.4,
+                                size: Responsive.sp(context, 11),
+                              ),
+                            ),
+                            SizedBox(height: short ? 10 : 14),
+                          ],
+                        );
+
+                        final carousel = SizedBox(
+                          height: heroHeight + 10,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              PageView.builder(
+                                controller: _pageController,
+                                itemCount: _halls.length,
+                                allowImplicitScrolling: true,
+                                onPageChanged: _onPageChanged,
+                                itemBuilder: (context, index) {
+                                  final theme = _halls[index];
+                                  return BlocBuilder<HomeCubit, int>(
+                                    buildWhen: (p, c) =>
+                                        p == index || c == index,
+                                    builder: (context, page) {
+                                      final active = page == index;
+                                      return BlocBuilder<
+                                        ThemeCubit,
+                                        ThemeCubitState
+                                      >(
+                                        buildWhen: (p, c) =>
+                                            p.owns(theme.id) !=
+                                                c.owns(theme.id) ||
+                                            p.selectedThemeId !=
+                                                c.selectedThemeId,
+                                        builder: (context, themeState) {
+                                          final owned = themeState.owns(
+                                            theme.id,
+                                          );
+                                          return AnimatedScale(
+                                            scale: active ? 1.0 : 0.94,
+                                            duration: const Duration(
+                                              milliseconds: 180,
+                                            ),
+                                            curve: Curves.easeOutCubic,
+                                            child: Center(
+                                              child: _ThemeHeroCard(
+                                                theme: theme,
+                                                width: cardWidth,
+                                                height: heroHeight,
+                                                cacheWidth: cacheWidth,
+                                                locked: !owned,
+                                                equipped: themeState.selected,
+                                                onTap: () {
+                                                  if (!owned) {
+                                                    context.push('/themes');
+                                                    return;
+                                                  }
+                                                  if (active) return;
+                                                  _goTo(index);
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                              BlocBuilder<HomeCubit, int>(
+                                builder: (context, page) {
+                                  return Stack(
+                                    children: [
+                                      if (page > 0)
+                                        Positioned(
+                                          left: 0,
+                                          top: 0,
+                                          bottom: 0,
                                           child: Center(
-                                            child: _ThemeHeroCard(
-                                              theme: theme,
-                                              width: cardWidth,
-                                              height: heroHeight,
-                                              cacheWidth: cacheWidth,
-                                              locked: !owned,
-                                              equipped: themeState.selected,
-                                              onTap: () {
-                                                if (!owned) {
-                                                  context.push('/themes');
-                                                  return;
-                                                }
-                                                if (active) return;
-                                                _goTo(index);
-                                              },
+                                            child: _HallChevron(
+                                              direction: AxisDirection.left,
+                                              onTap: () => _goTo(page - 1),
                                             ),
                                           ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                            BlocBuilder<HomeCubit, int>(
-                              builder: (context, page) {
-                                return Stack(
-                                  children: [
-                                    if (page > 0)
-                                      Positioned(
-                                        left: 0,
-                                        top: 0,
-                                        bottom: 0,
-                                        child: Center(
-                                          child: _HallChevron(
-                                            direction: AxisDirection.left,
-                                            onTap: () => _goTo(page - 1),
+                                        ),
+                                      if (page < _halls.length - 1)
+                                        Positioned(
+                                          right: 0,
+                                          top: 0,
+                                          bottom: 0,
+                                          child: Center(
+                                            child: _HallChevron(
+                                              direction: AxisDirection.right,
+                                              onTap: () => _goTo(page + 1),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    if (page < _halls.length - 1)
-                                      Positioned(
-                                        right: 0,
-                                        top: 0,
-                                        bottom: 0,
-                                        child: Center(
-                                          child: _HallChevron(
-                                            direction: AxisDirection.right,
-                                            onTap: () => _goTo(page + 1),
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-
-                      final footer = Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 10),
-                          BlocBuilder<HomeCubit, int>(
-                            builder: (context, page) =>
-                                _PageDots(count: _halls.length, index: page),
-                          ),
-                          SizedBox(height: short ? 14 : 20),
-                          const _PlayButtons(),
-                        ],
-                      );
-
-                      if (compact) {
-                        return SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: constraints.maxHeight,
-                            ),
-                            child: Column(children: [header, carousel, footer]),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         );
-                      }
 
-                      return Column(
-                        children: [
-                          header,
-                          Expanded(child: Center(child: carousel)),
-                          footer,
-                        ],
-                      );
-                    },
+                        final footer = Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 10),
+                            BlocBuilder<HomeCubit, int>(
+                              builder: (context, page) => _PageDots(
+                                count: _halls.length,
+                                index: page,
+                              ),
+                            ),
+                            SizedBox(height: short ? 14 : 20),
+                            const _PlayButtons(),
+                          ],
+                        );
+
+                        if (compact) {
+                          return SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: constraints.maxHeight,
+                              ),
+                              child: Column(
+                                children: [header, carousel, footer],
+                              ),
+                            ),
+                          );
+                        }
+
+                        return Column(
+                          children: [
+                            header,
+                            Expanded(child: Center(child: carousel)),
+                            footer,
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -616,10 +675,7 @@ class _TopStatusBar extends StatelessWidget {
             MedievalBronzeButton(
               icon: Icons.settings_rounded,
               size: 34,
-              onPressed: () {
-                context.read<ThemeCubit>().restoreEquippedTheme();
-                context.push('/settings');
-              },
+              onPressed: () => context.push('/settings'),
             ),
           ],
         ),

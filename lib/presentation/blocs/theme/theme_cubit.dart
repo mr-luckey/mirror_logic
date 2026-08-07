@@ -88,6 +88,9 @@ class ThemeCubit extends Cubit<ThemeCubitState> {
   /// Hall being previewed on the home carousel, if it is not the equipped one.
   String? _previewedThemeId;
 
+  /// True while the home carousel is showing a hall that is not yet confirmed.
+  bool get isPreviewing => _previewedThemeId != null;
+
   static ThemeCubitState _fromSave(PlayerSave save) {
     return ThemeCubitState(
       selectedThemeId: save.selectedThemeId,

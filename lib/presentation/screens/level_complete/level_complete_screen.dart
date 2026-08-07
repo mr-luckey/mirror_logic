@@ -60,9 +60,9 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
   static const _starGap = Duration(milliseconds: 230);
   static const _coinDelay = Duration(milliseconds: 900);
 
-  /// Long enough for the fanfare to finish and the buttons to settle, so the
-  /// prompt reads as a beat after the win rather than part of it.
-  static const _ratePromptDelay = Duration(milliseconds: 1800);
+  /// After the star fanfare lands and before the player taps Next — the WOW
+  /// beat Play's guidance wants for a rating ask.
+  static const _ratePromptDelay = Duration(milliseconds: 2000);
 
   final List<Timer> _fanfare = [];
 
@@ -89,12 +89,13 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
     _scheduleRatePrompt();
   }
 
-  /// Considers asking for a rating, a moment after the celebration.
+  /// Considers asking for a rating after the stars land, before Next.
   ///
-  /// A finished board is the one place in the game where the player is provably
-  /// having a good time and is not mid-thought, which is exactly where Play's
-  /// guidance puts this prompt. Whether it actually appears is [ReviewService]'s
-  /// call — it is rationed and partly random, so most clears show nothing.
+  /// Level complete is the app's WOW moment: celebration is on screen, the
+  /// player is not mid-puzzle, and they have not committed to the next board
+  /// yet. Whether it actually appears is [ReviewService]'s call — first ask
+  /// after seven clears, then every 5–10 clears at random, so most wins show
+  /// nothing.
   void _scheduleRatePrompt() {
     final review = context.review;
     if (review == null) return;

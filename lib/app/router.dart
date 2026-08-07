@@ -14,9 +14,14 @@ import 'package:mirror_logic/presentation/screens/theme_shop/theme_shop_screen.d
 abstract final class AppRouter {
   static final GlobalKey<NavigatorState> rootKey = GlobalKey<NavigatorState>();
 
+  /// Lets the home menu notice when a pushed route (play / settings) pops.
+  static final RouteObserver<ModalRoute<void>> routeObserver =
+      RouteObserver<ModalRoute<void>>();
+
   static final GoRouter router = GoRouter(
     navigatorKey: rootKey,
     initialLocation: '/splash',
+    observers: [routeObserver],
     routes: [
       GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/onboarding', builder: (_, _) => const OnboardingScreen()),

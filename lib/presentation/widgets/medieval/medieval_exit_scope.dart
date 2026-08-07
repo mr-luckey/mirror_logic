@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
@@ -11,24 +13,17 @@ import 'package:mirror_logic/domain/theme/theme_controller.dart';
 ///
 /// Without this the system pops the last route and drops the player straight
 /// out of the game, which is jarring on Android where back is a reflex.
-class MedievalExitScope extends StatelessWidget {
+///
+/// Uses both [BackButtonListener] (Android/engine back) and [PopScope]
+/// (predictive-back / Navigator pop). A re-entry guard stops the confirm
+/// dialog from stacking if both fire for one press.
+class MedievalExitScope extends StatefulWidget {
   const MedievalExitScope({super.key, required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
-    ThemeController.watch(context);
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) async {
-        if (didPop) return;
-        final leave = await confirmExit(context);
-        if (leave) await SystemNavigator.pop();
-      },
-      child: child,
-    );
-  }
+  State<MedievalExitScope> createState() => _MedievalExitScopeState();
 
   static Future<bool> confirmExit(BuildContext context) async {
     final answer = await showDialog<bool>(
@@ -45,6 +40,39 @@ class MedievalExitScope extends StatelessWidget {
       ),
     );
     return answer ?? false;
+  }
+}
+
+class _MedievalExitScopeState extends State<MedievalExitScope> {
+  bool _asking = false;
+
+  Future<bool> _handleBack() async {
+    if (_asking || !mounted) return true;
+    _asking = true;
+    try {
+      final leave = await MedievalExitScope.confirmExit(context);
+      if (leave && mounted) await SystemNavigator.pop();
+    } finally {
+      _asking = false;
+    }
+    // Always consume the event so the route is not popped underneath.
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ThemeController.watch(context);
+    return BackButtonListener(
+      onBackButtonPressed: _handleBack,
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (didPop) return;
+          unawaited(_handleBack());
+        },
+        child: widget.child,
+      ),
+    );
   }
 }
 

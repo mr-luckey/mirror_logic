@@ -12,6 +12,7 @@ import 'package:mirror_logic/domain/theme/theme_controller.dart';
 import 'package:mirror_logic/domain/theme/visual_theme.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/rewarded_coins_cubit.dart';
+import 'package:mirror_logic/presentation/blocs/home/home_cubit.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/theme/theme_cubit.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
@@ -227,9 +228,17 @@ Future<void> showMedievalInsufficientCoinsDialog(
           child: MedievalInsufficientCoinsDialog(
             theme: theme,
             onPlayGame: () {
-              // The carousel may be previewing this locked hall; the board has
-              // to open in the hall the player actually owns.
-              context.read<ThemeCubit>().restoreEquippedTheme();
+              // Drop the locked-hall preview and point home at the permanent
+              // hall so returning from the board does not show the lock card.
+              final themeCubit = context.read<ThemeCubit>();
+              themeCubit.restoreEquippedTheme();
+              try {
+                context.read<HomeCubit>().snapToTheme(
+                  themeCubit.state.selectedThemeId,
+                );
+              } on ProviderNotFoundException {
+                // Opened from the shop — MainMenu reconciles on didPopNext.
+              }
               final resume = context
                   .read<ProgressBloc>()
                   .state

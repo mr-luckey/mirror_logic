@@ -19,18 +19,27 @@ typedef UrlLauncher = Future<bool> Function(Uri uri, {LaunchMode mode});
 /// ignores requests once a device-level quota is spent, so an app that asks on
 /// every level clear does not get more ratings — it burns its quota on players
 /// who were never going to rate and has nothing left for the ones who would.
+///
+/// Cadence follows the usual WOW-moment pattern: wait until the player has
+/// cleared the early tutorial boards ([levelsBeforeFirstAsk]), then ask on a
+/// level-complete screen, then space later asks by a random gap in
+/// [[levelsBetweenAsksMin], [levelsBetweenAsksMax]] so the prompt never feels
+/// scheduled.
 class ReviewService {
   ReviewService({
     required LocalStorageService storage,
     InAppReview? review,
     Random? random,
     UrlLauncher? launcher,
-    this.levelsBeforeFirstAsk = 4,
-    this.levelsBetweenAsks = 12,
+    this.levelsBeforeFirstAsk = 7,
+    this.levelsBetweenAsksMin = 5,
+    this.levelsBetweenAsksMax = 10,
     this.cooldown = const Duration(days: 5),
     this.maxAsks = 3,
-    this.askChance = 0.3,
-  }) : _storage = storage,
+    this.askChance = 0.35,
+  }) : assert(levelsBetweenAsksMin >= 1),
+       assert(levelsBetweenAsksMax >= levelsBetweenAsksMin),
+       _storage = storage,
        _review = review ?? InAppReview.instance,
        _random = random ?? Random(),
        _launcher = launcher ?? launchUrl;
@@ -40,13 +49,18 @@ class ReviewService {
   final Random _random;
   final UrlLauncher _launcher;
 
-  /// Clears a player owes before the first ask. Nobody who has solved three
-  /// boards knows yet whether they like the game.
+  /// Clears before the first ask. The opening boards are too simple to judge
+  /// the game on; seven clears is past the tutorial and into real play.
   final int levelsBeforeFirstAsk;
 
-  /// Further clears between one ask and the next, so a second prompt lands
-  /// after real play rather than on the next screen.
-  final int levelsBetweenAsks;
+  /// Shortest gap (in clears) before a follow-up ask may appear.
+  final int levelsBetweenAsksMin;
+
+  /// Longest gap (in clears) before a follow-up ask may appear.
+  ///
+  /// Each ask rolls a fresh gap in this range and stores it, so two players
+  /// who both dismissed once do not meet the prompt again on the same level.
+  final int levelsBetweenAsksMax;
 
   /// Wall-clock rest between asks, which also covers the player who reopens the
   /// app and grinds a dozen easy boards in one sitting.
@@ -66,6 +80,7 @@ class ReviewService {
   static const _askCountKey = 'review_ask_count';
   static const _lastAskMsKey = 'review_last_ask_ms';
   static const _lastAskClearsKey = 'review_last_ask_clears';
+  static const _nextGapKey = 'review_next_gap';
 
   static const _listingPath = 'details?id=${AppInfo.playStoreId}';
   static const _reviewPath =
@@ -82,6 +97,13 @@ class ReviewService {
     return ms == 0 ? null : DateTime.fromMillisecondsSinceEpoch(ms);
   }
 
+  /// Gap rolled for the next follow-up, or the minimum if none is stored yet.
+  @visibleForTesting
+  int get nextAskGap {
+    final stored = _storage.readInt(_nextGapKey);
+    return stored == 0 ? levelsBetweenAsksMin : stored;
+  }
+
   /// Every gate except the dice roll, so the cadence can be tested without
   /// standing in for [Random].
   @visibleForTesting
@@ -93,7 +115,7 @@ class ReviewService {
     if (asks == 0) return true;
 
     final since = levelsCleared - _storage.readInt(_lastAskClearsKey);
-    if (since < levelsBetweenAsks) return false;
+    if (since < nextAskGap) return false;
 
     final last = lastAskedAt;
     if (last != null && now.difference(last) < cooldown) return false;
@@ -128,9 +150,16 @@ class ReviewService {
       (now ?? DateTime.now()).millisecondsSinceEpoch,
     );
     await _storage.writeInt(_lastAskClearsKey, levelsCleared);
+    await _storage.writeInt(_nextGapKey, _rollAskGap());
     // Spending the last ask settles the matter; there is no point keeping the
     // other bookkeeping alive for a prompt that can never fire again.
     if (asks >= maxAsks) await markSettled();
+  }
+
+  /// Inclusive roll in [[levelsBetweenAsksMin], [levelsBetweenAsksMax]].
+  int _rollAskGap() {
+    final span = levelsBetweenAsksMax - levelsBetweenAsksMin;
+    return levelsBetweenAsksMin + _random.nextInt(span + 1);
   }
 
   /// Closes the subject for good.
