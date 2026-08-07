@@ -19,6 +19,7 @@ import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/theme/theme_cubit.dart';
 import 'package:mirror_logic/presentation/screens/splash/splash_screen.dart'
     show GameTitle;
+import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_bronze_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_button.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_exit_scope.dart';
@@ -174,24 +175,32 @@ class _MainMenuViewState extends State<_MainMenuView> with RouteAware {
                         final dpr = MediaQuery.devicePixelRatioOf(context);
                         final cacheWidth = (cardWidth * dpr).round();
 
+                        // Crest stays the designer webp — glow only follows the
+                        // previewed hall via MedievalColors.laserGlow.
+                        final crestSize = Responsive.wp(
+                          context,
+                          compact || short ? 0.34 : 0.42,
+                        ).clamp(120.0, 190.0);
+
                         final header = Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const _TopStatusBar(),
                             SizedBox(height: short ? 6 : 10),
+                            MedievalArtwork(
+                                  asset: MedievalArt.crest,
+                                  size: crestSize,
+                                  glow: MedievalColors.laserGlow,
+                                  glowStrength: 0.26,
+                                )
+                                .animate()
+                                .fadeIn(duration: 550.ms)
+                                .scale(begin: const Offset(0.9, 0.9)),
+                            SizedBox(height: short ? 6 : 10),
                             const GameTitle()
                                 .animate()
                                 .fadeIn(duration: 450.ms)
                                 .slideY(begin: -0.08, end: 0),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Swipe to choose a hall',
-                              style: MedievalTextStyles.cinzel(
-                                color: MedievalColors.textMuted,
-                                letterSpacing: 1.4,
-                                size: Responsive.sp(context, 11),
-                              ),
-                            ),
                             SizedBox(height: short ? 10 : 14),
                           ],
                         );
@@ -296,14 +305,7 @@ class _MainMenuViewState extends State<_MainMenuView> with RouteAware {
                         final footer = Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const SizedBox(height: 10),
-                            BlocBuilder<HomeCubit, int>(
-                              builder: (context, page) => _PageDots(
-                                count: _halls.length,
-                                index: page,
-                              ),
-                            ),
-                            SizedBox(height: short ? 14 : 20),
+                            SizedBox(height: short ? 12 : 18),
                             const _PlayButtons(),
                           ],
                         );
@@ -477,46 +479,6 @@ class _HallChevron extends StatelessWidget {
   }
 }
 
-class _PageDots extends StatelessWidget {
-  const _PageDots({required this.count, required this.index});
-
-  final int count;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    ThemeController.watch(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(count, (i) {
-        final active = i == index;
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          width: active ? 18 : 8,
-          height: 8,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: active
-                ? MedievalColors.bronzeHighlight
-                : MedievalColors.textMuted.withValues(alpha: 0.35),
-            boxShadow: active
-                ? [
-                    BoxShadow(
-                      color: MedievalColors.bronzeHighlight.withValues(
-                        alpha: 0.45,
-                      ),
-                      blurRadius: 8,
-                    ),
-                  ]
-                : null,
-          ),
-        );
-      }),
-    );
-  }
-}
-
 class _PlayButtons extends StatelessWidget {
   const _PlayButtons();
 
@@ -535,16 +497,33 @@ class _PlayButtons extends StatelessWidget {
             return BlocBuilder<ProgressBloc, ProgressState>(
               buildWhen: (p, c) =>
                   p.save.lastPlayedLevelId != c.save.lastPlayedLevelId ||
-                  p.save.continueLevelId != c.save.continueLevelId,
+                  p.save.continueLevelId != c.save.continueLevelId ||
+                  p.save.unlockedLevelIds != c.save.unlockedLevelIds,
               builder: (context, progress) {
-                final last = progress.save.lastPlayedLevelId;
+                // Continue target — not lastPlayed. After a clear, lastPlayed is
+                // still the board just won; continueLevelId is the next unlock.
+                final continueId = progress.save.continueLevelId;
+                final hasPlayed = progress.save.lastPlayedLevelId != null;
 
                 return Column(
                   children: [
+                    Text(
+                      'Level ${_labelFor(continueId)}',
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: MedievalTextStyles.cinzelDecorative(
+                        weight: FontWeight.w700,
+                        size: Responsive.sp(context, 22),
+                        color: MedievalColors.textGold,
+                        letterSpacing: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     MedievalButton(
                       label: hallLocked
                           ? 'Locked · ${hall.coinPrice} coins'
-                          : (last == null ? 'Play' : 'Continue'),
+                          : (hasPlayed ? 'Continue' : 'Play'),
                       style: MedievalButtonStyle.primary,
                       icon: hallLocked
                           ? Icons.lock_rounded
@@ -560,7 +539,7 @@ class _PlayButtons extends StatelessWidget {
                           : () => _continueWithHall(
                               context,
                               hallId: hall.id,
-                              levelId: progress.save.continueLevelId,
+                              levelId: continueId,
                             ),
                     ),
                     if (!hallLocked) ...[
@@ -583,6 +562,14 @@ class _PlayButtons extends StatelessWidget {
         );
       },
     );
+  }
+
+  static String _labelFor(String levelId) {
+    final match = RegExp(r'^ch(\d+)_(\d+)$').firstMatch(levelId);
+    if (match == null) return levelId;
+    final chapter = int.parse(match.group(1)!);
+    final index = int.parse(match.group(2)!);
+    return '${(chapter - 1) * 100 + index}';
   }
 
   /// Locks in the visible owned hall, then opens the continue level.
@@ -659,55 +646,23 @@ class _TopStatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeController.watch(context);
-    return Column(
+    return Row(
       children: [
-        Row(
-          children: [
-            BlocBuilder<EconomyBloc, EconomyState>(
-              buildWhen: (p, c) => p.coins != c.coins,
-              builder: (context, eco) => MedievalResourceChip(
-                icon: Icons.monetization_on_rounded,
-                label: '${eco.coins}',
-                glowColor: MedievalColors.bronzeHighlight,
-              ),
-            ),
-            const Spacer(),
-            MedievalBronzeButton(
-              icon: Icons.settings_rounded,
-              size: 34,
-              onPressed: () => context.push('/settings'),
-            ),
-          ],
+        BlocBuilder<EconomyBloc, EconomyState>(
+          buildWhen: (p, c) => p.coins != c.coins,
+          builder: (context, eco) => MedievalResourceChip(
+            icon: Icons.monetization_on_rounded,
+            label: '${eco.coins}',
+            glowColor: MedievalColors.bronzeHighlight,
+          ),
         ),
-        const SizedBox(height: 10),
-        BlocBuilder<ProgressBloc, ProgressState>(
-          buildWhen: (p, c) =>
-              p.save.lastPlayedLevelId != c.save.lastPlayedLevelId,
-          builder: (context, progress) {
-            final last = progress.save.lastPlayedLevelId;
-            return Text(
-              last == null ? 'Level 1' : 'Level ${_labelFor(last)}',
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: MedievalTextStyles.cinzelDecorative(
-                weight: FontWeight.w700,
-                size: Responsive.sp(context, 22),
-                color: MedievalColors.textGold,
-                letterSpacing: 1.4,
-              ),
-            );
-          },
+        const Spacer(),
+        MedievalBronzeButton(
+          icon: Icons.settings_rounded,
+          size: 34,
+          onPressed: () => context.push('/settings'),
         ),
       ],
     );
-  }
-
-  static String _labelFor(String levelId) {
-    final match = RegExp(r'^ch(\d+)_(\d+)$').firstMatch(levelId);
-    if (match == null) return levelId;
-    final chapter = int.parse(match.group(1)!);
-    final index = int.parse(match.group(2)!);
-    return '${(chapter - 1) * 100 + index}';
   }
 }
