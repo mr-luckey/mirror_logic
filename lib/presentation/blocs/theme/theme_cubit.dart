@@ -36,10 +36,11 @@ class ThemeCubitState extends Equatable {
 
   VisualTheme get selected => ThemeCatalog.byId(selectedThemeId);
 
-  bool owns(String id) => ownedThemeIds.contains(id);
+  bool owns(String id) =>
+      GameConstants.unlockAllThemesForTesting || ownedThemeIds.contains(id);
 
   bool isLevelUnlocked(VisualTheme theme) {
-    if (GameConstants.unlockAllLevelsForTesting) return true;
+    if (GameConstants.unlockAllThemesForTesting) return true;
     return highestDisplayLevel >= theme.unlockLevel;
   }
 
