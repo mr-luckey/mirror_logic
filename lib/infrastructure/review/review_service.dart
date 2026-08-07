@@ -24,7 +24,7 @@ typedef UrlLauncher = Future<bool> Function(Uri uri, {LaunchMode mode});
 /// cleared the early tutorial boards ([levelsBeforeFirstAsk]), then ask on a
 /// level-complete screen, then space later asks by a random gap in
 /// [[levelsBetweenAsksMin], [levelsBetweenAsksMax]] so the prompt never feels
-/// scheduled.
+/// scheduled. When those gates pass, the ask is shown — not coin-flipped away.
 class ReviewService {
   ReviewService({
     required LocalStorageService storage,
@@ -36,7 +36,6 @@ class ReviewService {
     this.levelsBetweenAsksMax = 10,
     this.cooldown = const Duration(days: 5),
     this.maxAsks = 3,
-    this.askChance = 0.35,
   }) : assert(levelsBetweenAsksMin >= 1),
        assert(levelsBetweenAsksMax >= levelsBetweenAsksMin),
        _storage = storage,
@@ -68,13 +67,6 @@ class ReviewService {
 
   /// Total asks over the app's whole lifetime on this device.
   final int maxAsks;
-
-  /// Chance of asking at a moment that already passed every other gate.
-  ///
-  /// The prompt is meant to feel incidental rather than scheduled: two players
-  /// on the same level should not both meet it, and one who dismissed it should
-  /// not be able to predict its return.
-  final double askChance;
 
   static const _settledKey = 'review_settled';
   static const _askCountKey = 'review_ask_count';
@@ -124,14 +116,14 @@ class ReviewService {
 
   /// Whether to put the prompt up at this exact moment.
   ///
-  /// Consuming: the dice are rolled here, so a caller that asks twice about the
-  /// same moment can get two different answers. Call it once, at the point you
-  /// are prepared to show the dialog.
+  /// Eligible clears always ask. Spacing comes from [levelsBeforeFirstAsk] and
+  /// the rolled 5–10 gap — a second coin-flip on top made the WOW dialog easy
+  /// to miss entirely during normal play.
   bool shouldAskNow({required int levelsCleared, DateTime? now}) {
-    if (!isEligible(levelsCleared: levelsCleared, now: now ?? DateTime.now())) {
-      return false;
-    }
-    return _random.nextDouble() < askChance;
+    return isEligible(
+      levelsCleared: levelsCleared,
+      now: now ?? DateTime.now(),
+    );
   }
 
   /// Books an ask against the budget, whichever way the player answers it.

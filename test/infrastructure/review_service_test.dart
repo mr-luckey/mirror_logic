@@ -8,23 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../support/memory_box.dart';
 
-/// A die that always comes up under any threshold, so the cadence gates are the
-/// only thing deciding whether the prompt fires. Gaps always roll the minimum.
-class _AlwaysRoll implements Random {
-  @override
-  double nextDouble() => 0;
-
-  @override
-  int nextInt(int max) => 0;
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class _NeverRoll implements Random {
-  @override
-  double nextDouble() => 1;
-
+/// Gaps always roll the minimum so follow-up eligibility is deterministic.
+class _MinGapRoll implements Random {
   @override
   int nextInt(int max) => 0;
 
@@ -36,9 +21,6 @@ class _NeverRoll implements Random {
 /// far end of the 5–10 window.
 class _MaxGapRoll implements Random {
   @override
-  double nextDouble() => 0;
-
-  @override
   int nextInt(int max) => max - 1;
 
   @override
@@ -48,13 +30,12 @@ class _MaxGapRoll implements Random {
 void main() {
   ReviewService build({Random? random}) => ReviewService(
     storage: LocalStorageService(MemoryBox()),
-    random: random ?? _AlwaysRoll(),
+    random: random ?? _MinGapRoll(),
     levelsBeforeFirstAsk: 7,
     levelsBetweenAsksMin: 5,
     levelsBetweenAsksMax: 10,
     cooldown: const Duration(days: 5),
     maxAsks: 3,
-    askChance: 0.35,
   );
 
   // Fixed clock so recordAsked and cooldown checks share one timeline.
@@ -77,7 +58,7 @@ void main() {
     test('a second ask waits for a rolled gap and more time', () async {
       final review = build();
       await review.recordAsked(levelsCleared: 7, now: now);
-      // AlwaysRoll picks the minimum gap of 5.
+      // MinGapRoll picks the minimum gap of 5.
       expect(review.nextAskGap, 5);
 
       // Same sitting, a few more boards: too soon on both counts.
@@ -144,19 +125,13 @@ void main() {
   });
 
   group('shouldAskNow', () {
-    test('an eligible moment can still lose the roll', () {
-      expect(
-        build(random: _NeverRoll()).shouldAskNow(levelsCleared: 40),
-        isFalse,
-      );
+    test('asks whenever the cadence gates pass — no second coin flip', () {
+      expect(build().shouldAskNow(levelsCleared: 7, now: now), isTrue);
+      expect(build().shouldAskNow(levelsCleared: 40, now: now), isTrue);
     });
 
-    test('a winning roll on an ineligible moment still asks nothing', () {
-      expect(build().shouldAskNow(levelsCleared: 1), isFalse);
-    });
-
-    test('an eligible moment with a winning roll asks', () {
-      expect(build().shouldAskNow(levelsCleared: 40), isTrue);
+    test('still stays quiet on an ineligible moment', () {
+      expect(build().shouldAskNow(levelsCleared: 1, now: now), isFalse);
     });
   });
 

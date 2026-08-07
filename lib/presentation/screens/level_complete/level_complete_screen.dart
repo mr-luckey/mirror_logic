@@ -62,13 +62,18 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
 
   /// After the star fanfare lands and before the player taps Next — the WOW
   /// beat Play's guidance wants for a rating ask.
-  static const _ratePromptDelay = Duration(milliseconds: 2000);
+  static const _ratePromptDelay = Duration(milliseconds: 1400);
 
   final List<Timer> _fanfare = [];
 
   LevelCompleteArgs get args => widget.args;
 
   bool _clearCounted = false;
+
+  /// [ReviewService] said yes; dialog not shown yet (timer or early Next).
+  bool _ratePending = false;
+  int _rateCleared = 0;
+  bool _rateInFlight = false;
 
   @override
   void initState() {
@@ -89,51 +94,65 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
     _scheduleRatePrompt();
   }
 
+  /// Unique clears on the save, including this board even if [ProgressBloc]
+  /// has not emitted the write yet (completion is fire-and-forget before nav).
+  int _completedClears() {
+    final save = context.read<ProgressBloc>().state.save;
+    final completed = save.levelProgress.values.where((p) => p.completed).length;
+    final thisDone = save.levelProgress[args.levelId]?.completed ?? false;
+    return thisDone ? completed : completed + 1;
+  }
+
   /// Considers asking for a rating after the stars land, before Next.
   ///
-  /// Level complete is the app's WOW moment: celebration is on screen, the
-  /// player is not mid-puzzle, and they have not committed to the next board
-  /// yet. Whether it actually appears is [ReviewService]'s call — first ask
-  /// after seven clears, then every 5–10 clears at random, so most wins show
-  /// nothing.
+  /// Level complete is the app's WOW moment. First ask after seven unique
+  /// clears, then again every 5–10 clears. A fast Next tap still sees it —
+  /// [_leave] flushes a pending ask before navigating away.
   void _scheduleRatePrompt() {
     final review = context.review;
     if (review == null) return;
 
-    final cleared = context
-        .read<ProgressBloc>()
-        .state
-        .save
-        .levelProgress
-        .values
-        .where((p) => p.completed)
-        .length;
+    final cleared = _completedClears();
     if (!review.shouldAskNow(levelsCleared: cleared)) return;
 
+    _ratePending = true;
+    _rateCleared = cleared;
     _fanfare.add(
-      Timer(_ratePromptDelay, () => unawaited(_askForRating(cleared))),
+      Timer(_ratePromptDelay, () => unawaited(_presentRateIfPending())),
     );
   }
 
-  Future<void> _askForRating(int levelsCleared) async {
-    final review = context.review;
-    if (!mounted || review == null) return;
-    // An interstitial can be on screen if the player tapped through already;
-    // stacking a dialog under a native ad activity loses the dialog.
-    if (context.ads?.isFullScreenAdShowing ?? false) return;
+  Future<void> _presentRateIfPending() async {
+    if (!_ratePending || _rateInFlight) return;
+    _rateInFlight = true;
 
-    await review.recordAsked(levelsCleared: levelsCleared);
-    if (!mounted) return;
+    try {
+      final review = context.review;
+      if (!mounted || review == null) {
+        _ratePending = false;
+        return;
+      }
+      // An interstitial can be on screen if the player tapped through already;
+      // stacking a dialog under a native ad activity loses the dialog. Keep the
+      // ask pending so a later clear can try again — do not burn the budget.
+      if (context.ads?.isFullScreenAdShowing ?? false) return;
 
-    final accepted = await showMedievalRateDialog(context);
-    if (!accepted || !mounted) return;
+      _ratePending = false;
+      await review.recordAsked(levelsCleared: _rateCleared);
+      if (!mounted) return;
 
-    // The player is handed off to Play from here, which reports nothing back
-    // about what they did, so this is the last time we ask either way.
-    await review.markSettled();
-    final opened = await review.promptForRating();
-    if (!opened && mounted) {
-      MedievalToast.show(context, 'Could not open the Play Store');
+      final accepted = await showMedievalRateDialog(context);
+      if (!accepted || !mounted) return;
+
+      // The player is handed off to Play from here, which reports nothing back
+      // about what they did, so this is the last time we ask either way.
+      await review.markSettled();
+      final opened = await review.promptForRating();
+      if (!opened && mounted) {
+        MedievalToast.show(context, 'Could not open the Play Store');
+      }
+    } finally {
+      _rateInFlight = false;
     }
   }
 
@@ -149,6 +168,11 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
     required bool replace,
     InterstitialPolicy policy = InterstitialPolicy.levelBreak,
   }) async {
+    // Next before the timer must not cancel the WOW ask.
+    if (_ratePending || _rateInFlight) {
+      await _presentRateIfPending();
+      if (!mounted) return;
+    }
     await context.ads?.showInterstitial(policy: policy);
     if (!mounted) return;
     if (replace) {
