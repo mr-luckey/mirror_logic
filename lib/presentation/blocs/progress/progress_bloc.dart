@@ -92,7 +92,7 @@ class ProgressBloc extends Bloc<ProgressEvent, ProgressState> {
     ProgressOnboardingCompleted event,
     Emitter<ProgressState> emit,
   ) async {
-    final next = state.save.copyWith(onboardingComplete: true);
+    final next = _saveRepository.loadSave().copyWith(onboardingComplete: true);
     await _saveRepository.persistSave(next);
     emit(state.copyWith(save: next));
   }

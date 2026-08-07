@@ -51,7 +51,7 @@ class _AboutScreenState extends State<AboutScreen> {
     // Settled here even though the store may not open: a player who came all
     // the way to About and tapped Rate should not also meet the random prompt.
     await review.markSettled();
-    final opened = await review.openStoreListing();
+    final opened = await review.promptForRating();
     if (!opened && mounted) {
       MedievalToast.show(context, 'Could not open the Play Store');
     }

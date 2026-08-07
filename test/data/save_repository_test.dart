@@ -69,4 +69,19 @@ void main() {
       expect(save.unlockedLevelIds, const PlayerSave().unlockedLevelIds);
     });
   });
+
+  group('in-memory cache', () {
+    test('loadSave sees a theme write before disk flush finishes', () async {
+      await saves.persistSave(const PlayerSave(selectedThemeId: 'golden_sun'));
+
+      // Fire a theme change without awaiting the disk write chain.
+      final pending = saves.persistSave(
+        saves.loadSave().copyWith(selectedThemeId: 'moonlight_castle'),
+      );
+
+      expect(saves.loadSave().selectedThemeId, 'moonlight_castle');
+      await pending;
+      expect(saves.loadSave().selectedThemeId, 'moonlight_castle');
+    });
+  });
 }

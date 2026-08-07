@@ -222,22 +222,15 @@ class ThemeCubit extends Cubit<ThemeCubitState> {
     unawaited(GameArt.loadForTheme(equipped));
   }
 
-  /// Persist the settled carousel page as the equipped hall (quiet — no toast).
-  /// Applies colors immediately; save write is fire-and-forget so the swipe
-  /// never waits on disk. Unowned halls are ignored (buy from the shop).
-  Future<void> equipFromCarousel(String themeId) async {
-    if (!state.owns(themeId)) return;
-    _previewedThemeId = null;
-    if (ThemeController.current.id != themeId) {
-      ThemeController.applyById(themeId);
-      unawaited(GameArt.loadForTheme(themeId));
+  /// Final hall selection — Continue / Play on an owned carousel page.
+  ///
+  /// Previewing on swipe never reaches here; only an explicit confirm writes
+  /// [selectedThemeId] and keeps that hall until the next confirm.
+  Future<ThemeActionResult> confirmHall(String themeId) async {
+    if (!state.owns(themeId)) {
+      emit(state.copyWith(lastResult: ThemeActionResult.locked));
+      return ThemeActionResult.locked;
     }
-    if (state.selectedThemeId == themeId) return;
-    emit(state.copyWith(selectedThemeId: themeId, clearResult: true));
-    final save = _saveRepository.loadSave();
-    if (save.selectedThemeId == themeId) return;
-    unawaited(
-      _saveRepository.persistSave(save.copyWith(selectedThemeId: themeId)),
-    );
+    return _equip(themeId);
   }
 }

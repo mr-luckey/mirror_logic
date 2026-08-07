@@ -130,7 +130,7 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
     // The player is handed off to Play from here, which reports nothing back
     // about what they did, so this is the last time we ask either way.
     await review.markSettled();
-    final opened = await review.openReviewPage();
+    final opened = await review.promptForRating();
     if (!opened && mounted) {
       MedievalToast.show(context, 'Could not open the Play Store');
     }

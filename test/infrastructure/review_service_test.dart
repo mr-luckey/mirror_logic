@@ -37,6 +37,7 @@ void main() {
     askChance: 0.3,
   );
 
+  // Fixed clock so recordAsked and cooldown checks share one timeline.
   final now = DateTime(2026, 8, 1, 12);
 
   group('eligibility', () {
@@ -54,7 +55,7 @@ void main() {
 
     test('a second ask waits for both more play and more time', () async {
       final review = build();
-      await review.recordAsked(levelsCleared: 4);
+      await review.recordAsked(levelsCleared: 4, now: now);
 
       // Same sitting, a few more boards: too soon on both counts.
       expect(review.isEligible(levelsCleared: 10, now: now), isFalse);
@@ -132,6 +133,46 @@ void main() {
       expect(launched, isNotNull);
       expect(launched!.toString(), contains(AppInfo.playStoreId));
       expect(launched.toString(), contains('showAllReviews=true'));
+    });
+
+    test('falls back to https when market intent fails', () async {
+      final launched = <Uri>[];
+      final review = ReviewService(
+        storage: LocalStorageService(MemoryBox()),
+        launcher: (uri, {mode = LaunchMode.platformDefault}) {
+          launched.add(uri);
+          if (uri.scheme == 'market') return Future.value(false);
+          return Future.value(true);
+        },
+      );
+
+      final ok = await review.openReviewPage();
+
+      expect(ok, isTrue);
+      expect(launched.length, 2);
+      expect(launched.first.scheme, 'market');
+      expect(launched.last.scheme, 'https');
+      expect(launched.last.toString(), contains('showAllReviews=true'));
+    });
+  });
+
+  group('openStoreListing', () {
+    test('uses market then https rather than claiming plugin success', () async {
+      final launched = <Uri>[];
+      final review = ReviewService(
+        storage: LocalStorageService(MemoryBox()),
+        launcher: (uri, {mode = LaunchMode.platformDefault}) {
+          launched.add(uri);
+          if (uri.scheme == 'market') return Future.value(false);
+          return Future.value(true);
+        },
+      );
+
+      final ok = await review.openStoreListing();
+
+      expect(ok, isTrue);
+      expect(launched.last.scheme, 'https');
+      expect(launched.last.toString(), isNot(contains('showAllReviews')));
     });
   });
 }

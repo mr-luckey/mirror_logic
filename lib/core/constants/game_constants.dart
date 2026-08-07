@@ -31,7 +31,7 @@ abstract final class GameConstants {
 
   /// Set to false before shipping. When true, every hall is owned and equippable
   /// without level gates or coin spend.
-  static const bool unlockAllThemesForTesting = true;
+  static const bool unlockAllThemesForTesting = false;
 
   /// Coins granted for each fully watched rewarded ad.
   static const int coinsPerRewardedAd = 5;

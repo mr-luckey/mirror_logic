@@ -136,15 +136,15 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  /// Sends the player straight to the Play listing rather than through Play's
-  /// in-app sheet, which shows nothing once the device quota is spent — see
-  /// [ReviewService.openStoreListing]. Tapping here also retires the random
-  /// prompt, since the player has clearly already found the button.
+  /// Sends the player to rate via the native sheet when available, otherwise
+  /// the Play listing — see [ReviewService.promptForRating]. Tapping here also
+  /// retires the random prompt, since the player has clearly already found the
+  /// button.
   Future<void> _rate(BuildContext context) async {
     final review = context.review;
     if (review == null) return;
     await review.markSettled();
-    final opened = await review.openStoreListing();
+    final opened = await review.promptForRating();
     if (!opened && context.mounted) {
       MedievalToast.show(context, 'Could not open the Play Store');
     }

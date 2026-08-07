@@ -67,6 +67,10 @@ class ReviewService {
   static const _lastAskMsKey = 'review_last_ask_ms';
   static const _lastAskClearsKey = 'review_last_ask_clears';
 
+  static const _listingPath = 'details?id=${AppInfo.playStoreId}';
+  static const _reviewPath =
+      'details?id=${AppInfo.playStoreId}&showAllReviews=true';
+
   /// Whether the player has answered the question for good — either they went
   /// to the store, or they have used up every ask they were going to get.
   bool get hasSettled => _storage.readBool(_settledKey);
@@ -113,12 +117,15 @@ class ReviewService {
   /// A dismissal costs the same as an acceptance by design — the point of the
   /// budget is to limit how often the player is interrupted, and being asked is
   /// the interruption.
-  Future<void> recordAsked({required int levelsCleared}) async {
+  Future<void> recordAsked({
+    required int levelsCleared,
+    DateTime? now,
+  }) async {
     final asks = askCount + 1;
     await _storage.writeInt(_askCountKey, asks);
     await _storage.writeInt(
       _lastAskMsKey,
-      DateTime.now().millisecondsSinceEpoch,
+      (now ?? DateTime.now()).millisecondsSinceEpoch,
     );
     await _storage.writeInt(_lastAskClearsKey, levelsCleared);
     // Spending the last ask settles the matter; there is no point keeping the
@@ -131,9 +138,9 @@ class ReviewService {
 
   /// Runs Play's in-app review sheet, and reports whether it was even offered.
   ///
-  /// This is the path the random prompt takes. Play gives no signal about what
-  /// the player did in the sheet — or whether it appeared at all — so the
-  /// subject is settled either way rather than re-asked on a maybe.
+  /// Play gives no signal about what the player did in the sheet — or whether
+  /// it appeared at all — so callers that need a visible destination should
+  /// fall back to [openReviewPage] when this returns false.
   Future<bool> requestReview() async {
     try {
       if (!await _review.isAvailable()) return false;
@@ -145,35 +152,44 @@ class ReviewService {
     }
   }
 
-  /// Opens the Play listing.
+  /// Opens the Play listing via store / web intents.
   ///
-  /// This is the path the About and Settings buttons take, rather than the
-  /// in-app sheet: a player who deliberately tapped "Rate" must land somewhere
-  /// visible, and the sheet does nothing at all once the quota is spent — which
-  /// reads as a broken button.
-  Future<bool> openStoreListing() async {
-    try {
-      await _review.openStoreListing();
-      return true;
-    } catch (error, stack) {
-      debugPrint('store listing failed: $error\n$stack');
-      return false;
-    }
-  }
+  /// Does not trust [InAppReview.openStoreListing] alone: that API can return
+  /// without throwing even when nothing opened, which used to block HTTPS
+  /// fallback and make Rate look broken.
+  Future<bool> openStoreListing() => _openStorePath(_listingPath);
 
   /// Puts the player on the listing's review section, where they can write one.
   ///
-  /// [requestReview] is not used here. Play's in-app sheet is silent when the
-  /// device quota is spent or the build did not come from Play, and a player
-  /// who just tapped "Rate" reads that silence as a broken button. Each step
-  /// below is a weaker way of reaching the same page: the Play app opened at
-  /// the reviews, the Play app opened at the listing, then the web listing.
-  Future<bool> openReviewPage() async {
-    const target = 'details?id=${AppInfo.playStoreId}&showAllReviews=true';
+  /// Prefer this for an explicit "Rate" tap. Play's in-app sheet is silent when
+  /// the device quota is spent or the build did not come from Play.
+  Future<bool> openReviewPage() => _openStorePath(_reviewPath);
 
-    if (await _launch(Uri.parse('market://$target'))) return true;
-    if (await openStoreListing()) return true;
-    return _launch(Uri.parse('https://play.google.com/store/apps/$target'));
+  /// Explicit Rate flow: open a real Play destination the player can see.
+  ///
+  /// [requestReview] alone is not enough here — Play may report the API as
+  /// available and still show nothing (quota / sideload), which reads as a
+  /// broken Rate button. Native sheet is only a last-ditch fallback.
+  Future<bool> promptForRating() async {
+    if (await openReviewPage()) return true;
+    return requestReview();
+  }
+
+  Future<bool> _openStorePath(String path) async {
+    if (await _launch(Uri.parse('market://$path'))) return true;
+    if (await _launch(Uri.parse('https://play.google.com/store/apps/$path'))) {
+      return true;
+    }
+    // Last resort — may no-op without throwing on sideloaded / iOS builds.
+    try {
+      await _review.openStoreListing();
+      // Plugin success is unverifiable; only claim success if a prior launch
+      // already returned true. Reaching here means intents failed.
+      debugPrint('store listing plugin invoked after intent failure');
+    } catch (error, stack) {
+      debugPrint('store listing failed: $error\n$stack');
+    }
+    return false;
   }
 
   Future<bool> _launch(Uri uri) async {

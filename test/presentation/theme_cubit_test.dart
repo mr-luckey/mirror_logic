@@ -55,12 +55,49 @@ void main() {
     expect(ThemeController.current.id, ThemeCatalog.starterId);
   });
 
-  test('equipFromCarousel ignores unowned halls', () async {
+  test('confirmHall ignores unowned halls', () async {
     const lockedId = 'frozen_kingdom';
 
-    await cubit.equipFromCarousel(lockedId);
+    final result = await cubit.confirmHall(lockedId);
 
+    expect(result, ThemeActionResult.locked);
     expect(cubit.state.selectedThemeId, isNot(lockedId));
     expect(saves.loadSave().selectedThemeId, isNot(lockedId));
+  });
+
+  test('confirmHall persists an owned hall as the selection', () async {
+    const ownedId = 'moonlight_castle';
+    await saves.persistSave(
+      saves.loadSave().copyWith(
+        ownedThemeIds: [ThemeCatalog.starterId, ownedId],
+      ),
+    );
+    cubit.syncFromSave(saves.loadSave());
+
+    final result = await cubit.confirmHall(ownedId);
+
+    expect(result, ThemeActionResult.equipped);
+    expect(cubit.state.selectedThemeId, ownedId);
+    expect(saves.loadSave().selectedThemeId, ownedId);
+    expect(ThemeController.current.id, ownedId);
+  });
+
+  test('preview does not change selectedThemeId until confirmHall', () async {
+    const ownedId = 'moonlight_castle';
+    await saves.persistSave(
+      saves.loadSave().copyWith(
+        ownedThemeIds: [ThemeCatalog.starterId, ownedId],
+      ),
+    );
+    cubit.syncFromSave(saves.loadSave());
+
+    cubit.previewHall(ownedId);
+    expect(ThemeController.current.id, ownedId);
+    expect(cubit.state.selectedThemeId, ThemeCatalog.starterId);
+    expect(saves.loadSave().selectedThemeId, ThemeCatalog.starterId);
+
+    await cubit.confirmHall(ownedId);
+    expect(cubit.state.selectedThemeId, ownedId);
+    expect(saves.loadSave().selectedThemeId, ownedId);
   });
 }

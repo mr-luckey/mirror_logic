@@ -27,8 +27,8 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_toast.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_torch.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 
-/// Home hall carousel. Page index lives in [HomeCubit]; theme equips on settle
-/// via [ThemeCubit] so the swipe itself never rebuilds the whole tree mid-drag.
+/// Home hall carousel. Page index lives in [HomeCubit]; swipe only previews.
+/// Continue / Play confirms the hall via [ThemeCubit.confirmHall].
 class MainMenuScreen extends StatelessWidget {
   const MainMenuScreen({super.key});
 
@@ -83,14 +83,8 @@ class _MainMenuViewState extends State<_MainMenuView> {
     context.read<HomeCubit>().setPage(index);
     HapticFeedback.selectionClick();
     context.playSfx(Sfx.tap);
-    final themeId = _halls[index].id;
-    // Preview every hall on settle; only owned halls are persisted.
-    context.read<ThemeCubit>().previewHall(themeId);
-    unawaitedEquip(themeId);
-  }
-
-  void unawaitedEquip(String themeId) {
-    context.read<ThemeCubit>().equipFromCarousel(themeId);
+    // Preview only — permanent selection waits for Continue / Play.
+    context.read<ThemeCubit>().previewHall(_halls[index].id);
   }
 
   void _goTo(int index) {
@@ -504,8 +498,10 @@ class _PlayButtons extends StatelessWidget {
                               hall: hall,
                               coins: themeState.coins,
                             )
-                          : () => context.push(
-                              '/play/${progress.save.continueLevelId}',
+                          : () => _continueWithHall(
+                              context,
+                              hallId: hall.id,
+                              levelId: progress.save.continueLevelId,
                             ),
                     ),
                     if (!hallLocked) ...[
@@ -513,7 +509,11 @@ class _PlayButtons extends StatelessWidget {
                       MedievalButton(
                         label: 'Chapters',
                         icon: Icons.menu_book_rounded,
-                        onPressed: () => context.push('/chapters'),
+                        onPressed: () {
+                          // Leaving without Continue drops any carousel preview.
+                          context.read<ThemeCubit>().restoreEquippedTheme();
+                          context.push('/chapters');
+                        },
                       ),
                     ],
                   ],
@@ -524,6 +524,20 @@ class _PlayButtons extends StatelessWidget {
         );
       },
     );
+  }
+
+  /// Locks in the visible owned hall, then opens the continue level.
+  Future<void> _continueWithHall(
+    BuildContext context, {
+    required String hallId,
+    required String levelId,
+  }) async {
+    await context.read<ThemeCubit>().confirmHall(hallId);
+    if (!context.mounted) return;
+    // Keep ProgressBloc's in-memory save aligned with the equipped hall so a
+    // later progress write cannot resurrect the previous theme id.
+    context.read<ProgressBloc>().add(const ProgressRefresh());
+    context.push('/play/$levelId');
   }
 
   /// Buys the hall outright when the purse allows, and otherwise opens the
@@ -602,7 +616,10 @@ class _TopStatusBar extends StatelessWidget {
             MedievalBronzeButton(
               icon: Icons.settings_rounded,
               size: 34,
-              onPressed: () => context.push('/settings'),
+              onPressed: () {
+                context.read<ThemeCubit>().restoreEquippedTheme();
+                context.push('/settings');
+              },
             ),
           ],
         ),

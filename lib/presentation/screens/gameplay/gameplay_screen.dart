@@ -23,6 +23,7 @@ import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/gameplay/gameplay_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/settings/settings_cubit.dart';
+import 'package:mirror_logic/presentation/blocs/theme/theme_cubit.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_fx_layer.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_paint_snapshot.dart';
 import 'package:mirror_logic/presentation/screens/gameplay/gameplay_painter.dart';
@@ -38,10 +39,26 @@ import 'package:mirror_logic/presentation/widgets/medieval/medieval_toast.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 
 /// Fantasy-medieval gameplay screen matching the production art reference.
-class GameplayScreen extends StatelessWidget {
+class GameplayScreen extends StatefulWidget {
   const GameplayScreen({super.key, required this.levelId});
 
   final String levelId;
+
+  @override
+  State<GameplayScreen> createState() => _GameplayScreenState();
+}
+
+class _GameplayScreenState extends State<GameplayScreen> {
+  bool _equippedThemeRestored = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Home carousel preview must not dress the board — only Continue confirms.
+    if (_equippedThemeRestored) return;
+    _equippedThemeRestored = true;
+    context.read<ThemeCubit>().restoreEquippedTheme();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +66,7 @@ class GameplayScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) =>
           GameplayBloc(levelRepository: context.read<LevelRepository>())
-            ..add(GameplayLoadLevel(levelId)),
+            ..add(GameplayLoadLevel(widget.levelId)),
       child: const _GameplayBody(),
     );
   }
