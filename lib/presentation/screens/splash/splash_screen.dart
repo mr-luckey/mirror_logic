@@ -10,6 +10,7 @@ import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_art.dart';
 import 'package:mirror_logic/presentation/widgets/medieval/medieval_wood_background.dart';
 import 'package:mirror_logic/domain/theme/theme_controller.dart';
+import 'dart:async';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -172,14 +173,11 @@ class _SplashBootstrapState extends State<_SplashBootstrap> {
   }
 
   Future<void> _boot() async {
-    try {
-      await context.read<LevelRepository>().preloadCatalog().timeout(
-        const Duration(seconds: 8),
-      );
-    } catch (_) {
-      // Never trap the user on splash if catalog warmup fails/times out.
-      // Gameplay routes can still report a targeted error later if needed.
-    }
+    // Warm catalog in background only. Parsing a large manifest on the UI
+    // isolate can stall first navigation on slower devices.
+    unawaited(
+      context.read<LevelRepository>().preloadCatalog().catchError((_) {}),
+    );
     await Future<void>.delayed(const Duration(milliseconds: 1400));
     if (!mounted) return;
     final onboarded = context

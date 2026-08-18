@@ -1,6 +1,8 @@
 package com.appwaretech.mirrorlogic
 
 import android.app.Activity
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.facebook.ads.*
 import io.flutter.plugin.common.MethodCall
@@ -15,6 +17,7 @@ class MetaAdsManager(private val activity: Activity) : MethodChannel.MethodCallH
 
     companion object {
         private const val TAG = "MetaAds"
+        private const val SHOW_TIMEOUT_MS = 90_000L
     }
 
     private var initialized = false
@@ -23,11 +26,17 @@ class MetaAdsManager(private val activity: Activity) : MethodChannel.MethodCallH
     private var interstitialAd: InterstitialAd? = null
     private var interstitialReady = false
     private var interstitialLoading = false
+    private var pendingInterstitialResult: MethodChannel.Result? = null
+    private var interstitialShowToken = 0
 
     // Rewarded state — at most one loaded at a time.
     private var rewardedAd: RewardedVideoAd? = null
     private var rewardedReady = false
     private var rewardedLoading = false
+    private var pendingRewardedResult: MethodChannel.Result? = null
+    private var pendingRewardEarned = false
+    private var rewardedShowToken = 0
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
@@ -108,6 +117,8 @@ class MetaAdsManager(private val activity: Activity) : MethodChannel.MethodCallH
                 Log.d(TAG, "Interstitial load failed: ${error.errorCode} ${error.errorMessage}")
                 interstitialReady = false
                 interstitialLoading = false
+                pendingInterstitialResult?.success(mapOf("shown" to false, "dismissed" to true))
+                pendingInterstitialResult = null
             }
             override fun onInterstitialDisplayed(p0: Ad) {
                 Log.d(TAG, "Interstitial displayed")
@@ -115,6 +126,9 @@ class MetaAdsManager(private val activity: Activity) : MethodChannel.MethodCallH
             override fun onInterstitialDismissed(p0: Ad) {
                 Log.d(TAG, "Interstitial dismissed")
                 interstitialReady = false
+                pendingInterstitialResult?.success(mapOf("shown" to true, "dismissed" to true))
+                pendingInterstitialResult = null
+                destroyInterstitial()
             }
             override fun onAdClicked(p0: Ad) {
                 Log.d(TAG, "Interstitial clicked")
@@ -134,28 +148,26 @@ class MetaAdsManager(private val activity: Activity) : MethodChannel.MethodCallH
             result.success(mapOf("shown" to false, "dismissed" to true))
             return
         }
-        interstitialReady = false
-
-        val oldListener = object : InterstitialAdListener {
-            override fun onAdLoaded(p0: Ad) {}
-            override fun onError(p0: Ad?, error: AdError) {
-                Log.d(TAG, "Interstitial show error: ${error.errorCode} ${error.errorMessage}")
-                result.success(mapOf("shown" to false, "dismissed" to true))
-                destroyInterstitial()
-            }
-            override fun onInterstitialDisplayed(p0: Ad) {}
-            override fun onInterstitialDismissed(p0: Ad) {
-                result.success(mapOf("shown" to true, "dismissed" to true))
-                destroyInterstitial()
-            }
-            override fun onAdClicked(p0: Ad) {}
-            override fun onLoggingImpression(p0: Ad) {}
+        if (pendingInterstitialResult != null) {
+            result.success(mapOf("shown" to false, "dismissed" to true))
+            return
         }
-
-        // Re-attach listener for show-phase callbacks.
-        ad.loadAd(ad.buildLoadAdConfig().withAdListener(oldListener).build())
-        // The ad is already loaded, so we show immediately.
-        ad.show()
+        interstitialReady = false
+        val token = ++interstitialShowToken
+        pendingInterstitialResult = result
+        mainHandler.postDelayed({
+            if (token != interstitialShowToken || pendingInterstitialResult == null) return@postDelayed
+            pendingInterstitialResult?.success(mapOf("shown" to false, "dismissed" to true))
+            pendingInterstitialResult = null
+            destroyInterstitial()
+        }, SHOW_TIMEOUT_MS)
+        val didShow = ad.show()
+        if (!didShow) {
+            pendingInterstitialResult?.success(mapOf("shown" to false, "dismissed" to true))
+            pendingInterstitialResult = null
+            interstitialShowToken++
+            destroyInterstitial()
+        }
     }
 
     private fun destroyInterstitial() {
@@ -195,13 +207,23 @@ class MetaAdsManager(private val activity: Activity) : MethodChannel.MethodCallH
                 Log.d(TAG, "Rewarded load failed: ${error.errorCode} ${error.errorMessage}")
                 rewardedReady = false
                 rewardedLoading = false
+                pendingRewardedResult?.success(mapOf("shown" to false, "earned" to false, "dismissed" to true))
+                pendingRewardedResult = null
+                pendingRewardEarned = false
             }
             override fun onRewardedVideoCompleted() {
                 Log.d(TAG, "Rewarded video completed (reward earned)")
+                pendingRewardEarned = true
             }
             override fun onRewardedVideoClosed() {
                 Log.d(TAG, "Rewarded video closed")
                 rewardedReady = false
+                pendingRewardedResult?.success(
+                    mapOf("shown" to true, "earned" to pendingRewardEarned, "dismissed" to true)
+                )
+                pendingRewardedResult = null
+                pendingRewardEarned = false
+                destroyRewarded()
             }
             override fun onAdClicked(p0: Ad) {
                 Log.d(TAG, "Rewarded clicked")
@@ -221,29 +243,29 @@ class MetaAdsManager(private val activity: Activity) : MethodChannel.MethodCallH
             result.success(mapOf("shown" to false, "earned" to false, "dismissed" to true))
             return
         }
-        rewardedReady = false
-        var earned = false
-
-        val listener = object : RewardedVideoAdListener {
-            override fun onAdLoaded(p0: Ad) {}
-            override fun onError(p0: Ad?, error: AdError) {
-                Log.d(TAG, "Rewarded show error: ${error.errorCode} ${error.errorMessage}")
-                result.success(mapOf("shown" to false, "earned" to false, "dismissed" to true))
-                destroyRewarded()
-            }
-            override fun onRewardedVideoCompleted() {
-                earned = true
-            }
-            override fun onRewardedVideoClosed() {
-                result.success(mapOf("shown" to true, "earned" to earned, "dismissed" to true))
-                destroyRewarded()
-            }
-            override fun onAdClicked(p0: Ad) {}
-            override fun onLoggingImpression(p0: Ad) {}
+        if (pendingRewardedResult != null) {
+            result.success(mapOf("shown" to false, "earned" to false, "dismissed" to true))
+            return
         }
-
-        ad.loadAd(ad.buildLoadAdConfig().withAdListener(listener).build())
-        ad.show()
+        rewardedReady = false
+        val token = ++rewardedShowToken
+        pendingRewardedResult = result
+        pendingRewardEarned = false
+        mainHandler.postDelayed({
+            if (token != rewardedShowToken || pendingRewardedResult == null) return@postDelayed
+            pendingRewardedResult?.success(mapOf("shown" to false, "earned" to false, "dismissed" to true))
+            pendingRewardedResult = null
+            pendingRewardEarned = false
+            destroyRewarded()
+        }, SHOW_TIMEOUT_MS)
+        val didShow = ad.show()
+        if (!didShow) {
+            pendingRewardedResult?.success(mapOf("shown" to false, "earned" to false, "dismissed" to true))
+            pendingRewardedResult = null
+            pendingRewardEarned = false
+            rewardedShowToken++
+            destroyRewarded()
+        }
     }
 
     private fun destroyRewarded() {
