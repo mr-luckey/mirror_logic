@@ -104,6 +104,12 @@ class AdsService {
   /// Brings the SDK up. Safe to call from anywhere, any number of times.
   Future<void> init() => _bringUp ??= _initialize();
 
+  /// Ensures Remote Config is initialized and fetched for this launch.
+  ///
+  /// If the network is unavailable, Firebase keeps the last activated values;
+  /// callers can proceed and rely on cached policy until connectivity returns.
+  Future<void> syncRemoteConfig() => _remoteConfig.ensureInitialized();
+
   Future<void> _initialize() async {
     if (!GameConstants.adsEnabled) {
       _ready = false;

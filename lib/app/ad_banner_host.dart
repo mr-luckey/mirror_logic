@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mirror_logic/app/router.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 import 'package:mirror_logic/presentation/blocs/ad_banner/ad_banner_cubit.dart';
 import 'package:mirror_logic/presentation/widgets/ads/ad_banner_slot.dart';
@@ -38,24 +39,56 @@ class _AdBannerBody extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<AdBannerCubit>();
         final selection = state.selection;
+        final location =
+            AppRouter.router.routerDelegate.currentConfiguration.uri.path;
+        final isGameplayScreen = location.startsWith('/play/');
+        final showOverlayBanner = isGameplayScreen && state.visible;
+
+        final content = showOverlayBanner
+            ? Stack(
+                children: [
+                  child,
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: AdBannerSlot(
+                      key: ValueKey(
+                        '${selection!.mountKey}-${state.mountGeneration}',
+                      ),
+                      selection: selection,
+                      onLoaded: cubit.onBannerLoaded,
+                      onFailed: cubit.onBannerFailed,
+                    ),
+                  ),
+                ],
+              )
+            : state.visible && selection != null
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: MediaQuery.removePadding(
+                      context: context,
+                      removeBottom: true,
+                      child: child,
+                    ),
+                  ),
+                  AdBannerSlot(
+                    key: ValueKey(
+                      '${selection.mountKey}-${state.mountGeneration}',
+                    ),
+                    selection: selection,
+                    onLoaded: cubit.onBannerLoaded,
+                    onFailed: cubit.onBannerFailed,
+                  ),
+                ],
+              )
+            : child;
 
         return Stack(
           children: [
-            child,
-            if (state.visible && selection != null)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: AdBannerSlot(
-                  key: ValueKey(
-                    '${selection.mountKey}-${state.mountGeneration}',
-                  ),
-                  selection: selection,
-                  onLoaded: cubit.onBannerLoaded,
-                  onFailed: cubit.onBannerFailed,
-                ),
-              ),
+            content,
             if (state.loading && selection != null)
               Offstage(
                 child: AdBannerSlot(

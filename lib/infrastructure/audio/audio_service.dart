@@ -121,7 +121,7 @@ class AudioService {
             audioFocus: AndroidAudioFocus.none,
           ),
           iOS: AudioContextIOS(
-            category: AVAudioSessionCategory.ambient,
+            category: AVAudioSessionCategory.playback,
             options: const {AVAudioSessionOptions.mixWithOthers},
           ),
         ),

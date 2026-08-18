@@ -40,79 +40,34 @@ abstract final class AdUnitIds {
   }
 
   /// Example / test Unity game ids — replace before release.
-  static const String _androidUnityGameId = '5880850';
+  static const String _androidUnityGameId = '6177237';
   static const String _iosUnityGameId = '5880851';
 
   /// Meta app id for Audience Network. Replace before release.
   static const String metaAppId = '1340478374904617';
 
   static const List<AdSlotIds> _androidBanner = [
-    AdSlotIds(
-      unity: 'Banner_Android_1',
-      meta: '1385141237044547_1385142403711097',
-    ),
-    AdSlotIds(
-      unity: 'Banner_Android_2',
-      meta: '1385141237044547_1385142763711061',
-    ),
-    AdSlotIds(
-      unity: 'Banner_Android_3',
-      meta: '1385141237044547_1385142897044381',
-    ),
-    AdSlotIds(
-      unity: 'Banner_Android_4',
-      meta: '1385141237044547_1385143033711034',
-    ),
-    AdSlotIds(
-      unity: 'Banner_Android_5',
-      meta: '1385141237044547_1385143123711025',
-    ),
+    AdSlotIds(unity: 'banner_1', meta: '1385141237044547_1385142403711097'),
+    AdSlotIds(unity: 'banner_2', meta: '1385141237044547_1385142763711061'),
+    AdSlotIds(unity: 'banner_3', meta: '1385141237044547_1385142897044381'),
+    AdSlotIds(unity: 'banner_4', meta: '1385141237044547_1385143033711034'),
+    AdSlotIds(unity: 'banner_5', meta: '1385141237044547_1385143123711025'),
   ];
 
   static const List<AdSlotIds> _androidInterstitial = [
-    AdSlotIds(
-      unity: 'Interstitial_Android_1',
-      meta: '1385141237044547_1385143267044344',
-    ),
-    AdSlotIds(
-      unity: 'Interstitial_Android_2',
-      meta: '1385141237044547_1385143203711017',
-    ),
-    AdSlotIds(
-      unity: 'Interstitial_Android_3',
-      meta: '1385141237044547_1385144233710914',
-    ),
-    AdSlotIds(
-      unity: 'Interstitial_Android_4',
-      meta: '1385141237044547_1385144537044217',
-    ),
-    AdSlotIds(
-      unity: 'Interstitial_Android_5',
-      meta: '1385141237044547_1385144607044210',
-    ),
+    AdSlotIds(unity: 'inter_1', meta: '1385141237044547_1385143267044344'),
+    AdSlotIds(unity: 'inter_2', meta: '1385141237044547_1385143203711017'),
+    AdSlotIds(unity: 'inter_3', meta: '1385141237044547_1385144233710914'),
+    AdSlotIds(unity: 'inter_3', meta: '1385141237044547_1385144537044217'),
+    AdSlotIds(unity: 'inter_3', meta: '1385141237044547_1385144607044210'),
   ];
 
   static const List<AdSlotIds> _androidRewarded = [
-    AdSlotIds(
-      unity: 'Rewarded_Android_1',
-      meta: '1385141237044547_1385144887044182',
-    ),
-    AdSlotIds(
-      unity: 'Rewarded_Android_2',
-      meta: '1385141237044547_1385145023710835',
-    ),
-    AdSlotIds(
-      unity: 'Rewarded_Android_3',
-      meta: '1385141237044547_1385145177044153',
-    ),
-    AdSlotIds(
-      unity: 'Rewarded_Android_4',
-      meta: '1385141237044547_1385145240377480',
-    ),
-    AdSlotIds(
-      unity: 'Rewarded_Android_5',
-      meta: '1385141237044547_1385145240377480',
-    ),
+    AdSlotIds(unity: 'reward_1', meta: '1385141237044547_1385144887044182'),
+    AdSlotIds(unity: 'reward_2', meta: '1385141237044547_1385145023710835'),
+    AdSlotIds(unity: 'reward_1', meta: '1385141237044547_1385145177044153'),
+    AdSlotIds(unity: 'reward_2', meta: '1385141237044547_1385145240377480'),
+    AdSlotIds(unity: 'reward_1', meta: '1385141237044547_1385145240377480'),
   ];
 
   static const List<AdSlotIds> _iosBanner = [

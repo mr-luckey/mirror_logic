@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,14 +39,6 @@ Future<void> main() async {
     ),
   );
 
-  // Firebase is optional at runtime: until its platform files are installed,
-  // the ads layer continues with the same in-code defaults.
-  try {
-    await Firebase.initializeApp();
-  } catch (error) {
-    debugPrint('Firebase unavailable; using local defaults: $error');
-  }
-
   await Hive.initFlutter();
   await configureDependencies();
 
@@ -69,6 +60,15 @@ Future<void> main() async {
   // Same deal for ads, and for the same reason: the SDK talks to the network on
   // the way up, and the splash screen is not going to wait for it.
   final adsService = sl<AdsService>();
+  // Remote config sync is required for ad policy; if network is unavailable,
+  // Firebase serves the last activated values and the app keeps moving.
+  try {
+    await adsService.syncRemoteConfig().timeout(const Duration(seconds: 8));
+  } on TimeoutException {
+    debugPrint('Ads RC sync timed out; using cached/default config');
+  } catch (error) {
+    debugPrint('Ads RC sync failed; using cached/default config: $error');
+  }
   unawaited(adsService.init());
 
   unawaited(

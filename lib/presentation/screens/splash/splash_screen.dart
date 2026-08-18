@@ -172,7 +172,14 @@ class _SplashBootstrapState extends State<_SplashBootstrap> {
   }
 
   Future<void> _boot() async {
-    await context.read<LevelRepository>().preloadCatalog();
+    try {
+      await context.read<LevelRepository>().preloadCatalog().timeout(
+        const Duration(seconds: 8),
+      );
+    } catch (_) {
+      // Never trap the user on splash if catalog warmup fails/times out.
+      // Gameplay routes can still report a targeted error later if needed.
+    }
     await Future<void>.delayed(const Duration(milliseconds: 1400));
     if (!mounted) return;
     final onboarded = context

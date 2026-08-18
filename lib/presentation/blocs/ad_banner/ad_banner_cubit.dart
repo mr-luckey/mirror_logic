@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mirror_logic/app/router.dart';
 import 'package:mirror_logic/app/ad_banner_host.dart';
-import 'package:mirror_logic/infrastructure/ads/ad_network.dart';
+import 'package:mirror_logic/app/router.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 
 part 'ad_banner_state.dart';
@@ -21,7 +20,6 @@ class AdBannerCubit extends Cubit<AdBannerState> with WidgetsBindingObserver {
     unawaited(_serveLoop());
   }
 
-  static const Duration _refreshInterval = Duration(seconds: 60);
   static const Duration _retryDelay = Duration(seconds: 15);
   static const Duration _perCandidateTimeout = Duration(seconds: 8);
 
@@ -36,8 +34,8 @@ class AdBannerCubit extends Cubit<AdBannerState> with WidgetsBindingObserver {
       AppRouter.router.routerDelegate.currentConfiguration.uri.path;
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState appState) {
-    final foreground = appState == AppLifecycleState.resumed;
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final foreground = state == AppLifecycleState.resumed;
     if (_appInForeground == foreground) return;
     _appInForeground = foreground;
     if (foreground) {
@@ -124,9 +122,11 @@ class AdBannerCubit extends Cubit<AdBannerState> with WidgetsBindingObserver {
       if (isClosed) return;
 
       if (loaded) {
-        await Future<void>.delayed(_refreshInterval);
-        if (isClosed) return;
-        _resetBanner();
+        // Keep a filled banner mounted continuously. Unity/Meta auto-refresh
+        // while visible; remounting on a timer can hurt UX and policy health.
+        while (!isClosed && _shouldRequest() && state.bannerLoaded) {
+          await Future<void>.delayed(const Duration(seconds: 1));
+        }
         continue;
       }
 
