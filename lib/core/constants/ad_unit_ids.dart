@@ -34,72 +34,154 @@ class AdSlotIds {
 abstract final class AdUnitIds {
   /// Unity Monetization game id. Use test id in debug; swap for production.
   static String get unityGameId {
-    return defaultTargetPlatform == TargetPlatform.iOS ? _iosUnityGameId : _androidUnityGameId;
+    return defaultTargetPlatform == TargetPlatform.iOS
+        ? _iosUnityGameId
+        : _androidUnityGameId;
   }
 
-  /// Unity test game ids — swap for production ids before release.
-  static const String _androidUnityGameId = kDebugMode ? '14851' : '5880850';
-  static const String _iosUnityGameId = kDebugMode ? '14850' : '5880851';
+  /// Example / test Unity game ids — replace before release.
+  static const String _androidUnityGameId = '5880850';
+  static const String _iosUnityGameId = '5880851';
 
-  /// Meta test app id — swap for production id before release.
-  static const String metaAppId = kDebugMode ? '123456789012345' : '123456789012345';
-
-  // -- Unity test placement ids (game ids 14850/14851) --
-  static const String _unityTestBanner = 'banner';
-  static const String _unityTestInterstitial = 'video';
-  static const String _unityTestRewarded = 'rewardedVideo';
-
-  // -- Meta Audience Network test placement ids --
-  static const String _metaTestBanner = 'IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID';
-  static const String _metaTestInterstitial = 'IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID';
-  static const String _metaTestRewarded = 'VID_HD_16_9_46S_APP_INSTALL#YOUR_PLACEMENT_ID';
+  /// Meta app id for Audience Network. Replace before release.
+  static const String metaAppId = '1340478374904617';
 
   static const List<AdSlotIds> _androidBanner = [
-    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_Android_1', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_Android_2', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_Android_3', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_Android_4', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_Android_5', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(
+      unity: 'Banner_Android_1',
+      meta: '1385141237044547_1385142403711097',
+    ),
+    AdSlotIds(
+      unity: 'Banner_Android_2',
+      meta: '1385141237044547_1385142763711061',
+    ),
+    AdSlotIds(
+      unity: 'Banner_Android_3',
+      meta: '1385141237044547_1385142897044381',
+    ),
+    AdSlotIds(
+      unity: 'Banner_Android_4',
+      meta: '1385141237044547_1385143033711034',
+    ),
+    AdSlotIds(
+      unity: 'Banner_Android_5',
+      meta: '1385141237044547_1385143123711025',
+    ),
   ];
 
   static const List<AdSlotIds> _androidInterstitial = [
-    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_Android_1', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_Android_2', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_Android_3', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_Android_4', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_Android_5', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(
+      unity: 'Interstitial_Android_1',
+      meta: '1385141237044547_1385143267044344',
+    ),
+    AdSlotIds(
+      unity: 'Interstitial_Android_2',
+      meta: '1385141237044547_1385143203711017',
+    ),
+    AdSlotIds(
+      unity: 'Interstitial_Android_3',
+      meta: '1385141237044547_1385144233710914',
+    ),
+    AdSlotIds(
+      unity: 'Interstitial_Android_4',
+      meta: '1385141237044547_1385144537044217',
+    ),
+    AdSlotIds(
+      unity: 'Interstitial_Android_5',
+      meta: '1385141237044547_1385144607044210',
+    ),
   ];
 
   static const List<AdSlotIds> _androidRewarded = [
-    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_Android_1', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_Android_2', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_Android_3', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_Android_4', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_Android_5', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
+    AdSlotIds(
+      unity: 'Rewarded_Android_1',
+      meta: '1385141237044547_1385144887044182',
+    ),
+    AdSlotIds(
+      unity: 'Rewarded_Android_2',
+      meta: '1385141237044547_1385145023710835',
+    ),
+    AdSlotIds(
+      unity: 'Rewarded_Android_3',
+      meta: '1385141237044547_1385145177044153',
+    ),
+    AdSlotIds(
+      unity: 'Rewarded_Android_4',
+      meta: '1385141237044547_1385145240377480',
+    ),
+    AdSlotIds(
+      unity: 'Rewarded_Android_5',
+      meta: '1385141237044547_1385145240377480',
+    ),
   ];
 
   static const List<AdSlotIds> _iosBanner = [
-    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_iOS_1', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_iOS_2', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_iOS_3', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_iOS_4', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_iOS_5', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(
+      unity: 'Banner_iOS_1',
+      meta: 'IMG_16_9_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Banner_iOS_2',
+      meta: 'IMG_16_9_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Banner_iOS_3',
+      meta: 'IMG_16_9_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Banner_iOS_4',
+      meta: 'IMG_16_9_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Banner_iOS_5',
+      meta: 'IMG_16_9_APP_INSTALL#5892850513905237',
+    ),
   ];
 
   static const List<AdSlotIds> _iosInterstitial = [
-    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_iOS_1', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_iOS_2', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_iOS_3', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_iOS_4', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_iOS_5', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(
+      unity: 'Interstitial_iOS_1',
+      meta: 'IMG_16_9_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Interstitial_iOS_2',
+      meta: 'IMG_16_9_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Interstitial_iOS_3',
+      meta: 'IMG_16_9_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Interstitial_iOS_4',
+      meta: 'IMG_16_9_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Interstitial_iOS_5',
+      meta: 'IMG_16_9_APP_INSTALL#5892850513905237',
+    ),
   ];
 
   static const List<AdSlotIds> _iosRewarded = [
-    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_iOS_1', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_iOS_2', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_iOS_3', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_iOS_4', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
-    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_iOS_5', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
+    AdSlotIds(
+      unity: 'Rewarded_iOS_1',
+      meta: 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Rewarded_iOS_2',
+      meta: 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Rewarded_iOS_3',
+      meta: 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Rewarded_iOS_4',
+      meta: 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237',
+    ),
+    AdSlotIds(
+      unity: 'Rewarded_iOS_5',
+      meta: 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237',
+    ),
   ];
 
   /// Fewest units a placement may carry.

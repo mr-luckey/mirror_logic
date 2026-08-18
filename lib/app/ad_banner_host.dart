@@ -208,29 +208,24 @@ class _AdBannerHostState extends State<AdBannerHost>
         !ads.isFullScreenAdShowing;
 
     return Stack(
-      alignment: Alignment.bottomCenter,
       children: [
+        widget.child,
         if (visible)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: MediaQuery.removePadding(
-                  context: context,
-                  removeBottom: true,
-                  child: widget.child,
-                ),
-              ),
-              AdBannerSlot(
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: AnimatedOpacity(
+              opacity: 1.0,
+              duration: const Duration(milliseconds: 300),
+              child: AdBannerSlot(
                 key: ValueKey('${selection.mountKey}-$_mountGeneration'),
                 selection: selection,
                 onLoaded: _onBannerLoaded,
                 onFailed: _onBannerFailed,
               ),
-            ],
-          )
-        else
-          widget.child,
+            ),
+          ),
         if (loading)
           Offstage(
             child: AdBannerSlot(
