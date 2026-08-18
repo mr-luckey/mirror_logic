@@ -1,7 +1,7 @@
 name: mirror_logic
 description: Mirror Logic — optical puzzle. Reflect, align, solve.
 publish_to: 'none'
-version: 5.0.0+5
+version: 6.0.0+6
 
 environment:
   sdk: ^3.11.5

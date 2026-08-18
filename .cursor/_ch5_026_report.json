@@ -1,0 +1,44 @@
+{
+  "harden_stdout": "ch5_026 strict family=woven_lattice side=south unique=37 catalog=serpentine_ridge_ridge_traverse_south_11_0589\n  top sc=12.90 n=13 start=(590,1510) xr=5 yr=5 ch=LLLLLLLLLLLL\n  strict exhausted after 0 wall-tries\nch5_026 loose family=woven_lattice side=south unique=205 catalog=serpentine_ridge_ridge_traverse_south_11_0589\n  top sc=10.72 n=12 start=(210,1160) xr=5 yr=2 ch=LLLRRRRLLLL\n  try#1 n=10 walls=7 lit={'c1'} hits=10 ok=True c=(970,1710)\nWROTE assets/levels/ch5_026.json\npath [(210.0, 1510.0), (590.0, 1510.0), (590.0, 810.0), (970.0, 810.0), (970.0, 460.0), (590.0, 460.0), (590.0, 110.0), (210.0, 110.0), (210.0, 1160.0), (970.0, 1160.0)]\ncrystal 970.0 1710.0 walls 7 chirs LRLRRLRRR",
+  "harden_exit": 0,
+  "validate_exit": 0,
+  "PRE": {
+    "title": "Gallery Path",
+    "mirrors": 12,
+    "obstacles": 8,
+    "req": 12,
+    "metadata": {
+      "designer": "canonical_v2",
+      "difficultyBand": "ch1",
+      "difficultyScore": 26.0,
+      "hardness": 0.6100000000000001,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "nested_frames_helix_descent_north_11_0598"
+    }
+  },
+  "FINAL": {
+    "title": "Gallery Path",
+    "mirrors": 10,
+    "obstacles": 7,
+    "req": 10,
+    "metadata": {
+      "designer": "canonical_v2_hardened",
+      "difficultyBand": "ch5_insane",
+      "difficultyScore": 97.0,
+      "hardness": 0.97,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "serpentine_ridge_ridge_traverse_south_11_0589"
+    },
+    "tip_m1": 358.0,
+    "tip": [
+      210.0,
+      1868.0
+    ],
+    "m1": [
+      210.0,
+      1510.0
+    ],
+    "ok_full": true
+  },
+  "harden_stderr": ""
+}

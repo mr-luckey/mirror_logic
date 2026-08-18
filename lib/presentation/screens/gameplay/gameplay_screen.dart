@@ -323,6 +323,12 @@ Future<void> _requestHint(BuildContext context) async {
 
 /// Takes payment for the hint, and reports whether it was paid.
 Future<bool> _payForHint(BuildContext context) async {
+  // QA / local: no rewarded gate while ads are off, or while the level-unlock
+  // testing flag is on (same "skip the grind" intent as open chapters).
+  if (!GameConstants.adsEnabled || GameConstants.unlockAllLevelsForTesting) {
+    return true;
+  }
+
   final ads = context.ads;
   if (ads == null) return false;
   if (!await _hasInternetConnection()) {

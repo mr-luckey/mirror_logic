@@ -1,0 +1,31 @@
+{
+  "levelId": "ch5_010_hard_vault_bend",
+  "title": "Vault Bend",
+  "metadata": {
+    "designer": "canonical_v2",
+    "difficultyBand": "ch1",
+    "difficultyScore": 10.0,
+    "hardness": 0.65,
+    "newConceptsIntroduced": [
+      "reflection",
+      "multi_mirror",
+      "orbit_ring"
+    ],
+    "objective": "Thread the vault bend \u2014 every post is required.",
+    "hints": [
+      "Rails fence the mid-spans so you cannot skip a corner.",
+      "Wrong angles die in the walls.",
+      "The crystal only opens from the last turn."
+    ],
+    "roomType": "meander_corridor",
+    "pathBias": "orbit_ring",
+    "wallStyle": "mid_segment_rails",
+    "globalIndex": 10,
+    "patternId": "orbit_ring_ridge_traverse_north_11_0574",
+    "pillars": []
+  },
+  "mirrors": 11,
+  "walls": 0,
+  "tip_m1": 68.0,
+  "bytes": 8756
+}

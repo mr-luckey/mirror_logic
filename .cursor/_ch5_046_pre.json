@@ -1,0 +1,29 @@
+{
+  "title": "Twin Pillars",
+  "mirrors": 12,
+  "obstacles": 7,
+  "req": 12,
+  "metadata": {
+    "designer": "canonical_v2",
+    "difficultyBand": "ch1",
+    "difficultyScore": 46.0,
+    "hardness": 0.6100000000000001,
+    "wallStyle": "mid_segment_rails",
+    "patternId": "corridor_gauntlet_west_cascade_fan_north_14_0626"
+  },
+  "ok_full": true,
+  "validate_ok": true,
+  "lit": [
+    "c1"
+  ],
+  "hits": 12,
+  "tip": [
+    590.0,
+    1868.0
+  ],
+  "m1": [
+    590.0,
+    1858.0
+  ],
+  "tip_m1": 10.0
+}

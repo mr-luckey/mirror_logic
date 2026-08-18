@@ -1,0 +1,64 @@
+{
+  "PRE": {
+    "title": "Hall Reflection",
+    "mirrors": 12,
+    "obstacles": 8,
+    "req": 12,
+    "metadata": {
+      "designer": "canonical_v2",
+      "difficultyBand": "ch1",
+      "difficultyScore": 37.0,
+      "hardness": 0.7200000000000001,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "double_loop_helix_descent_east_11_0628"
+    },
+    "ok_full": true,
+    "validate_ok": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 12,
+    "tip": [
+      52.0,
+      1508.0
+    ],
+    "m1": [
+      232.0,
+      1508.0
+    ],
+    "tip_m1": 180.0
+  },
+  "FINAL": {
+    "title": "Hall Reflection",
+    "mirrors": 11,
+    "obstacles": 7,
+    "req": 11,
+    "metadata": {
+      "designer": "canonical_v2_hardened",
+      "difficultyBand": "ch5_insane",
+      "difficultyScore": 97.0,
+      "hardness": 0.97,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "double_loop_helix_descent_east_14_0608"
+    },
+    "ok_full": true,
+    "validate_ok": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 11,
+    "tip": [
+      52.0,
+      1158.0
+    ],
+    "m1": [
+      232.0,
+      1158.0
+    ],
+    "tip_m1": 180.0
+  },
+  "harden_exit": 0,
+  "validate_exit": 0,
+  "mem_updated": 1,
+  "last_hardened": "ch5_037"
+}

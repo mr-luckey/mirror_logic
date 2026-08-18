@@ -1,0 +1,64 @@
+{
+  "PRE": {
+    "title": "Labyrinth Gate",
+    "mirrors": 12,
+    "obstacles": 9,
+    "req": 12,
+    "metadata": {
+      "designer": "canonical_v2",
+      "difficultyBand": "ch1",
+      "difficultyScore": 45.0,
+      "hardness": 0.6000000000000001,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "serpentine_ridge_ridge_traverse_south_14_0629"
+    },
+    "ok_full": true,
+    "validate_ok": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 12,
+    "tip": [
+      52.0,
+      1500.0
+    ],
+    "m1": [
+      232.0,
+      1500.0
+    ],
+    "tip_m1": 180.0
+  },
+  "FINAL": {
+    "title": "Labyrinth Gate",
+    "mirrors": 11,
+    "obstacles": 7,
+    "req": 11,
+    "metadata": {
+      "designer": "canonical_v2_hardened",
+      "difficultyBand": "ch5_insane",
+      "difficultyScore": 97.0,
+      "hardness": 0.97,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "serpentine_ridge_ridge_traverse_south_14_0629"
+    },
+    "ok_full": true,
+    "validate_ok": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 11,
+    "tip": [
+      52.0,
+      800.0
+    ],
+    "m1": [
+      232.0,
+      800.0
+    ],
+    "tip_m1": 180.0
+  },
+  "harden_exit": 0,
+  "validate_exit": 0,
+  "mem_updated": 2,
+  "last_hardened": "ch5_045"
+}

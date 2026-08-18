@@ -1,0 +1,31 @@
+{
+  "PRE": {
+    "title": "Iron Switchback",
+    "mirrors": 12,
+    "obstacles": 8,
+    "req": 12,
+    "metadata": {
+      "designer": "canonical_v2",
+      "difficultyBand": "ch1",
+      "difficultyScore": 48.0,
+      "hardness": 0.63,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "pillar_maze_west_cascade_fan_west_11_0631"
+    },
+    "ok_full": true,
+    "validate_ok": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 12,
+    "tip": [
+      1028.0,
+      450.0
+    ],
+    "m1": [
+      970.0,
+      450.0
+    ],
+    "tip_m1": 58.0
+  }
+}

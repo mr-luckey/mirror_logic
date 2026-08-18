@@ -1,0 +1,773 @@
+LIGHT GAP BATCH FIX REPORT
+========================================================================
+MIN_BEAM = 180.0
+levels scanned: 1000
+before tip→m1 < 180: 754
+after  tip→m1 < 180: 524
+fixed: 230
+needs_reharden: 520
+failed (reverted): 4
+skipped: 0
+
+FIXED
+------------------------------------------------------------------------
+  ch10_002.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_006.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_010.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_014.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_018.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_022.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_026.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_030.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_034.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_038.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_042.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_046.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_050.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_054.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_062.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_066.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_070.json   before=  158.0  after=  180.0  shift=22.0
+  ch10_074.json   before=  158.0  after=  180.0  shift=22.0
+  ch1_032.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_036.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_040.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_044.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_048.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_052.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_056.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_060.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_064.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_068.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_072.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_076.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_080.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_084.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_088.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_092.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_096.json    before=  168.0  after=  180.0  shift=12.0
+  ch1_100.json    before=  168.0  after=  180.0  shift=12.0
+  ch2_004.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_008.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_012.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_016.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_020.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_024.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_028.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_032.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_036.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_040.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_044.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_048.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_052.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_056.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_060.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_064.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_068.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_072.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_076.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_080.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_084.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_088.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_092.json    before=  158.0  after=  180.0  shift=22.0
+  ch2_100.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_004.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_008.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_012.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_016.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_020.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_024.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_028.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_036.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_040.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_044.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_048.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_056.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_060.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_064.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_068.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_072.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_074.json    before=   58.0  after=  180.0  shift=122.0
+  ch3_076.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_080.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_084.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_088.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_092.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_096.json    before=  158.0  after=  180.0  shift=22.0
+  ch3_100.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_004.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_008.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_012.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_016.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_020.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_024.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_028.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_032.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_036.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_040.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_044.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_048.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_053.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_057.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_061.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_065.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_069.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_073.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_077.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_085.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_089.json    before=  158.0  after=  180.0  shift=22.0
+  ch4_093.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_001.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_005.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_009.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_013.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_017.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_018.json    before=   18.0  after=  180.0  shift=162.0
+  ch5_021.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_025.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_029.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_033.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_037.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_041.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_045.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_047.json    before=   58.0  after=  180.0  shift=122.0
+  ch5_049.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_050.json    before=    8.0  after=  180.0  shift=172.0
+  ch5_053.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_057.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_065.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_069.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_073.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_077.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_081.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_085.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_089.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_093.json    before=  158.0  after=  180.0  shift=22.0
+  ch5_097.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_001.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_005.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_009.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_013.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_017.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_021.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_025.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_029.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_033.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_037.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_041.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_045.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_049.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_053.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_057.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_061.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_065.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_069.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_073.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_077.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_081.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_085.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_089.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_093.json    before=  158.0  after=  180.0  shift=22.0
+  ch6_097.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_001.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_005.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_009.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_013.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_017.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_021.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_025.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_029.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_037.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_041.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_045.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_049.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_053.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_057.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_061.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_065.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_069.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_073.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_077.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_081.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_085.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_089.json    before=  158.0  after=  180.0  shift=22.0
+  ch7_097.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_002.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_006.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_010.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_014.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_018.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_022.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_026.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_030.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_034.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_038.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_046.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_050.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_054.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_058.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_062.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_066.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_070.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_074.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_078.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_082.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_086.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_090.json    before=  158.0  after=  180.0  shift=22.0
+  ch8_094.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_002.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_006.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_010.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_014.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_017.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_018.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_022.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_026.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_030.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_034.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_038.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_042.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_046.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_050.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_054.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_058.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_062.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_066.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_070.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_074.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_078.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_082.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_086.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_090.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_094.json    before=  158.0  after=  180.0  shift=22.0
+  ch9_098.json    before=  158.0  after=  180.0  shift=22.0
+
+NEEDS_REHARDEN
+------------------------------------------------------------------------
+  ch10_001.json   oob_after_shift needed=122.0
+  ch10_003.json   oob_after_shift needed=152.0
+  ch10_005.json   oob_after_shift needed=122.0
+  ch10_009.json   oob_after_shift needed=122.0
+  ch10_012.json   oob_after_shift needed=142.0
+  ch10_013.json   oob_after_shift needed=122.0
+  ch10_015.json   oob_after_shift needed=152.0
+  ch10_017.json   oob_after_shift needed=122.0
+  ch10_021.json   oob_after_shift needed=122.0
+  ch10_024.json   oob_after_shift needed=142.0
+  ch10_025.json   oob_after_shift needed=122.0
+  ch10_027.json   oob_after_shift needed=152.0
+  ch10_029.json   oob_after_shift needed=122.0
+  ch10_033.json   oob_after_shift needed=122.0
+  ch10_036.json   oob_after_shift needed=142.0
+  ch10_037.json   oob_after_shift needed=122.0
+  ch10_039.json   oob_after_shift needed=152.0
+  ch10_041.json   oob_after_shift needed=122.0
+  ch10_045.json   oob_after_shift needed=122.0
+  ch10_048.json   oob_after_shift needed=142.0
+  ch10_049.json   oob_after_shift needed=122.0
+  ch10_051.json   oob_after_shift needed=152.0
+  ch10_053.json   oob_after_shift needed=122.0
+  ch10_057.json   oob_after_shift needed=122.0
+  ch10_058.json   oob_after_shift needed=122.0
+  ch10_059.json   oob_after_shift needed=168.0
+  ch10_060.json   oob_after_shift needed=142.0
+  ch10_061.json   oob_after_shift needed=122.0
+  ch10_063.json   oob_after_shift needed=152.0
+  ch10_065.json   oob_after_shift needed=122.0
+  ch10_069.json   oob_after_shift needed=122.0
+  ch10_071.json   oob_after_shift needed=168.0
+  ch10_073.json   oob_after_shift needed=122.0
+  ch1_020.json    oob_after_shift needed=72.0
+  ch1_023.json    oob_after_shift needed=152.0
+  ch1_024.json    oob_after_shift needed=72.0
+  ch1_025.json    oob_after_shift needed=12.0
+  ch1_026.json    oob_after_shift needed=32.0
+  ch1_027.json    oob_after_shift needed=152.0
+  ch1_029.json    oob_after_shift needed=72.0
+  ch1_031.json    oob_after_shift needed=112.0
+  ch1_033.json    oob_after_shift needed=92.0
+  ch1_035.json    oob_after_shift needed=112.0
+  ch1_037.json    oob_after_shift needed=152.0
+  ch1_038.json    oob_after_shift needed=142.0
+  ch1_039.json    oob_after_shift needed=132.0
+  ch1_041.json    oob_after_shift needed=152.0
+  ch1_043.json    oob_after_shift needed=132.0
+  ch1_047.json    oob_after_shift needed=132.0
+  ch1_050.json    oob_after_shift needed=142.0
+  ch1_051.json    oob_after_shift needed=132.0
+  ch1_055.json    oob_after_shift needed=132.0
+  ch1_057.json    oob_after_shift needed=152.0
+  ch1_059.json    oob_after_shift needed=132.0
+  ch1_061.json    oob_after_shift needed=152.0
+  ch1_062.json    oob_after_shift needed=142.0
+  ch1_063.json    oob_after_shift needed=132.0
+  ch1_065.json    oob_after_shift needed=152.0
+  ch1_066.json    oob_after_shift needed=142.0
+  ch1_067.json    oob_after_shift needed=132.0
+  ch1_069.json    oob_after_shift needed=152.0
+  ch1_070.json    oob_after_shift needed=142.0
+  ch1_071.json    oob_after_shift needed=132.0
+  ch1_073.json    oob_after_shift needed=152.0
+  ch1_074.json    oob_after_shift needed=142.0
+  ch1_075.json    oob_after_shift needed=132.0
+  ch1_078.json    oob_after_shift needed=142.0
+  ch1_079.json    oob_after_shift needed=132.0
+  ch1_083.json    oob_after_shift needed=132.0
+  ch1_087.json    oob_after_shift needed=132.0
+  ch1_091.json    oob_after_shift needed=132.0
+  ch1_095.json    oob_after_shift needed=132.0
+  ch1_098.json    oob_after_shift needed=142.0
+  ch1_099.json    oob_after_shift needed=132.0
+  ch2_003.json    oob_after_shift needed=122.0
+  ch2_007.json    oob_after_shift needed=122.0
+  ch2_011.json    oob_after_shift needed=122.0
+  ch2_013.json    oob_after_shift needed=170.0
+  ch2_014.json    oob_after_shift needed=122.0
+  ch2_015.json    oob_after_shift needed=122.0
+  ch2_017.json    oob_after_shift needed=172.0
+  ch2_018.json    oob_after_shift needed=132.0
+  ch2_019.json    oob_after_shift needed=122.0
+  ch2_021.json    oob_after_shift needed=162.0
+  ch2_022.json    oob_after_shift needed=124.0
+  ch2_023.json    oob_after_shift needed=122.0
+  ch2_026.json    oob_after_shift needed=122.0
+  ch2_027.json    oob_after_shift needed=122.0
+  ch2_029.json    oob_after_shift needed=172.0
+  ch2_030.json    oob_after_shift needed=132.0
+  ch2_031.json    oob_after_shift needed=122.0
+  ch2_033.json    oob_after_shift needed=162.0
+  ch2_034.json    oob_after_shift needed=124.0
+  ch2_035.json    oob_after_shift needed=122.0
+  ch2_037.json    oob_after_shift needed=170.0
+  ch2_038.json    oob_after_shift needed=122.0
+  ch2_039.json    oob_after_shift needed=122.0
+  ch2_041.json    oob_after_shift needed=172.0
+  ch2_042.json    oob_after_shift needed=132.0
+  ch2_043.json    oob_after_shift needed=122.0
+  ch2_045.json    oob_after_shift needed=162.0
+  ch2_047.json    oob_after_shift needed=122.0
+  ch2_049.json    oob_after_shift needed=170.0
+  ch2_051.json    oob_after_shift needed=122.0
+  ch2_055.json    oob_after_shift needed=122.0
+  ch2_059.json    oob_after_shift needed=122.0
+  ch2_063.json    oob_after_shift needed=122.0
+  ch2_065.json    oob_after_shift needed=172.0
+  ch2_067.json    oob_after_shift needed=122.0
+  ch2_071.json    oob_after_shift needed=122.0
+  ch2_075.json    oob_after_shift needed=122.0
+  ch2_079.json    oob_after_shift needed=122.0
+  ch2_081.json    oob_after_shift needed=162.0
+  ch2_082.json    oob_after_shift needed=124.0
+  ch2_083.json    oob_after_shift needed=122.0
+  ch2_085.json    oob_after_shift needed=170.0
+  ch2_086.json    oob_after_shift needed=122.0
+  ch2_087.json    oob_after_shift needed=122.0
+  ch2_089.json    oob_after_shift needed=172.0
+  ch2_090.json    oob_after_shift needed=132.0
+  ch2_091.json    oob_after_shift needed=122.0
+  ch2_094.json    oob_after_shift needed=124.0
+  ch2_095.json    oob_after_shift needed=122.0
+  ch2_096.json    oob_after_shift needed=22.0
+  ch2_097.json    oob_after_shift needed=170.0
+  ch2_099.json    oob_after_shift needed=122.0
+  ch3_002.json    oob_after_shift needed=122.0
+  ch3_003.json    oob_after_shift needed=122.0
+  ch3_005.json    oob_after_shift needed=172.0
+  ch3_007.json    oob_after_shift needed=122.0
+  ch3_011.json    oob_after_shift needed=122.0
+  ch3_015.json    oob_after_shift needed=122.0
+  ch3_017.json    oob_after_shift needed=172.0
+  ch3_018.json    oob_after_shift needed=122.0
+  ch3_019.json    oob_after_shift needed=122.0
+  ch3_023.json    oob_after_shift needed=122.0
+  ch3_027.json    oob_after_shift needed=122.0
+  ch3_029.json    oob_after_shift needed=172.0
+  ch3_030.json    oob_after_shift needed=122.0
+  ch3_031.json    oob_after_shift needed=122.0
+  ch3_032.json    oob_after_shift needed=22.0
+  ch3_033.json    oob_after_shift needed=172.0
+  ch3_034.json    oob_after_shift needed=122.0
+  ch3_035.json    oob_after_shift needed=122.0
+  ch3_037.json    oob_after_shift needed=172.0
+  ch3_038.json    oob_after_shift needed=122.0
+  ch3_039.json    oob_after_shift needed=122.0
+  ch3_041.json    oob_after_shift needed=172.0
+  ch3_042.json    oob_after_shift needed=122.0
+  ch3_043.json    oob_after_shift needed=122.0
+  ch3_045.json    oob_after_shift needed=172.0
+  ch3_046.json    oob_after_shift needed=122.0
+  ch3_047.json    oob_after_shift needed=122.0
+  ch3_049.json    oob_after_shift needed=172.0
+  ch3_050.json    oob_after_shift needed=122.0
+  ch3_051.json    oob_after_shift needed=122.0
+  ch3_052.json    oob_after_shift needed=22.0
+  ch3_053.json    oob_after_shift needed=172.0
+  ch3_054.json    oob_after_shift needed=122.0
+  ch3_055.json    oob_after_shift needed=122.0
+  ch3_057.json    oob_after_shift needed=172.0
+  ch3_058.json    oob_after_shift needed=122.0
+  ch3_059.json    oob_after_shift needed=122.0
+  ch3_061.json    oob_after_shift needed=172.0
+  ch3_062.json    oob_after_shift needed=122.0
+  ch3_063.json    oob_after_shift needed=122.0
+  ch3_065.json    oob_after_shift needed=172.0
+  ch3_066.json    oob_after_shift needed=122.0
+  ch3_067.json    oob_after_shift needed=122.0
+  ch3_069.json    oob_after_shift needed=172.0
+  ch3_070.json    oob_after_shift needed=122.0
+  ch3_071.json    oob_after_shift needed=122.0
+  ch3_073.json    oob_after_shift needed=172.0
+  ch3_075.json    oob_after_shift needed=122.0
+  ch3_077.json    oob_after_shift needed=172.0
+  ch3_078.json    oob_after_shift needed=122.0
+  ch3_079.json    oob_after_shift needed=122.0
+  ch3_082.json    oob_after_shift needed=122.0
+  ch3_083.json    oob_after_shift needed=122.0
+  ch3_086.json    oob_after_shift needed=122.0
+  ch3_087.json    oob_after_shift needed=122.0
+  ch3_089.json    oob_after_shift needed=172.0
+  ch3_091.json    oob_after_shift needed=122.0
+  ch3_095.json    oob_after_shift needed=122.0
+  ch3_099.json    oob_after_shift needed=122.0
+  ch4_003.json    oob_after_shift needed=122.0
+  ch4_007.json    oob_after_shift needed=122.0
+  ch4_011.json    oob_after_shift needed=122.0
+  ch4_013.json    oob_after_shift needed=160.0
+  ch4_014.json    oob_after_shift needed=126.0
+  ch4_015.json    oob_after_shift needed=122.0
+  ch4_017.json    oob_after_shift needed=168.0
+  ch4_018.json    oob_after_shift needed=142.0
+  ch4_019.json    oob_after_shift needed=122.0
+  ch4_021.json    oob_after_shift needed=152.0
+  ch4_022.json    oob_after_shift needed=134.0
+  ch4_023.json    oob_after_shift needed=122.0
+  ch4_025.json    oob_after_shift needed=160.0
+  ch4_026.json    oob_after_shift needed=126.0
+  ch4_027.json    oob_after_shift needed=122.0
+  ch4_030.json    oob_after_shift needed=142.0
+  ch4_031.json    oob_after_shift needed=122.0
+  ch4_033.json    oob_after_shift needed=152.0
+  ch4_034.json    oob_after_shift needed=134.0
+  ch4_035.json    oob_after_shift needed=122.0
+  ch4_037.json    oob_after_shift needed=160.0
+  ch4_038.json    oob_after_shift needed=126.0
+  ch4_039.json    oob_after_shift needed=122.0
+  ch4_041.json    oob_after_shift needed=168.0
+  ch4_042.json    oob_after_shift needed=142.0
+  ch4_043.json    oob_after_shift needed=122.0
+  ch4_045.json    oob_after_shift needed=152.0
+  ch4_046.json    oob_after_shift needed=134.0
+  ch4_047.json    oob_after_shift needed=122.0
+  ch4_049.json    oob_after_shift needed=160.0
+  ch4_050.json    oob_after_shift needed=126.0
+  ch4_052.json    oob_after_shift needed=122.0
+  ch4_054.json    oob_after_shift needed=152.0
+  ch4_055.json    oob_after_shift needed=134.0
+  ch4_056.json    oob_after_shift needed=122.0
+  ch4_058.json    oob_after_shift needed=160.0
+  ch4_059.json    oob_after_shift needed=126.0
+  ch4_060.json    oob_after_shift needed=122.0
+  ch4_062.json    oob_after_shift needed=168.0
+  ch4_064.json    oob_after_shift needed=122.0
+  ch4_066.json    oob_after_shift needed=152.0
+  ch4_067.json    oob_after_shift needed=134.0
+  ch4_068.json    oob_after_shift needed=122.0
+  ch4_070.json    oob_after_shift needed=160.0
+  ch4_071.json    oob_after_shift needed=126.0
+  ch4_072.json    oob_after_shift needed=122.0
+  ch4_075.json    oob_after_shift needed=142.0
+  ch4_076.json    oob_after_shift needed=122.0
+  ch4_078.json    oob_after_shift needed=152.0
+  ch4_079.json    oob_after_shift needed=134.0
+  ch4_080.json    oob_after_shift needed=122.0
+  ch4_081.json    oob_after_shift needed=22.0
+  ch4_082.json    oob_after_shift needed=160.0
+  ch4_083.json    oob_after_shift needed=126.0
+  ch4_084.json    oob_after_shift needed=122.0
+  ch4_086.json    oob_after_shift needed=168.0
+  ch4_087.json    oob_after_shift needed=142.0
+  ch4_088.json    oob_after_shift needed=122.0
+  ch4_090.json    oob_after_shift needed=152.0
+  ch4_091.json    oob_after_shift needed=134.0
+  ch4_092.json    oob_after_shift needed=122.0
+  ch4_094.json    oob_after_shift needed=160.0
+  ch4_095.json    oob_after_shift needed=126.0
+  ch4_096.json    oob_after_shift needed=122.0
+  ch4_097.json    oob_after_shift needed=22.0
+  ch4_098.json    oob_after_shift needed=168.0
+  ch4_099.json    oob_after_shift needed=142.0
+  ch4_100.json    oob_after_shift needed=122.0
+  ch5_002.json    oob_after_shift needed=172.0
+  ch5_003.json    oob_after_shift needed=132.0
+  ch5_004.json    oob_after_shift needed=122.0
+  ch5_006.json    oob_after_shift needed=162.0
+  ch5_007.json    oob_after_shift needed=124.0
+  ch5_008.json    oob_after_shift needed=122.0
+  ch5_010.json    oob_after_shift needed=170.0
+  ch5_011.json    oob_after_shift needed=122.0
+  ch5_012.json    oob_after_shift needed=122.0
+  ch5_014.json    oob_after_shift needed=172.0
+  ch5_015.json    oob_after_shift needed=132.0
+  ch5_016.json    oob_after_shift needed=122.0
+  ch5_019.json    oob_after_shift needed=124.0
+  ch5_020.json    oob_after_shift needed=122.0
+  ch5_022.json    oob_after_shift needed=170.0
+  ch5_023.json    oob_after_shift needed=122.0
+  ch5_024.json    oob_after_shift needed=122.0
+  ch5_026.json    oob_after_shift needed=172.0
+  ch5_027.json    oob_after_shift needed=132.0
+  ch5_028.json    oob_after_shift needed=122.0
+  ch5_030.json    oob_after_shift needed=162.0
+  ch5_031.json    oob_after_shift needed=124.0
+  ch5_032.json    oob_after_shift needed=122.0
+  ch5_034.json    oob_after_shift needed=170.0
+  ch5_035.json    oob_after_shift needed=122.0
+  ch5_036.json    oob_after_shift needed=122.0
+  ch5_038.json    oob_after_shift needed=172.0
+  ch5_040.json    oob_after_shift needed=122.0
+  ch5_043.json    oob_after_shift needed=124.0
+  ch5_044.json    oob_after_shift needed=122.0
+  ch5_046.json    oob_after_shift needed=170.0
+  ch5_048.json    oob_after_shift needed=122.0
+  ch5_052.json    oob_after_shift needed=122.0
+  ch5_056.json    oob_after_shift needed=122.0
+  ch5_060.json    oob_after_shift needed=122.0
+  ch5_064.json    oob_after_shift needed=122.0
+  ch5_068.json    oob_after_shift needed=122.0
+  ch5_072.json    oob_after_shift needed=122.0
+  ch5_076.json    oob_after_shift needed=122.0
+  ch5_080.json    oob_after_shift needed=122.0
+  ch5_084.json    oob_after_shift needed=122.0
+  ch5_088.json    oob_after_shift needed=122.0
+  ch5_092.json    oob_after_shift needed=122.0
+  ch5_096.json    oob_after_shift needed=122.0
+  ch5_100.json    oob_after_shift needed=122.0
+  ch6_004.json    oob_after_shift needed=122.0
+  ch6_008.json    oob_after_shift needed=122.0
+  ch6_012.json    oob_after_shift needed=122.0
+  ch6_016.json    oob_after_shift needed=122.0
+  ch6_020.json    oob_after_shift needed=122.0
+  ch6_023.json    oob_after_shift needed=122.0
+  ch6_024.json    oob_after_shift needed=122.0
+  ch6_027.json    oob_after_shift needed=122.0
+  ch6_028.json    oob_after_shift needed=122.0
+  ch6_030.json    oob_after_shift needed=172.0
+  ch6_031.json    oob_after_shift needed=122.0
+  ch6_032.json    oob_after_shift needed=122.0
+  ch6_034.json    oob_after_shift needed=172.0
+  ch6_035.json    oob_after_shift needed=122.0
+  ch6_036.json    oob_after_shift needed=122.0
+  ch6_038.json    oob_after_shift needed=172.0
+  ch6_039.json    oob_after_shift needed=122.0
+  ch6_040.json    oob_after_shift needed=122.0
+  ch6_042.json    oob_after_shift needed=172.0
+  ch6_043.json    oob_after_shift needed=122.0
+  ch6_044.json    oob_after_shift needed=122.0
+  ch6_046.json    oob_after_shift needed=172.0
+  ch6_047.json    oob_after_shift needed=122.0
+  ch6_048.json    oob_after_shift needed=122.0
+  ch6_050.json    oob_after_shift needed=172.0
+  ch6_051.json    oob_after_shift needed=122.0
+  ch6_052.json    oob_after_shift needed=122.0
+  ch6_054.json    oob_after_shift needed=172.0
+  ch6_055.json    oob_after_shift needed=122.0
+  ch6_056.json    oob_after_shift needed=122.0
+  ch6_058.json    oob_after_shift needed=172.0
+  ch6_059.json    oob_after_shift needed=122.0
+  ch6_060.json    oob_after_shift needed=122.0
+  ch6_062.json    oob_after_shift needed=172.0
+  ch6_063.json    oob_after_shift needed=122.0
+  ch6_064.json    oob_after_shift needed=122.0
+  ch6_066.json    oob_after_shift needed=172.0
+  ch6_067.json    oob_after_shift needed=122.0
+  ch6_068.json    oob_after_shift needed=122.0
+  ch6_070.json    oob_after_shift needed=172.0
+  ch6_071.json    oob_after_shift needed=122.0
+  ch6_072.json    oob_after_shift needed=122.0
+  ch6_074.json    oob_after_shift needed=172.0
+  ch6_075.json    oob_after_shift needed=122.0
+  ch6_076.json    oob_after_shift needed=122.0
+  ch6_078.json    oob_after_shift needed=172.0
+  ch6_079.json    oob_after_shift needed=122.0
+  ch6_080.json    oob_after_shift needed=122.0
+  ch6_082.json    oob_after_shift needed=172.0
+  ch6_083.json    oob_after_shift needed=122.0
+  ch6_084.json    oob_after_shift needed=122.0
+  ch6_086.json    oob_after_shift needed=172.0
+  ch6_087.json    oob_after_shift needed=122.0
+  ch6_088.json    oob_after_shift needed=122.0
+  ch6_090.json    oob_after_shift needed=172.0
+  ch6_091.json    oob_after_shift needed=122.0
+  ch6_092.json    oob_after_shift needed=122.0
+  ch6_094.json    oob_after_shift needed=172.0
+  ch6_095.json    oob_after_shift needed=122.0
+  ch6_096.json    oob_after_shift needed=122.0
+  ch6_098.json    oob_after_shift needed=172.0
+  ch6_099.json    oob_after_shift needed=122.0
+  ch6_100.json    oob_after_shift needed=122.0
+  ch7_004.json    oob_after_shift needed=122.0
+  ch7_006.json    oob_after_shift needed=152.0
+  ch7_008.json    oob_after_shift needed=122.0
+  ch7_012.json    oob_after_shift needed=122.0
+  ch7_015.json    oob_after_shift needed=142.0
+  ch7_016.json    oob_after_shift needed=122.0
+  ch7_018.json    oob_after_shift needed=152.0
+  ch7_020.json    oob_after_shift needed=122.0
+  ch7_024.json    oob_after_shift needed=122.0
+  ch7_027.json    oob_after_shift needed=142.0
+  ch7_028.json    oob_after_shift needed=122.0
+  ch7_030.json    oob_after_shift needed=152.0
+  ch7_032.json    oob_after_shift needed=122.0
+  ch7_033.json    oob_after_shift needed=22.0
+  ch7_036.json    oob_after_shift needed=122.0
+  ch7_039.json    oob_after_shift needed=142.0
+  ch7_040.json    oob_after_shift needed=122.0
+  ch7_042.json    oob_after_shift needed=152.0
+  ch7_044.json    oob_after_shift needed=122.0
+  ch7_048.json    oob_after_shift needed=122.0
+  ch7_051.json    oob_after_shift needed=142.0
+  ch7_052.json    oob_after_shift needed=122.0
+  ch7_054.json    oob_after_shift needed=152.0
+  ch7_056.json    oob_after_shift needed=122.0
+  ch7_060.json    oob_after_shift needed=122.0
+  ch7_063.json    oob_after_shift needed=142.0
+  ch7_064.json    oob_after_shift needed=122.0
+  ch7_066.json    oob_after_shift needed=152.0
+  ch7_068.json    oob_after_shift needed=122.0
+  ch7_072.json    oob_after_shift needed=122.0
+  ch7_075.json    oob_after_shift needed=142.0
+  ch7_076.json    oob_after_shift needed=122.0
+  ch7_078.json    oob_after_shift needed=152.0
+  ch7_080.json    oob_after_shift needed=122.0
+  ch7_084.json    oob_after_shift needed=122.0
+  ch7_087.json    oob_after_shift needed=142.0
+  ch7_088.json    oob_after_shift needed=122.0
+  ch7_090.json    oob_after_shift needed=152.0
+  ch7_092.json    oob_after_shift needed=122.0
+  ch7_093.json    oob_after_shift needed=22.0
+  ch7_096.json    oob_after_shift needed=122.0
+  ch7_099.json    oob_after_shift needed=142.0
+  ch7_100.json    oob_after_shift needed=122.0
+  ch8_001.json    oob_after_shift needed=122.0
+  ch8_005.json    oob_after_shift needed=122.0
+  ch8_008.json    oob_after_shift needed=122.0
+  ch8_009.json    oob_after_shift needed=122.0
+  ch8_011.json    oob_after_shift needed=172.0
+  ch8_013.json    oob_after_shift needed=122.0
+  ch8_017.json    oob_after_shift needed=122.0
+  ch8_020.json    oob_after_shift needed=122.0
+  ch8_021.json    oob_after_shift needed=122.0
+  ch8_023.json    oob_after_shift needed=172.0
+  ch8_025.json    oob_after_shift needed=122.0
+  ch8_029.json    oob_after_shift needed=122.0
+  ch8_032.json    oob_after_shift needed=122.0
+  ch8_033.json    oob_after_shift needed=122.0
+  ch8_035.json    oob_after_shift needed=172.0
+  ch8_041.json    oob_after_shift needed=122.0
+  ch8_042.json    oob_after_shift needed=122.0
+  ch8_044.json    oob_after_shift needed=122.0
+  ch8_045.json    oob_after_shift needed=122.0
+  ch8_047.json    oob_after_shift needed=172.0
+  ch8_049.json    oob_after_shift needed=122.0
+  ch8_053.json    oob_after_shift needed=122.0
+  ch8_056.json    oob_after_shift needed=122.0
+  ch8_057.json    oob_after_shift needed=122.0
+  ch8_059.json    oob_after_shift needed=172.0
+  ch8_061.json    oob_after_shift needed=122.0
+  ch8_065.json    oob_after_shift needed=122.0
+  ch8_068.json    oob_after_shift needed=122.0
+  ch8_069.json    oob_after_shift needed=122.0
+  ch8_071.json    oob_after_shift needed=172.0
+  ch8_073.json    oob_after_shift needed=122.0
+  ch8_077.json    oob_after_shift needed=172.0
+  ch8_080.json    oob_after_shift needed=122.0
+  ch8_081.json    oob_after_shift needed=122.0
+  ch8_083.json    oob_after_shift needed=172.0
+  ch8_085.json    oob_after_shift needed=122.0
+  ch8_089.json    oob_after_shift needed=122.0
+  ch8_092.json    oob_after_shift needed=122.0
+  ch8_093.json    oob_after_shift needed=122.0
+  ch8_095.json    oob_after_shift needed=172.0
+  ch8_097.json    oob_after_shift needed=122.0
+  ch8_098.json    oob_after_shift needed=122.0
+  ch9_001.json    oob_after_shift needed=122.0
+  ch9_003.json    oob_after_shift needed=172.0
+  ch9_004.json    oob_after_shift needed=122.0
+  ch9_005.json    oob_after_shift needed=122.0
+  ch9_007.json    oob_after_shift needed=172.0
+  ch9_008.json    oob_after_shift needed=122.0
+  ch9_009.json    oob_after_shift needed=122.0
+  ch9_011.json    oob_after_shift needed=172.0
+  ch9_012.json    oob_after_shift needed=122.0
+  ch9_013.json    oob_after_shift needed=122.0
+  ch9_015.json    oob_after_shift needed=172.0
+  ch9_016.json    oob_after_shift needed=122.0
+  ch9_019.json    oob_after_shift needed=172.0
+  ch9_020.json    oob_after_shift needed=122.0
+  ch9_021.json    oob_after_shift needed=122.0
+  ch9_023.json    oob_after_shift needed=172.0
+  ch9_024.json    oob_after_shift needed=122.0
+  ch9_025.json    oob_after_shift needed=122.0
+  ch9_027.json    oob_after_shift needed=172.0
+  ch9_028.json    oob_after_shift needed=122.0
+  ch9_029.json    oob_after_shift needed=122.0
+  ch9_031.json    oob_after_shift needed=172.0
+  ch9_032.json    oob_after_shift needed=122.0
+  ch9_033.json    oob_after_shift needed=122.0
+  ch9_035.json    oob_after_shift needed=172.0
+  ch9_036.json    oob_after_shift needed=122.0
+  ch9_037.json    oob_after_shift needed=122.0
+  ch9_039.json    oob_after_shift needed=172.0
+  ch9_040.json    oob_after_shift needed=122.0
+  ch9_041.json    oob_after_shift needed=122.0
+  ch9_043.json    oob_after_shift needed=172.0
+  ch9_044.json    oob_after_shift needed=122.0
+  ch9_045.json    oob_after_shift needed=122.0
+  ch9_047.json    oob_after_shift needed=172.0
+  ch9_048.json    oob_after_shift needed=122.0
+  ch9_049.json    oob_after_shift needed=122.0
+  ch9_051.json    oob_after_shift needed=172.0
+  ch9_052.json    oob_after_shift needed=122.0
+  ch9_053.json    oob_after_shift needed=122.0
+  ch9_055.json    oob_after_shift needed=122.0
+  ch9_056.json    oob_after_shift needed=122.0
+  ch9_057.json    oob_after_shift needed=122.0
+  ch9_059.json    oob_after_shift needed=172.0
+  ch9_060.json    oob_after_shift needed=122.0
+  ch9_061.json    oob_after_shift needed=122.0
+  ch9_063.json    oob_after_shift needed=172.0
+  ch9_064.json    oob_after_shift needed=122.0
+  ch9_065.json    oob_after_shift needed=122.0
+  ch9_067.json    oob_after_shift needed=122.0
+  ch9_068.json    oob_after_shift needed=122.0
+  ch9_069.json    oob_after_shift needed=122.0
+  ch9_071.json    oob_after_shift needed=172.0
+  ch9_072.json    oob_after_shift needed=122.0
+  ch9_073.json    oob_after_shift needed=122.0
+  ch9_075.json    oob_after_shift needed=172.0
+  ch9_076.json    oob_after_shift needed=122.0
+  ch9_077.json    oob_after_shift needed=122.0
+  ch9_079.json    oob_after_shift needed=172.0
+  ch9_080.json    oob_after_shift needed=122.0
+  ch9_081.json    oob_after_shift needed=122.0
+  ch9_083.json    oob_after_shift needed=172.0
+  ch9_084.json    oob_after_shift needed=122.0
+  ch9_085.json    oob_after_shift needed=122.0
+  ch9_087.json    oob_after_shift needed=172.0
+  ch9_088.json    oob_after_shift needed=122.0
+  ch9_089.json    oob_after_shift needed=122.0
+  ch9_091.json    oob_after_shift needed=172.0
+  ch9_092.json    oob_after_shift needed=122.0
+  ch9_093.json    oob_after_shift needed=122.0
+  ch9_095.json    oob_after_shift needed=172.0
+  ch9_096.json    oob_after_shift needed=122.0
+  ch9_097.json    oob_after_shift needed=122.0
+  ch9_099.json    oob_after_shift needed=172.0
+  ch9_100.json    oob_after_shift needed=122.0
+
+FAILED (reverted)
+------------------------------------------------------------------------
+  ch1_017.json    validate_fail needed=32.0
+  ch1_021.json    validate_fail needed=12.0
+  ch1_022.json    validate_fail needed=32.0
+  ch1_028.json    validate_fail needed=32.0

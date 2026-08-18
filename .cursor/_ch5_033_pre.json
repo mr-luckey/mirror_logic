@@ -1,0 +1,30 @@
+{
+  "id": null,
+  "metadata": {
+    "designer": "canonical_v2",
+    "difficultyBand": "ch1",
+    "difficultyScore": 33.0,
+    "hardness": 0.68,
+    "newConceptsIntroduced": [
+      "reflection",
+      "multi_mirror",
+      "ridge_climb"
+    ],
+    "objective": "Thread the iron switchback \u2014 every post is required.",
+    "hints": [
+      "Rails fence the mid-spans so you cannot skip a corner.",
+      "Wrong angles die in the walls.",
+      "The crystal only opens from the last turn."
+    ],
+    "roomType": "meander_corridor",
+    "pathBias": "ridge_climb",
+    "wallStyle": "mid_segment_rails",
+    "globalIndex": 33,
+    "patternId": "ridge_climb_helix_descent_south_11_0613",
+    "pillars": []
+  },
+  "width": null,
+  "height": null,
+  "mirrors_count": 11,
+  "walls_count": 0
+}

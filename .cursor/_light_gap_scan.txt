@@ -1,0 +1,990 @@
+LIGHT→MIRROR GAP SCAN
+========================================================================
+levels scanned: 1000
+skipped: 0
+m1 != nearest hinge: 23
+no m1 resolvable: 0
+
+COUNTS: primary distance (lightSources[0].position → intended m1 hinge,
+         else nearest hinge if m1 missing)
+  <  50: 379
+  <  80: 517
+  < 100: 750
+  < 120: 753
+  < 150: 753
+  < 170: 756
+  < 200: 756
+  < 250: 756
+
+COUNTS: nearest hinge only
+  <  50: 379
+  <  80: 517
+  < 100: 750
+  < 120: 755
+  < 150: 756
+  < 170: 761
+  < 200: 761
+  < 250: 767
+
+COUNTS: intended m1 only (levels with resolvable m1)
+  <  50: 379
+  <  80: 517
+  < 100: 750
+  < 120: 753
+  < 150: 753
+  < 170: 756
+  < 200: 756
+  < 250: 756
+
+ALL levels with primary distance < 150 (753):
+------------------------------------------------------------------------
+ch1_031.json    d=   10.0  via=m1:m1  light=(950,1020)  hinge=(960,1020)  dir=180  near=10.0/m1  m1=10.0
+ch1_033.json    d=   10.0  via=m1:m1  light=(560,1790)  hinge=(560,1780)  dir=270  near=10.0/m1  m1=10.0
+ch1_035.json    d=   10.0  via=m1:m1  light=(950,1840)  hinge=(960,1840)  dir=180  near=10.0/m1  m1=10.0
+ch10_001.json   d=   20.0  via=m1:m1  light=(950,1148)  hinge=(970,1148)  dir=180  near=20.0/m1  m1=20.0
+ch10_005.json   d=   20.0  via=m1:m1  light=(950,456)  hinge=(970,456)  dir=180  near=20.0/m1  m1=20.0
+ch10_009.json   d=   20.0  via=m1:m1  light=(950,440)  hinge=(970,440)  dir=180  near=20.0/m1  m1=20.0
+ch10_013.json   d=   20.0  via=m1:m1  light=(950,1148)  hinge=(970,1148)  dir=180  near=20.0/m1  m1=20.0
+ch10_017.json   d=   20.0  via=m1:m1  light=(950,1506)  hinge=(970,1506)  dir=180  near=20.0/m1  m1=20.0
+ch10_021.json   d=   20.0  via=m1:m1  light=(950,440)  hinge=(970,440)  dir=180  near=20.0/m1  m1=20.0
+ch10_025.json   d=   20.0  via=m1:m1  light=(950,798)  hinge=(970,798)  dir=180  near=20.0/m1  m1=20.0
+ch10_029.json   d=   20.0  via=m1:m1  light=(950,456)  hinge=(970,456)  dir=180  near=20.0/m1  m1=20.0
+ch10_033.json   d=   20.0  via=m1:m1  light=(950,440)  hinge=(970,440)  dir=180  near=20.0/m1  m1=20.0
+ch10_037.json   d=   20.0  via=m1:m1  light=(950,448)  hinge=(970,448)  dir=180  near=20.0/m1  m1=20.0
+ch10_041.json   d=   20.0  via=m1:m1  light=(950,456)  hinge=(970,456)  dir=180  near=20.0/m1  m1=20.0
+ch10_045.json   d=   20.0  via=m1:m1  light=(950,440)  hinge=(970,440)  dir=180  near=20.0/m1  m1=20.0
+ch10_049.json   d=   20.0  via=m1:m1  light=(950,448)  hinge=(970,448)  dir=180  near=20.0/m1  m1=20.0
+ch10_053.json   d=   20.0  via=m1:m1  light=(950,456)  hinge=(970,456)  dir=180  near=20.0/m1  m1=20.0
+ch10_057.json   d=   20.0  via=m1:m1  light=(950,440)  hinge=(970,440)  dir=180  near=20.0/m1  m1=20.0
+ch10_058.json   d=   20.0  via=m1:m1  light=(950,1148)  hinge=(970,1148)  dir=180  near=20.0/m1  m1=20.0
+ch10_061.json   d=   20.0  via=m1:m1  light=(950,798)  hinge=(970,798)  dir=180  near=20.0/m1  m1=20.0
+ch10_065.json   d=   20.0  via=m1:m1  light=(950,456)  hinge=(970,456)  dir=180  near=20.0/m1  m1=20.0
+ch10_069.json   d=   20.0  via=m1:m1  light=(950,440)  hinge=(970,440)  dir=180  near=20.0/m1  m1=20.0
+ch10_073.json   d=   20.0  via=m1:m1  light=(950,448)  hinge=(970,448)  dir=180  near=20.0/m1  m1=20.0
+ch2_003.json    d=   20.0  via=m1:m1  light=(950,450)  hinge=(970,450)  dir=180  near=20.0/m1  m1=20.0
+ch2_007.json    d=   20.0  via=m1:m1  light=(950,808)  hinge=(970,808)  dir=180  near=20.0/m1  m1=20.0
+ch2_011.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch2_014.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch2_015.json    d=   20.0  via=m1:m1  light=(950,1500)  hinge=(970,1500)  dir=180  near=20.0/m1  m1=20.0
+ch2_019.json    d=   20.0  via=m1:m1  light=(950,458)  hinge=(970,458)  dir=180  near=20.0/m1  m1=20.0
+ch2_023.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch2_026.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch2_027.json    d=   20.0  via=m1:m1  light=(950,800)  hinge=(970,800)  dir=180  near=20.0/m1  m1=20.0
+ch2_031.json    d=   20.0  via=m1:m1  light=(950,1158)  hinge=(970,1158)  dir=180  near=20.0/m1  m1=20.0
+ch2_035.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch2_038.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch2_039.json    d=   20.0  via=m1:m1  light=(950,1150)  hinge=(970,1150)  dir=180  near=20.0/m1  m1=20.0
+ch2_043.json    d=   20.0  via=m1:m1  light=(950,108)  hinge=(970,108)  dir=180  near=20.0/m1  m1=20.0
+ch2_047.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch2_051.json    d=   20.0  via=m1:m1  light=(950,450)  hinge=(970,450)  dir=180  near=20.0/m1  m1=20.0
+ch2_055.json    d=   20.0  via=m1:m1  light=(950,1508)  hinge=(970,1508)  dir=180  near=20.0/m1  m1=20.0
+ch2_059.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch2_063.json    d=   20.0  via=m1:m1  light=(950,1500)  hinge=(970,1500)  dir=180  near=20.0/m1  m1=20.0
+ch2_067.json    d=   20.0  via=m1:m1  light=(950,808)  hinge=(970,808)  dir=180  near=20.0/m1  m1=20.0
+ch2_071.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch2_075.json    d=   20.0  via=m1:m1  light=(950,800)  hinge=(970,800)  dir=180  near=20.0/m1  m1=20.0
+ch2_079.json    d=   20.0  via=m1:m1  light=(950,1158)  hinge=(970,1158)  dir=180  near=20.0/m1  m1=20.0
+ch2_083.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch2_086.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch2_087.json    d=   20.0  via=m1:m1  light=(950,1150)  hinge=(970,1150)  dir=180  near=20.0/m1  m1=20.0
+ch2_091.json    d=   20.0  via=m1:m1  light=(950,458)  hinge=(970,458)  dir=180  near=20.0/m1  m1=20.0
+ch2_095.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch2_099.json    d=   20.0  via=m1:m1  light=(950,100)  hinge=(970,100)  dir=180  near=20.0/m1  m1=20.0
+ch3_002.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_003.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch3_007.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch3_011.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch3_015.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch3_018.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_019.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch3_023.json    d=   20.0  via=m1:m1  light=(950,1860)  hinge=(970,1860)  dir=180  near=20.0/m1  m1=20.0
+ch3_027.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch3_030.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_031.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch3_034.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_035.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch3_038.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_039.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch3_042.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_043.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch3_046.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_047.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch3_050.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_051.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch3_054.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_055.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch3_058.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_059.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch3_062.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_063.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch3_066.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_067.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch3_070.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_071.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch3_074.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_075.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch3_078.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_079.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch3_082.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_083.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch3_086.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch3_087.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch3_091.json    d=   20.0  via=m1:m1  light=(950,110)  hinge=(970,110)  dir=180  near=20.0/m1  m1=20.0
+ch3_095.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch3_099.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch4_003.json    d=   20.0  via=m1:m1  light=(950,440)  hinge=(970,440)  dir=180  near=20.0/m1  m1=20.0
+ch4_007.json    d=   20.0  via=m1:m1  light=(950,1498)  hinge=(970,1498)  dir=180  near=20.0/m1  m1=20.0
+ch4_011.json    d=   20.0  via=m1:m1  light=(950,1156)  hinge=(970,1156)  dir=180  near=20.0/m1  m1=20.0
+ch4_015.json    d=   20.0  via=m1:m1  light=(950,1490)  hinge=(970,1490)  dir=180  near=20.0/m1  m1=20.0
+ch4_019.json    d=   20.0  via=m1:m1  light=(950,448)  hinge=(970,448)  dir=180  near=20.0/m1  m1=20.0
+ch4_023.json    d=   20.0  via=m1:m1  light=(950,806)  hinge=(970,806)  dir=180  near=20.0/m1  m1=20.0
+ch4_027.json    d=   20.0  via=m1:m1  light=(950,790)  hinge=(970,790)  dir=180  near=20.0/m1  m1=20.0
+ch4_031.json    d=   20.0  via=m1:m1  light=(950,798)  hinge=(970,798)  dir=180  near=20.0/m1  m1=20.0
+ch4_035.json    d=   20.0  via=m1:m1  light=(950,456)  hinge=(970,456)  dir=180  near=20.0/m1  m1=20.0
+ch4_039.json    d=   20.0  via=m1:m1  light=(950,1140)  hinge=(970,1140)  dir=180  near=20.0/m1  m1=20.0
+ch4_043.json    d=   20.0  via=m1:m1  light=(950,1148)  hinge=(970,1148)  dir=180  near=20.0/m1  m1=20.0
+ch4_047.json    d=   20.0  via=m1:m1  light=(950,1856)  hinge=(970,1856)  dir=180  near=20.0/m1  m1=20.0
+ch4_052.json    d=   20.0  via=m1:m1  light=(950,798)  hinge=(970,798)  dir=180  near=20.0/m1  m1=20.0
+ch4_056.json    d=   20.0  via=m1:m1  light=(950,1506)  hinge=(970,1506)  dir=180  near=20.0/m1  m1=20.0
+ch4_060.json    d=   20.0  via=m1:m1  light=(950,790)  hinge=(970,790)  dir=180  near=20.0/m1  m1=20.0
+ch4_064.json    d=   20.0  via=m1:m1  light=(950,448)  hinge=(970,448)  dir=180  near=20.0/m1  m1=20.0
+ch4_068.json    d=   20.0  via=m1:m1  light=(950,806)  hinge=(970,806)  dir=180  near=20.0/m1  m1=20.0
+ch4_072.json    d=   20.0  via=m1:m1  light=(950,790)  hinge=(970,790)  dir=180  near=20.0/m1  m1=20.0
+ch4_076.json    d=   20.0  via=m1:m1  light=(950,1148)  hinge=(970,1148)  dir=180  near=20.0/m1  m1=20.0
+ch4_080.json    d=   20.0  via=m1:m1  light=(950,456)  hinge=(970,456)  dir=180  near=20.0/m1  m1=20.0
+ch4_084.json    d=   20.0  via=m1:m1  light=(950,1140)  hinge=(970,1140)  dir=180  near=20.0/m1  m1=20.0
+ch4_088.json    d=   20.0  via=m1:m1  light=(950,448)  hinge=(970,448)  dir=180  near=20.0/m1  m1=20.0
+ch4_092.json    d=   20.0  via=m1:m1  light=(950,456)  hinge=(970,456)  dir=180  near=20.0/m1  m1=20.0
+ch4_096.json    d=   20.0  via=m1:m1  light=(950,1140)  hinge=(970,1140)  dir=180  near=20.0/m1  m1=20.0
+ch4_100.json    d=   20.0  via=m1:m1  light=(950,1148)  hinge=(970,1148)  dir=180  near=20.0/m1  m1=20.0
+ch5_004.json    d=   20.0  via=m1:m1  light=(950,808)  hinge=(970,808)  dir=180  near=20.0/m1  m1=20.0
+ch5_008.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch5_011.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch5_012.json    d=   20.0  via=m1:m1  light=(950,1500)  hinge=(970,1500)  dir=180  near=20.0/m1  m1=20.0
+ch5_016.json    d=   20.0  via=m1:m1  light=(950,808)  hinge=(970,808)  dir=180  near=20.0/m1  m1=20.0
+ch5_020.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch5_023.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch5_024.json    d=   20.0  via=m1:m1  light=(950,450)  hinge=(970,450)  dir=180  near=20.0/m1  m1=20.0
+ch5_028.json    d=   20.0  via=m1:m1  light=(950,1158)  hinge=(970,1158)  dir=180  near=20.0/m1  m1=20.0
+ch5_032.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch5_035.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch5_036.json    d=   20.0  via=m1:m1  light=(950,1500)  hinge=(970,1500)  dir=180  near=20.0/m1  m1=20.0
+ch5_040.json    d=   20.0  via=m1:m1  light=(950,458)  hinge=(970,458)  dir=180  near=20.0/m1  m1=20.0
+ch5_044.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch5_047.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch5_048.json    d=   20.0  via=m1:m1  light=(950,450)  hinge=(970,450)  dir=180  near=20.0/m1  m1=20.0
+ch5_052.json    d=   20.0  via=m1:m1  light=(950,1508)  hinge=(970,1508)  dir=180  near=20.0/m1  m1=20.0
+ch5_056.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch5_060.json    d=   20.0  via=m1:m1  light=(950,1500)  hinge=(970,1500)  dir=180  near=20.0/m1  m1=20.0
+ch5_064.json    d=   20.0  via=m1:m1  light=(950,458)  hinge=(970,458)  dir=180  near=20.0/m1  m1=20.0
+ch5_068.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch5_072.json    d=   20.0  via=m1:m1  light=(950,800)  hinge=(970,800)  dir=180  near=20.0/m1  m1=20.0
+ch5_076.json    d=   20.0  via=m1:m1  light=(950,1508)  hinge=(970,1508)  dir=180  near=20.0/m1  m1=20.0
+ch5_080.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch5_084.json    d=   20.0  via=m1:m1  light=(950,800)  hinge=(970,800)  dir=180  near=20.0/m1  m1=20.0
+ch5_088.json    d=   20.0  via=m1:m1  light=(950,1508)  hinge=(970,1508)  dir=180  near=20.0/m1  m1=20.0
+ch5_092.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch5_096.json    d=   20.0  via=m1:m1  light=(950,1500)  hinge=(970,1500)  dir=180  near=20.0/m1  m1=20.0
+ch5_100.json    d=   20.0  via=m1:m1  light=(950,808)  hinge=(970,808)  dir=180  near=20.0/m1  m1=20.0
+ch6_004.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch6_008.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch6_012.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch6_016.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch6_020.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch6_023.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_024.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch6_027.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_028.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch6_031.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_032.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch6_035.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_036.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch6_039.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_040.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_043.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_044.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch6_047.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_048.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch6_051.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_052.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch6_055.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_056.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch6_059.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_060.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch6_063.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_064.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch6_067.json    d=   20.0  via=m1:m1  light=(210,130)  hinge=(210,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_068.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch6_071.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_072.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch6_075.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_076.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch6_079.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_080.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch6_083.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_084.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch6_087.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_088.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch6_091.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_092.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch6_095.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_096.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch6_099.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch6_100.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch7_004.json    d=   20.0  via=m1:m1  light=(950,448)  hinge=(970,448)  dir=180  near=20.0/m1  m1=20.0
+ch7_008.json    d=   20.0  via=m1:m1  light=(950,456)  hinge=(970,456)  dir=180  near=20.0/m1  m1=20.0
+ch7_012.json    d=   20.0  via=m1:m1  light=(950,790)  hinge=(970,790)  dir=180  near=20.0/m1  m1=20.0
+ch7_016.json    d=   20.0  via=m1:m1  light=(950,1498)  hinge=(970,1498)  dir=180  near=20.0/m1  m1=20.0
+ch7_020.json    d=   20.0  via=m1:m1  light=(950,1506)  hinge=(970,1506)  dir=180  near=20.0/m1  m1=20.0
+ch7_024.json    d=   20.0  via=m1:m1  light=(950,1140)  hinge=(970,1140)  dir=180  near=20.0/m1  m1=20.0
+ch7_028.json    d=   20.0  via=m1:m1  light=(950,798)  hinge=(970,798)  dir=180  near=20.0/m1  m1=20.0
+ch7_032.json    d=   20.0  via=m1:m1  light=(950,806)  hinge=(970,806)  dir=180  near=20.0/m1  m1=20.0
+ch7_036.json    d=   20.0  via=m1:m1  light=(950,1490)  hinge=(970,1490)  dir=180  near=20.0/m1  m1=20.0
+ch7_040.json    d=   20.0  via=m1:m1  light=(950,798)  hinge=(970,798)  dir=180  near=20.0/m1  m1=20.0
+ch7_044.json    d=   20.0  via=m1:m1  light=(950,806)  hinge=(970,806)  dir=180  near=20.0/m1  m1=20.0
+ch7_048.json    d=   20.0  via=m1:m1  light=(950,440)  hinge=(970,440)  dir=180  near=20.0/m1  m1=20.0
+ch7_052.json    d=   20.0  via=m1:m1  light=(950,448)  hinge=(970,448)  dir=180  near=20.0/m1  m1=20.0
+ch7_056.json    d=   20.0  via=m1:m1  light=(950,1156)  hinge=(970,1156)  dir=180  near=20.0/m1  m1=20.0
+ch7_060.json    d=   20.0  via=m1:m1  light=(950,1490)  hinge=(970,1490)  dir=180  near=20.0/m1  m1=20.0
+ch7_064.json    d=   20.0  via=m1:m1  light=(950,1498)  hinge=(970,1498)  dir=180  near=20.0/m1  m1=20.0
+ch7_068.json    d=   20.0  via=m1:m1  light=(950,1156)  hinge=(970,1156)  dir=180  near=20.0/m1  m1=20.0
+ch7_072.json    d=   20.0  via=m1:m1  light=(950,440)  hinge=(970,440)  dir=180  near=20.0/m1  m1=20.0
+ch7_076.json    d=   20.0  via=m1:m1  light=(950,1498)  hinge=(970,1498)  dir=180  near=20.0/m1  m1=20.0
+ch7_080.json    d=   20.0  via=m1:m1  light=(950,806)  hinge=(970,806)  dir=180  near=20.0/m1  m1=20.0
+ch7_084.json    d=   20.0  via=m1:m1  light=(950,790)  hinge=(970,790)  dir=180  near=20.0/m1  m1=20.0
+ch7_088.json    d=   20.0  via=m1:m1  light=(950,798)  hinge=(970,798)  dir=180  near=20.0/m1  m1=20.0
+ch7_092.json    d=   20.0  via=m1:m1  light=(950,456)  hinge=(970,456)  dir=180  near=20.0/m1  m1=20.0
+ch7_096.json    d=   20.0  via=m1:m1  light=(950,440)  hinge=(970,440)  dir=180  near=20.0/m1  m1=20.0
+ch7_100.json    d=   20.0  via=m1:m1  light=(950,1148)  hinge=(970,1148)  dir=180  near=20.0/m1  m1=20.0
+ch8_001.json    d=   20.0  via=m1:m1  light=(950,808)  hinge=(970,808)  dir=180  near=20.0/m1  m1=20.0
+ch8_005.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch8_008.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch8_009.json    d=   20.0  via=m1:m1  light=(950,1150)  hinge=(970,1150)  dir=180  near=20.0/m1  m1=20.0
+ch8_013.json    d=   20.0  via=m1:m1  light=(950,808)  hinge=(970,808)  dir=180  near=20.0/m1  m1=20.0
+ch8_017.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch8_020.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch8_021.json    d=   20.0  via=m1:m1  light=(950,1150)  hinge=(970,1150)  dir=180  near=20.0/m1  m1=20.0
+ch8_025.json    d=   20.0  via=m1:m1  light=(950,1158)  hinge=(970,1158)  dir=180  near=20.0/m1  m1=20.0
+ch8_029.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch8_032.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch8_033.json    d=   20.0  via=m1:m1  light=(950,1150)  hinge=(970,1150)  dir=180  near=20.0/m1  m1=20.0
+ch8_041.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch8_042.json    d=   20.0  via=m1:m1  light=(950,450)  hinge=(970,450)  dir=180  near=20.0/m1  m1=20.0
+ch8_044.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch8_045.json    d=   20.0  via=m1:m1  light=(950,450)  hinge=(970,450)  dir=180  near=20.0/m1  m1=20.0
+ch8_049.json    d=   20.0  via=m1:m1  light=(950,1158)  hinge=(970,1158)  dir=180  near=20.0/m1  m1=20.0
+ch8_053.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch8_056.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch8_057.json    d=   20.0  via=m1:m1  light=(950,800)  hinge=(970,800)  dir=180  near=20.0/m1  m1=20.0
+ch8_061.json    d=   20.0  via=m1:m1  light=(950,458)  hinge=(970,458)  dir=180  near=20.0/m1  m1=20.0
+ch8_065.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch8_068.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch8_069.json    d=   20.0  via=m1:m1  light=(950,800)  hinge=(970,800)  dir=180  near=20.0/m1  m1=20.0
+ch8_073.json    d=   20.0  via=m1:m1  light=(950,458)  hinge=(970,458)  dir=180  near=20.0/m1  m1=20.0
+ch8_080.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch8_081.json    d=   20.0  via=m1:m1  light=(950,450)  hinge=(970,450)  dir=180  near=20.0/m1  m1=20.0
+ch8_085.json    d=   20.0  via=m1:m1  light=(950,808)  hinge=(970,808)  dir=180  near=20.0/m1  m1=20.0
+ch8_089.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch8_092.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch8_093.json    d=   20.0  via=m1:m1  light=(950,450)  hinge=(970,450)  dir=180  near=20.0/m1  m1=20.0
+ch8_097.json    d=   20.0  via=m1:m1  light=(950,458)  hinge=(970,458)  dir=180  near=20.0/m1  m1=20.0
+ch8_098.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch9_001.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch9_004.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_005.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch9_008.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_009.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch9_012.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_013.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch9_016.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_020.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_021.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch9_024.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_025.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch9_028.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_029.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch9_032.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_033.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch9_036.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_037.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch9_040.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_041.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch9_044.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_045.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch9_048.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_049.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch9_052.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_053.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch9_055.json    d=   20.0  via=m1:m1  light=(950,1510)  hinge=(970,1510)  dir=180  near=20.0/m1  m1=20.0
+ch9_056.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_057.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch9_060.json    d=   20.0  via=m1:m1  light=(590,130)  hinge=(590,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_061.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch9_064.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_065.json    d=   20.0  via=m1:m1  light=(950,110)  hinge=(970,110)  dir=180  near=20.0/m1  m1=20.0
+ch9_067.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch9_068.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_069.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch9_072.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_073.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch9_076.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_077.json    d=   20.0  via=m1:m1  light=(950,810)  hinge=(970,810)  dir=180  near=20.0/m1  m1=20.0
+ch9_080.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_081.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch9_084.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_085.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch9_088.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_089.json    d=   20.0  via=m1:m1  light=(950,110)  hinge=(970,110)  dir=180  near=20.0/m1  m1=20.0
+ch9_092.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_093.json    d=   20.0  via=m1:m1  light=(950,1160)  hinge=(970,1160)  dir=180  near=20.0/m1  m1=20.0
+ch9_096.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch9_097.json    d=   20.0  via=m1:m1  light=(950,460)  hinge=(970,460)  dir=180  near=20.0/m1  m1=20.0
+ch9_100.json    d=   20.0  via=m1:m1  light=(970,130)  hinge=(970,110)  dir=90  near=20.0/m1  m1=20.0
+ch2_022.json    d=   22.0  via=m1:m1  light=(590,130)  hinge=(590,108)  dir=90  near=22.0/m1  m1=22.0
+ch2_034.json    d=   22.0  via=m1:m1  light=(210,130)  hinge=(210,108)  dir=90  near=22.0/m1  m1=22.0
+ch2_082.json    d=   22.0  via=m1:m1  light=(590,130)  hinge=(590,108)  dir=90  near=22.0/m1  m1=22.0
+ch2_094.json    d=   22.0  via=m1:m1  light=(970,130)  hinge=(970,108)  dir=90  near=22.0/m1  m1=22.0
+ch5_007.json    d=   22.0  via=m1:m1  light=(970,130)  hinge=(970,108)  dir=90  near=22.0/m1  m1=22.0
+ch5_019.json    d=   22.0  via=m1:m1  light=(210,130)  hinge=(210,108)  dir=90  near=22.0/m1  m1=22.0
+ch5_031.json    d=   22.0  via=m1:m1  light=(210,130)  hinge=(210,108)  dir=90  near=22.0/m1  m1=22.0
+ch5_043.json    d=   22.0  via=m1:m1  light=(210,130)  hinge=(210,108)  dir=90  near=22.0/m1  m1=22.0
+ch4_014.json    d=   24.0  via=m1:m1  light=(210,130)  hinge=(210,106)  dir=90  near=24.0/m1  m1=24.0
+ch4_026.json    d=   24.0  via=m1:m1  light=(590,130)  hinge=(590,106)  dir=90  near=24.0/m1  m1=24.0
+ch4_038.json    d=   24.0  via=m1:m1  light=(970,130)  hinge=(970,106)  dir=90  near=24.0/m1  m1=24.0
+ch4_050.json    d=   24.0  via=m1:m1  light=(210,130)  hinge=(210,106)  dir=90  near=24.0/m1  m1=24.0
+ch4_059.json    d=   24.0  via=m1:m1  light=(210,130)  hinge=(210,106)  dir=90  near=24.0/m1  m1=24.0
+ch4_071.json    d=   24.0  via=m1:m1  light=(590,130)  hinge=(590,106)  dir=90  near=24.0/m1  m1=24.0
+ch4_083.json    d=   24.0  via=m1:m1  light=(590,130)  hinge=(590,106)  dir=90  near=24.0/m1  m1=24.0
+ch4_095.json    d=   24.0  via=m1:m1  light=(210,130)  hinge=(210,106)  dir=90  near=24.0/m1  m1=24.0
+ch1_023.json    d=   30.0  via=m1:m1  light=(1030,800)  hinge=(1000,800)  dir=180  near=30.0/m1  m1=30.0
+ch1_024.json    d=   30.0  via=m1:m1  light=(130,800)  hinge=(160,800)  dir=0  near=30.0/m1  m1=30.0
+ch1_027.json    d=   30.0  via=m1:m1  light=(1030,200)  hinge=(1000,200)  dir=180  near=30.0/m1  m1=30.0
+ch1_029.json    d=   30.0  via=m1:m1  light=(200,1790)  hinge=(200,1760)  dir=270  near=30.0/m1  m1=30.0
+ch1_039.json    d=   30.0  via=m1:m1  light=(950,1140)  hinge=(980,1140)  dir=180  near=30.0/m1  m1=30.0
+ch1_043.json    d=   30.0  via=m1:m1  light=(950,790)  hinge=(980,790)  dir=180  near=30.0/m1  m1=30.0
+ch1_047.json    d=   30.0  via=m1:m1  light=(950,1490)  hinge=(980,1490)  dir=180  near=30.0/m1  m1=30.0
+ch1_051.json    d=   30.0  via=m1:m1  light=(950,440)  hinge=(980,440)  dir=180  near=30.0/m1  m1=30.0
+ch1_055.json    d=   30.0  via=m1:m1  light=(950,1140)  hinge=(980,1140)  dir=180  near=30.0/m1  m1=30.0
+ch1_059.json    d=   30.0  via=m1:m1  light=(950,790)  hinge=(980,790)  dir=180  near=30.0/m1  m1=30.0
+ch1_063.json    d=   30.0  via=m1:m1  light=(950,790)  hinge=(980,790)  dir=180  near=30.0/m1  m1=30.0
+ch1_067.json    d=   30.0  via=m1:m1  light=(950,440)  hinge=(980,440)  dir=180  near=30.0/m1  m1=30.0
+ch1_071.json    d=   30.0  via=m1:m1  light=(950,90)  hinge=(980,90)  dir=180  near=30.0/m1  m1=30.0
+ch1_075.json    d=   30.0  via=m1:m1  light=(950,440)  hinge=(980,440)  dir=180  near=30.0/m1  m1=30.0
+ch1_079.json    d=   30.0  via=m1:m1  light=(950,1140)  hinge=(980,1140)  dir=180  near=30.0/m1  m1=30.0
+ch1_083.json    d=   30.0  via=m1:m1  light=(950,440)  hinge=(980,440)  dir=180  near=30.0/m1  m1=30.0
+ch1_087.json    d=   30.0  via=m1:m1  light=(950,1490)  hinge=(980,1490)  dir=180  near=30.0/m1  m1=30.0
+ch1_091.json    d=   30.0  via=m1:m1  light=(950,1840)  hinge=(980,1840)  dir=180  near=30.0/m1  m1=30.0
+ch1_095.json    d=   30.0  via=m1:m1  light=(950,440)  hinge=(980,440)  dir=180  near=30.0/m1  m1=30.0
+ch1_099.json    d=   30.0  via=m1:m1  light=(950,790)  hinge=(980,790)  dir=180  near=30.0/m1  m1=30.0
+ch2_018.json    d=   30.0  via=m1:m1  light=(590,130)  hinge=(590,100)  dir=90  near=30.0/m1  m1=30.0
+ch2_030.json    d=   30.0  via=m1:m1  light=(210,130)  hinge=(210,100)  dir=90  near=30.0/m1  m1=30.0
+ch2_042.json    d=   30.0  via=m1:m1  light=(970,130)  hinge=(970,100)  dir=90  near=30.0/m1  m1=30.0
+ch2_090.json    d=   30.0  via=m1:m1  light=(590,130)  hinge=(590,100)  dir=90  near=30.0/m1  m1=30.0
+ch5_003.json    d=   30.0  via=m1:m1  light=(970,130)  hinge=(970,100)  dir=90  near=30.0/m1  m1=30.0
+ch5_015.json    d=   30.0  via=m1:m1  light=(210,130)  hinge=(210,100)  dir=90  near=30.0/m1  m1=30.0
+ch5_027.json    d=   30.0  via=m1:m1  light=(210,130)  hinge=(210,100)  dir=90  near=30.0/m1  m1=30.0
+ch4_022.json    d=   32.0  via=m1:m1  light=(590,130)  hinge=(590,98)  dir=90  near=32.0/m1  m1=32.0
+ch4_034.json    d=   32.0  via=m1:m1  light=(970,130)  hinge=(970,98)  dir=90  near=32.0/m1  m1=32.0
+ch4_046.json    d=   32.0  via=m1:m1  light=(210,130)  hinge=(210,98)  dir=90  near=32.0/m1  m1=32.0
+ch4_055.json    d=   32.0  via=m1:m1  light=(210,130)  hinge=(210,98)  dir=90  near=32.0/m1  m1=32.0
+ch4_067.json    d=   32.0  via=m1:m1  light=(590,130)  hinge=(590,98)  dir=90  near=32.0/m1  m1=32.0
+ch4_079.json    d=   32.0  via=m1:m1  light=(590,130)  hinge=(590,98)  dir=90  near=32.0/m1  m1=32.0
+ch4_091.json    d=   32.0  via=m1:m1  light=(590,130)  hinge=(590,98)  dir=90  near=32.0/m1  m1=32.0
+ch10_012.json   d=   40.0  via=m1:m1  light=(210,130)  hinge=(210,90)  dir=90  near=40.0/m1  m1=40.0
+ch10_024.json   d=   40.0  via=m1:m1  light=(210,130)  hinge=(210,90)  dir=90  near=40.0/m1  m1=40.0
+ch10_036.json   d=   40.0  via=m1:m1  light=(210,130)  hinge=(210,90)  dir=90  near=40.0/m1  m1=40.0
+ch10_048.json   d=   40.0  via=m1:m1  light=(210,130)  hinge=(210,90)  dir=90  near=40.0/m1  m1=40.0
+ch10_060.json   d=   40.0  via=m1:m1  light=(210,130)  hinge=(210,90)  dir=90  near=40.0/m1  m1=40.0
+ch1_038.json    d=   40.0  via=m1:m1  light=(220,130)  hinge=(220,90)  dir=90  near=40.0/m1  m1=40.0
+ch1_050.json    d=   40.0  via=m1:m1  light=(980,130)  hinge=(980,90)  dir=90  near=40.0/m1  m1=40.0
+ch1_062.json    d=   40.0  via=m1:m1  light=(600,130)  hinge=(600,90)  dir=90  near=40.0/m1  m1=40.0
+ch1_066.json    d=   40.0  via=m1:m1  light=(220,130)  hinge=(220,90)  dir=90  near=40.0/m1  m1=40.0
+ch1_070.json    d=   40.0  via=m1:m1  light=(220,130)  hinge=(220,90)  dir=90  near=40.0/m1  m1=40.0
+ch1_074.json    d=   40.0  via=m1:m1  light=(980,130)  hinge=(980,90)  dir=90  near=40.0/m1  m1=40.0
+ch1_078.json    d=   40.0  via=m1:m1  light=(600,130)  hinge=(600,90)  dir=90  near=40.0/m1  m1=40.0
+ch1_098.json    d=   40.0  via=m1:m1  light=(600,130)  hinge=(600,90)  dir=90  near=40.0/m1  m1=40.0
+ch4_018.json    d=   40.0  via=m1:m1  light=(590,130)  hinge=(590,90)  dir=90  near=40.0/m1  m1=40.0
+ch4_030.json    d=   40.0  via=m1:m1  light=(970,130)  hinge=(970,90)  dir=90  near=40.0/m1  m1=40.0
+ch4_042.json    d=   40.0  via=m1:m1  light=(210,130)  hinge=(210,90)  dir=90  near=40.0/m1  m1=40.0
+ch4_075.json    d=   40.0  via=m1:m1  light=(970,130)  hinge=(970,90)  dir=90  near=40.0/m1  m1=40.0
+ch4_087.json    d=   40.0  via=m1:m1  light=(590,130)  hinge=(590,90)  dir=90  near=40.0/m1  m1=40.0
+ch4_099.json    d=   40.0  via=m1:m1  light=(590,130)  hinge=(590,90)  dir=90  near=40.0/m1  m1=40.0
+ch7_015.json    d=   40.0  via=m1:m1  light=(210,130)  hinge=(210,90)  dir=90  near=40.0/m1  m1=40.0
+ch7_027.json    d=   40.0  via=m1:m1  light=(590,130)  hinge=(590,90)  dir=90  near=40.0/m1  m1=40.0
+ch7_039.json    d=   40.0  via=m1:m1  light=(590,130)  hinge=(590,90)  dir=90  near=40.0/m1  m1=40.0
+ch7_051.json    d=   40.0  via=m1:m1  light=(590,130)  hinge=(590,90)  dir=90  near=40.0/m1  m1=40.0
+ch7_063.json    d=   40.0  via=m1:m1  light=(210,130)  hinge=(210,90)  dir=90  near=40.0/m1  m1=40.0
+ch7_075.json    d=   40.0  via=m1:m1  light=(210,130)  hinge=(210,90)  dir=90  near=40.0/m1  m1=40.0
+ch7_087.json    d=   40.0  via=m1:m1  light=(210,130)  hinge=(210,90)  dir=90  near=40.0/m1  m1=40.0
+ch7_099.json    d=   40.0  via=m1:m1  light=(210,130)  hinge=(210,90)  dir=90  near=40.0/m1  m1=40.0
+ch10_003.json   d=   50.0  via=m1:m1  light=(210,1790)  hinge=(210,1840)  dir=270  near=50.0/m1  m1=50.0
+ch10_015.json   d=   50.0  via=m1:m1  light=(210,1790)  hinge=(210,1840)  dir=270  near=50.0/m1  m1=50.0
+ch10_027.json   d=   50.0  via=m1:m1  light=(210,1790)  hinge=(210,1840)  dir=270  near=50.0/m1  m1=50.0
+ch10_039.json   d=   50.0  via=m1:m1  light=(210,1790)  hinge=(210,1840)  dir=270  near=50.0/m1  m1=50.0
+ch10_051.json   d=   50.0  via=m1:m1  light=(210,1790)  hinge=(210,1840)  dir=270  near=50.0/m1  m1=50.0
+ch10_063.json   d=   50.0  via=m1:m1  light=(210,1790)  hinge=(210,1840)  dir=270  near=50.0/m1  m1=50.0
+ch1_037.json    d=   50.0  via=m1:m1  light=(580,1790)  hinge=(580,1840)  dir=270  near=50.0/m1  m1=50.0
+ch1_041.json    d=   50.0  via=m1:m1  light=(220,1790)  hinge=(220,1840)  dir=270  near=50.0/m1  m1=50.0
+ch1_057.json    d=   50.0  via=m1:m1  light=(600,1790)  hinge=(600,1840)  dir=270  near=50.0/m1  m1=50.0
+ch1_061.json    d=   50.0  via=m1:m1  light=(600,1790)  hinge=(600,1840)  dir=270  near=50.0/m1  m1=50.0
+ch1_065.json    d=   50.0  via=m1:m1  light=(980,1790)  hinge=(980,1840)  dir=270  near=50.0/m1  m1=50.0
+ch1_069.json    d=   50.0  via=m1:m1  light=(220,1790)  hinge=(220,1840)  dir=270  near=50.0/m1  m1=50.0
+ch1_073.json    d=   50.0  via=m1:m1  light=(980,1790)  hinge=(980,1840)  dir=270  near=50.0/m1  m1=50.0
+ch4_021.json    d=   50.0  via=m1:m1  light=(590,1790)  hinge=(590,1840)  dir=270  near=50.0/m1  m1=50.0
+ch4_033.json    d=   50.0  via=m1:m1  light=(210,1790)  hinge=(210,1840)  dir=270  near=50.0/m1  m1=50.0
+ch4_045.json    d=   50.0  via=m1:m1  light=(970,1790)  hinge=(970,1840)  dir=270  near=50.0/m1  m1=50.0
+ch4_054.json    d=   50.0  via=m1:m1  light=(590,1790)  hinge=(590,1840)  dir=270  near=50.0/m1  m1=50.0
+ch4_066.json    d=   50.0  via=m1:m1  light=(590,1790)  hinge=(590,1840)  dir=270  near=50.0/m1  m1=50.0
+ch4_078.json    d=   50.0  via=m1:m1  light=(210,1790)  hinge=(210,1840)  dir=270  near=50.0/m1  m1=50.0
+ch4_090.json    d=   50.0  via=m1:m1  light=(590,1790)  hinge=(590,1840)  dir=270  near=50.0/m1  m1=50.0
+ch7_006.json    d=   50.0  via=m1:m1  light=(590,1790)  hinge=(590,1840)  dir=270  near=50.0/m1  m1=50.0
+ch7_018.json    d=   50.0  via=m1:m1  light=(970,1790)  hinge=(970,1840)  dir=270  near=50.0/m1  m1=50.0
+ch7_030.json    d=   50.0  via=m1:m1  light=(590,1790)  hinge=(590,1840)  dir=270  near=50.0/m1  m1=50.0
+ch7_042.json    d=   50.0  via=m1:m1  light=(590,1790)  hinge=(590,1840)  dir=270  near=50.0/m1  m1=50.0
+ch7_054.json    d=   50.0  via=m1:m1  light=(590,1790)  hinge=(590,1840)  dir=270  near=50.0/m1  m1=50.0
+ch7_066.json    d=   50.0  via=m1:m1  light=(590,1790)  hinge=(590,1840)  dir=270  near=50.0/m1  m1=50.0
+ch7_078.json    d=   50.0  via=m1:m1  light=(970,1790)  hinge=(970,1840)  dir=270  near=50.0/m1  m1=50.0
+ch7_090.json    d=   50.0  via=m1:m1  light=(590,1790)  hinge=(590,1840)  dir=270  near=50.0/m1  m1=50.0
+ch4_013.json    d=   58.0  via=m1:m1  light=(210,1790)  hinge=(210,1848)  dir=270  near=58.0/m1  m1=58.0
+ch4_025.json    d=   58.0  via=m1:m1  light=(970,1790)  hinge=(970,1848)  dir=270  near=58.0/m1  m1=58.0
+ch4_037.json    d=   58.0  via=m1:m1  light=(590,1790)  hinge=(590,1848)  dir=270  near=58.0/m1  m1=58.0
+ch4_049.json    d=   58.0  via=m1:m1  light=(590,1790)  hinge=(590,1848)  dir=270  near=58.0/m1  m1=58.0
+ch4_058.json    d=   58.0  via=m1:m1  light=(210,1790)  hinge=(210,1848)  dir=270  near=58.0/m1  m1=58.0
+ch4_070.json    d=   58.0  via=m1:m1  light=(210,1790)  hinge=(210,1848)  dir=270  near=58.0/m1  m1=58.0
+ch4_082.json    d=   58.0  via=m1:m1  light=(210,1790)  hinge=(210,1848)  dir=270  near=58.0/m1  m1=58.0
+ch4_094.json    d=   58.0  via=m1:m1  light=(590,1790)  hinge=(590,1848)  dir=270  near=58.0/m1  m1=58.0
+ch2_021.json    d=   60.0  via=m1:m1  light=(590,1790)  hinge=(590,1850)  dir=270  near=60.0/m1  m1=60.0
+ch2_033.json    d=   60.0  via=m1:m1  light=(210,1790)  hinge=(210,1850)  dir=270  near=60.0/m1  m1=60.0
+ch2_045.json    d=   60.0  via=m1:m1  light=(970,1790)  hinge=(970,1850)  dir=270  near=60.0/m1  m1=60.0
+ch2_081.json    d=   60.0  via=m1:m1  light=(590,1790)  hinge=(590,1850)  dir=270  near=60.0/m1  m1=60.0
+ch5_006.json    d=   60.0  via=m1:m1  light=(970,1790)  hinge=(970,1850)  dir=270  near=60.0/m1  m1=60.0
+ch5_018.json    d=   60.0  via=m1:m1  light=(210,1790)  hinge=(210,1850)  dir=270  near=60.0/m1  m1=60.0
+ch5_030.json    d=   60.0  via=m1:m1  light=(210,1790)  hinge=(210,1850)  dir=270  near=60.0/m1  m1=60.0
+ch10_059.json   d=   66.0  via=m1:m1  light=(210,1790)  hinge=(210,1856)  dir=270  near=66.0/m1  m1=66.0
+ch10_071.json   d=   66.0  via=m1:m1  light=(210,1790)  hinge=(210,1856)  dir=270  near=66.0/m1  m1=66.0
+ch4_017.json    d=   66.0  via=m1:m1  light=(210,1790)  hinge=(210,1856)  dir=270  near=66.0/m1  m1=66.0
+ch4_041.json    d=   66.0  via=m1:m1  light=(590,1790)  hinge=(590,1856)  dir=270  near=66.0/m1  m1=66.0
+ch4_062.json    d=   66.0  via=m1:m1  light=(590,1790)  hinge=(590,1856)  dir=270  near=66.0/m1  m1=66.0
+ch4_086.json    d=   66.0  via=m1:m1  light=(590,1790)  hinge=(590,1856)  dir=270  near=66.0/m1  m1=66.0
+ch4_098.json    d=   66.0  via=m1:m1  light=(590,1790)  hinge=(590,1856)  dir=270  near=66.0/m1  m1=66.0
+ch2_013.json    d=   68.0  via=m1:m1  light=(590,1790)  hinge=(590,1858)  dir=270  near=68.0/m1  m1=68.0
+ch2_037.json    d=   68.0  via=m1:m1  light=(210,1790)  hinge=(210,1858)  dir=270  near=68.0/m1  m1=68.0
+ch2_049.json    d=   68.0  via=m1:m1  light=(970,1790)  hinge=(970,1858)  dir=270  near=68.0/m1  m1=68.0
+ch2_085.json    d=   68.0  via=m1:m1  light=(590,1790)  hinge=(590,1858)  dir=270  near=68.0/m1  m1=68.0
+ch2_097.json    d=   68.0  via=m1:m1  light=(970,1790)  hinge=(970,1858)  dir=270  near=68.0/m1  m1=68.0
+ch5_010.json    d=   68.0  via=m1:m1  light=(970,1790)  hinge=(970,1858)  dir=270  near=68.0/m1  m1=68.0
+ch5_022.json    d=   68.0  via=m1:m1  light=(590,1790)  hinge=(590,1858)  dir=270  near=68.0/m1  m1=68.0
+ch5_034.json    d=   68.0  via=m1:m1  light=(590,1790)  hinge=(590,1858)  dir=270  near=68.0/m1  m1=68.0
+ch5_046.json    d=   68.0  via=m1:m1  light=(590,1790)  hinge=(590,1858)  dir=270  near=68.0/m1  m1=68.0
+ch1_022.json    d=   70.0  via=m1:m1  light=(160,130)  hinge=(160,200)  dir=90  near=70.0/m1  m1=70.0
+ch1_026.json    d=   70.0  via=m1:m1  light=(440,130)  hinge=(440,200)  dir=90  near=70.0/m1  m1=70.0
+ch1_028.json    d=   70.0  via=m1:m1  light=(130,640)  hinge=(200,640)  dir=0  near=70.0/m1  m1=70.0
+ch2_017.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch2_029.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch2_041.json    d=   70.0  via=m1:m1  light=(970,1790)  hinge=(970,1860)  dir=270  near=70.0/m1  m1=70.0
+ch2_065.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch2_089.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_005.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_017.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_029.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_033.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_037.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_041.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_045.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_049.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_053.json    d=   70.0  via=m1:m1  light=(970,1790)  hinge=(970,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_057.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_061.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_065.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_069.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_073.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_077.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch3_089.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch5_002.json    d=   70.0  via=m1:m1  light=(970,1790)  hinge=(970,1860)  dir=270  near=70.0/m1  m1=70.0
+ch5_014.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch5_026.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch5_038.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch5_050.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_030.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_034.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_038.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_042.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_046.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_050.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_054.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_058.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_062.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_066.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_070.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_074.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_078.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_082.json    d=   70.0  via=m1:m1  light=(210,1790)  hinge=(210,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_086.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_090.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_094.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch6_098.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch8_011.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch8_023.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch8_035.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch8_047.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch8_059.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch8_071.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch8_077.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch8_083.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch8_095.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_003.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_007.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_011.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_015.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_019.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_023.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_027.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_031.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_035.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_039.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_043.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_047.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_051.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_059.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_063.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_071.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_075.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_079.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_083.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_087.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_091.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_095.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch9_099.json    d=   70.0  via=m1:m1  light=(590,1790)  hinge=(590,1860)  dir=270  near=70.0/m1  m1=70.0
+ch10_002.json   d=   80.0  via=m1:m1  light=(130,806)  hinge=(210,806)  dir=0  near=80.0/m1  m1=80.0
+ch10_006.json   d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch10_010.json   d=   80.0  via=m1:m1  light=(130,1498)  hinge=(210,1498)  dir=0  near=80.0/m1  m1=80.0
+ch10_014.json   d=   80.0  via=m1:m1  light=(130,806)  hinge=(210,806)  dir=0  near=80.0/m1  m1=80.0
+ch10_018.json   d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch10_022.json   d=   80.0  via=m1:m1  light=(130,1148)  hinge=(210,1148)  dir=0  near=80.0/m1  m1=80.0
+ch10_026.json   d=   80.0  via=m1:m1  light=(130,456)  hinge=(210,456)  dir=0  near=80.0/m1  m1=80.0
+ch10_030.json   d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch10_034.json   d=   80.0  via=m1:m1  light=(130,1498)  hinge=(210,1498)  dir=0  near=80.0/m1  m1=80.0
+ch10_038.json   d=   80.0  via=m1:m1  light=(130,456)  hinge=(210,456)  dir=0  near=80.0/m1  m1=80.0
+ch10_042.json   d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch10_046.json   d=   80.0  via=m1:m1  light=(130,798)  hinge=(210,798)  dir=0  near=80.0/m1  m1=80.0
+ch10_050.json   d=   80.0  via=m1:m1  light=(130,456)  hinge=(210,456)  dir=0  near=80.0/m1  m1=80.0
+ch10_054.json   d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch10_062.json   d=   80.0  via=m1:m1  light=(130,1506)  hinge=(210,1506)  dir=0  near=80.0/m1  m1=80.0
+ch10_066.json   d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch10_070.json   d=   80.0  via=m1:m1  light=(130,1498)  hinge=(210,1498)  dir=0  near=80.0/m1  m1=80.0
+ch10_074.json   d=   80.0  via=m1:m1  light=(130,1506)  hinge=(210,1506)  dir=0  near=80.0/m1  m1=80.0
+ch2_004.json    d=   80.0  via=m1:m1  light=(130,458)  hinge=(210,458)  dir=0  near=80.0/m1  m1=80.0
+ch2_008.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch2_012.json    d=   80.0  via=m1:m1  light=(130,450)  hinge=(210,450)  dir=0  near=80.0/m1  m1=80.0
+ch2_016.json    d=   80.0  via=m1:m1  light=(130,1508)  hinge=(210,1508)  dir=0  near=80.0/m1  m1=80.0
+ch2_020.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch2_024.json    d=   80.0  via=m1:m1  light=(130,1500)  hinge=(210,1500)  dir=0  near=80.0/m1  m1=80.0
+ch2_028.json    d=   80.0  via=m1:m1  light=(130,808)  hinge=(210,808)  dir=0  near=80.0/m1  m1=80.0
+ch2_032.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch2_036.json    d=   80.0  via=m1:m1  light=(130,800)  hinge=(210,800)  dir=0  near=80.0/m1  m1=80.0
+ch2_040.json    d=   80.0  via=m1:m1  light=(130,1158)  hinge=(210,1158)  dir=0  near=80.0/m1  m1=80.0
+ch2_044.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch2_048.json    d=   80.0  via=m1:m1  light=(130,1150)  hinge=(210,1150)  dir=0  near=80.0/m1  m1=80.0
+ch2_052.json    d=   80.0  via=m1:m1  light=(130,808)  hinge=(210,808)  dir=0  near=80.0/m1  m1=80.0
+ch2_056.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch2_060.json    d=   80.0  via=m1:m1  light=(130,800)  hinge=(210,800)  dir=0  near=80.0/m1  m1=80.0
+ch2_064.json    d=   80.0  via=m1:m1  light=(130,1158)  hinge=(210,1158)  dir=0  near=80.0/m1  m1=80.0
+ch2_068.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch2_072.json    d=   80.0  via=m1:m1  light=(130,1150)  hinge=(210,1150)  dir=0  near=80.0/m1  m1=80.0
+ch2_076.json    d=   80.0  via=m1:m1  light=(130,808)  hinge=(210,808)  dir=0  near=80.0/m1  m1=80.0
+ch2_080.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch2_084.json    d=   80.0  via=m1:m1  light=(130,800)  hinge=(210,800)  dir=0  near=80.0/m1  m1=80.0
+ch2_088.json    d=   80.0  via=m1:m1  light=(130,108)  hinge=(210,108)  dir=0  near=80.0/m1  m1=80.0
+ch2_092.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch2_096.json    d=   80.0  via=m1:m1  light=(130,1150)  hinge=(210,1150)  dir=0  near=80.0/m1  m1=80.0
+ch2_100.json    d=   80.0  via=m1:m1  light=(130,1858)  hinge=(210,1858)  dir=0  near=80.0/m1  m1=80.0
+ch3_004.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch3_008.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch3_012.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch3_016.json    d=   80.0  via=m1:m1  light=(130,110)  hinge=(210,110)  dir=0  near=80.0/m1  m1=80.0
+ch3_020.json    d=   80.0  via=m1:m1  light=(130,1860)  hinge=(210,1860)  dir=0  near=80.0/m1  m1=80.0
+ch3_024.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch3_028.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch3_032.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch3_036.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch3_040.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch3_044.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch3_048.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch3_052.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch3_056.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch3_060.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch3_064.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch3_068.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch3_072.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch3_076.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch3_080.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch3_084.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch3_088.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch3_092.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch3_096.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch3_100.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch4_004.json    d=   80.0  via=m1:m1  light=(130,1498)  hinge=(210,1498)  dir=0  near=80.0/m1  m1=80.0
+ch4_008.json    d=   80.0  via=m1:m1  light=(130,1506)  hinge=(210,1506)  dir=0  near=80.0/m1  m1=80.0
+ch4_012.json    d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch4_016.json    d=   80.0  via=m1:m1  light=(130,448)  hinge=(210,448)  dir=0  near=80.0/m1  m1=80.0
+ch4_020.json    d=   80.0  via=m1:m1  light=(130,1156)  hinge=(210,1156)  dir=0  near=80.0/m1  m1=80.0
+ch4_024.json    d=   80.0  via=m1:m1  light=(130,1490)  hinge=(210,1490)  dir=0  near=80.0/m1  m1=80.0
+ch4_028.json    d=   80.0  via=m1:m1  light=(130,1148)  hinge=(210,1148)  dir=0  near=80.0/m1  m1=80.0
+ch4_032.json    d=   80.0  via=m1:m1  light=(130,806)  hinge=(210,806)  dir=0  near=80.0/m1  m1=80.0
+ch4_036.json    d=   80.0  via=m1:m1  light=(130,790)  hinge=(210,790)  dir=0  near=80.0/m1  m1=80.0
+ch4_040.json    d=   80.0  via=m1:m1  light=(130,798)  hinge=(210,798)  dir=0  near=80.0/m1  m1=80.0
+ch4_044.json    d=   80.0  via=m1:m1  light=(130,456)  hinge=(210,456)  dir=0  near=80.0/m1  m1=80.0
+ch4_048.json    d=   80.0  via=m1:m1  light=(130,1140)  hinge=(210,1140)  dir=0  near=80.0/m1  m1=80.0
+ch4_053.json    d=   80.0  via=m1:m1  light=(130,1156)  hinge=(210,1156)  dir=0  near=80.0/m1  m1=80.0
+ch4_057.json    d=   80.0  via=m1:m1  light=(130,1140)  hinge=(210,1140)  dir=0  near=80.0/m1  m1=80.0
+ch4_061.json    d=   80.0  via=m1:m1  light=(130,798)  hinge=(210,798)  dir=0  near=80.0/m1  m1=80.0
+ch4_065.json    d=   80.0  via=m1:m1  light=(130,806)  hinge=(210,806)  dir=0  near=80.0/m1  m1=80.0
+ch4_069.json    d=   80.0  via=m1:m1  light=(130,790)  hinge=(210,790)  dir=0  near=80.0/m1  m1=80.0
+ch4_073.json    d=   80.0  via=m1:m1  light=(130,798)  hinge=(210,798)  dir=0  near=80.0/m1  m1=80.0
+ch4_077.json    d=   80.0  via=m1:m1  light=(130,806)  hinge=(210,806)  dir=0  near=80.0/m1  m1=80.0
+ch4_081.json    d=   80.0  via=m1:m1  light=(130,790)  hinge=(210,790)  dir=0  near=80.0/m1  m1=80.0
+ch4_085.json    d=   80.0  via=m1:m1  light=(130,448)  hinge=(210,448)  dir=0  near=80.0/m1  m1=80.0
+ch4_089.json    d=   80.0  via=m1:m1  light=(130,1856)  hinge=(210,1856)  dir=0  near=80.0/m1  m1=80.0
+ch4_093.json    d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch4_097.json    d=   80.0  via=m1:m1  light=(130,448)  hinge=(210,448)  dir=0  near=80.0/m1  m1=80.0
+ch5_001.json    d=   80.0  via=m1:m1  light=(130,808)  hinge=(210,808)  dir=0  near=80.0/m1  m1=80.0
+ch5_005.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch5_009.json    d=   80.0  via=m1:m1  light=(130,800)  hinge=(210,800)  dir=0  near=80.0/m1  m1=80.0
+ch5_013.json    d=   80.0  via=m1:m1  light=(130,1858)  hinge=(210,1858)  dir=0  near=80.0/m1  m1=80.0
+ch5_017.json    d=   80.0  via=m1:m1  light=(130,1860)  hinge=(210,1860)  dir=0  near=80.0/m1  m1=80.0
+ch5_021.json    d=   80.0  via=m1:m1  light=(130,450)  hinge=(210,450)  dir=0  near=80.0/m1  m1=80.0
+ch5_025.json    d=   80.0  via=m1:m1  light=(130,1508)  hinge=(210,1508)  dir=0  near=80.0/m1  m1=80.0
+ch5_029.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch5_033.json    d=   80.0  via=m1:m1  light=(130,450)  hinge=(210,450)  dir=0  near=80.0/m1  m1=80.0
+ch5_037.json    d=   80.0  via=m1:m1  light=(130,1508)  hinge=(210,1508)  dir=0  near=80.0/m1  m1=80.0
+ch5_041.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch5_045.json    d=   80.0  via=m1:m1  light=(130,1500)  hinge=(210,1500)  dir=0  near=80.0/m1  m1=80.0
+ch5_049.json    d=   80.0  via=m1:m1  light=(130,458)  hinge=(210,458)  dir=0  near=80.0/m1  m1=80.0
+ch5_053.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch5_057.json    d=   80.0  via=m1:m1  light=(130,450)  hinge=(210,450)  dir=0  near=80.0/m1  m1=80.0
+ch5_065.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch5_069.json    d=   80.0  via=m1:m1  light=(130,1500)  hinge=(210,1500)  dir=0  near=80.0/m1  m1=80.0
+ch5_073.json    d=   80.0  via=m1:m1  light=(130,458)  hinge=(210,458)  dir=0  near=80.0/m1  m1=80.0
+ch5_077.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch5_081.json    d=   80.0  via=m1:m1  light=(130,450)  hinge=(210,450)  dir=0  near=80.0/m1  m1=80.0
+ch5_085.json    d=   80.0  via=m1:m1  light=(130,1508)  hinge=(210,1508)  dir=0  near=80.0/m1  m1=80.0
+ch5_089.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch5_093.json    d=   80.0  via=m1:m1  light=(130,450)  hinge=(210,450)  dir=0  near=80.0/m1  m1=80.0
+ch5_097.json    d=   80.0  via=m1:m1  light=(130,1508)  hinge=(210,1508)  dir=0  near=80.0/m1  m1=80.0
+ch6_001.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch6_005.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch6_009.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch6_013.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch6_017.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch6_021.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch6_025.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch6_029.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch6_033.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch6_037.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch6_041.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch6_045.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch6_049.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch6_053.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch6_057.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch6_061.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch6_065.json    d=   80.0  via=m1:m1  light=(130,110)  hinge=(210,110)  dir=0  near=80.0/m1  m1=80.0
+ch6_069.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch6_073.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch6_077.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch6_081.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch6_085.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch6_089.json    d=   80.0  via=m1:m1  light=(130,110)  hinge=(210,110)  dir=0  near=80.0/m1  m1=80.0
+ch6_093.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch6_097.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch7_001.json    d=   80.0  via=m1:m1  light=(130,1498)  hinge=(210,1498)  dir=0  near=80.0/m1  m1=80.0
+ch7_005.json    d=   80.0  via=m1:m1  light=(130,456)  hinge=(210,456)  dir=0  near=80.0/m1  m1=80.0
+ch7_009.json    d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch7_013.json    d=   80.0  via=m1:m1  light=(130,448)  hinge=(210,448)  dir=0  near=80.0/m1  m1=80.0
+ch7_017.json    d=   80.0  via=m1:m1  light=(130,1506)  hinge=(210,1506)  dir=0  near=80.0/m1  m1=80.0
+ch7_021.json    d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch7_025.json    d=   80.0  via=m1:m1  light=(130,1498)  hinge=(210,1498)  dir=0  near=80.0/m1  m1=80.0
+ch7_029.json    d=   80.0  via=m1:m1  light=(130,1506)  hinge=(210,1506)  dir=0  near=80.0/m1  m1=80.0
+ch7_033.json    d=   80.0  via=m1:m1  light=(130,1490)  hinge=(210,1490)  dir=0  near=80.0/m1  m1=80.0
+ch7_037.json    d=   80.0  via=m1:m1  light=(130,1498)  hinge=(210,1498)  dir=0  near=80.0/m1  m1=80.0
+ch7_041.json    d=   80.0  via=m1:m1  light=(130,456)  hinge=(210,456)  dir=0  near=80.0/m1  m1=80.0
+ch7_045.json    d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch7_049.json    d=   80.0  via=m1:m1  light=(130,448)  hinge=(210,448)  dir=0  near=80.0/m1  m1=80.0
+ch7_053.json    d=   80.0  via=m1:m1  light=(130,1506)  hinge=(210,1506)  dir=0  near=80.0/m1  m1=80.0
+ch7_057.json    d=   80.0  via=m1:m1  light=(130,790)  hinge=(210,790)  dir=0  near=80.0/m1  m1=80.0
+ch7_061.json    d=   80.0  via=m1:m1  light=(130,448)  hinge=(210,448)  dir=0  near=80.0/m1  m1=80.0
+ch7_065.json    d=   80.0  via=m1:m1  light=(130,1506)  hinge=(210,1506)  dir=0  near=80.0/m1  m1=80.0
+ch7_069.json    d=   80.0  via=m1:m1  light=(130,1140)  hinge=(210,1140)  dir=0  near=80.0/m1  m1=80.0
+ch7_073.json    d=   80.0  via=m1:m1  light=(130,448)  hinge=(210,448)  dir=0  near=80.0/m1  m1=80.0
+ch7_077.json    d=   80.0  via=m1:m1  light=(130,456)  hinge=(210,456)  dir=0  near=80.0/m1  m1=80.0
+ch7_081.json    d=   80.0  via=m1:m1  light=(130,440)  hinge=(210,440)  dir=0  near=80.0/m1  m1=80.0
+ch7_085.json    d=   80.0  via=m1:m1  light=(130,798)  hinge=(210,798)  dir=0  near=80.0/m1  m1=80.0
+ch7_089.json    d=   80.0  via=m1:m1  light=(130,106)  hinge=(210,106)  dir=0  near=80.0/m1  m1=80.0
+ch7_093.json    d=   80.0  via=m1:m1  light=(130,1490)  hinge=(210,1490)  dir=0  near=80.0/m1  m1=80.0
+ch7_097.json    d=   80.0  via=m1:m1  light=(130,1498)  hinge=(210,1498)  dir=0  near=80.0/m1  m1=80.0
+ch8_002.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch8_006.json    d=   80.0  via=m1:m1  light=(130,450)  hinge=(210,450)  dir=0  near=80.0/m1  m1=80.0
+ch8_010.json    d=   80.0  via=m1:m1  light=(130,458)  hinge=(210,458)  dir=0  near=80.0/m1  m1=80.0
+ch8_014.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch8_018.json    d=   80.0  via=m1:m1  light=(130,450)  hinge=(210,450)  dir=0  near=80.0/m1  m1=80.0
+ch8_022.json    d=   80.0  via=m1:m1  light=(130,458)  hinge=(210,458)  dir=0  near=80.0/m1  m1=80.0
+ch8_026.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch8_030.json    d=   80.0  via=m1:m1  light=(130,1150)  hinge=(210,1150)  dir=0  near=80.0/m1  m1=80.0
+ch8_034.json    d=   80.0  via=m1:m1  light=(130,1158)  hinge=(210,1158)  dir=0  near=80.0/m1  m1=80.0
+ch8_038.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch8_046.json    d=   80.0  via=m1:m1  light=(130,808)  hinge=(210,808)  dir=0  near=80.0/m1  m1=80.0
+ch8_050.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch8_054.json    d=   80.0  via=m1:m1  light=(130,1500)  hinge=(210,1500)  dir=0  near=80.0/m1  m1=80.0
+ch8_058.json    d=   80.0  via=m1:m1  light=(130,1158)  hinge=(210,1158)  dir=0  near=80.0/m1  m1=80.0
+ch8_062.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch8_066.json    d=   80.0  via=m1:m1  light=(130,1500)  hinge=(210,1500)  dir=0  near=80.0/m1  m1=80.0
+ch8_070.json    d=   80.0  via=m1:m1  light=(130,458)  hinge=(210,458)  dir=0  near=80.0/m1  m1=80.0
+ch8_074.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch8_078.json    d=   80.0  via=m1:m1  light=(130,450)  hinge=(210,450)  dir=0  near=80.0/m1  m1=80.0
+ch8_082.json    d=   80.0  via=m1:m1  light=(130,458)  hinge=(210,458)  dir=0  near=80.0/m1  m1=80.0
+ch8_086.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch8_090.json    d=   80.0  via=m1:m1  light=(130,800)  hinge=(210,800)  dir=0  near=80.0/m1  m1=80.0
+ch8_094.json    d=   80.0  via=m1:m1  light=(130,1508)  hinge=(210,1508)  dir=0  near=80.0/m1  m1=80.0
+ch9_002.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch9_006.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch9_010.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch9_014.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch9_017.json    d=   80.0  via=m1:m1  light=(130,110)  hinge=(210,110)  dir=0  near=80.0/m1  m1=80.0
+ch9_018.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch9_022.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch9_026.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch9_030.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch9_034.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch9_038.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch9_042.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch9_046.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch9_050.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch9_054.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch9_058.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch9_062.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch9_066.json    d=   80.0  via=m1:m1  light=(130,460)  hinge=(210,460)  dir=0  near=80.0/m1  m1=80.0
+ch9_070.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch9_074.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch9_078.json    d=   80.0  via=m1:m1  light=(130,810)  hinge=(210,810)  dir=0  near=80.0/m1  m1=80.0
+ch9_082.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch9_086.json    d=   80.0  via=m1:m1  light=(130,1160)  hinge=(210,1160)  dir=0  near=80.0/m1  m1=80.0
+ch9_090.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch9_094.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch9_098.json    d=   80.0  via=m1:m1  light=(130,1510)  hinge=(210,1510)  dir=0  near=80.0/m1  m1=80.0
+ch1_032.json    d=   90.0  via=m1:m1  light=(130,200)  hinge=(220,200)  dir=0  near=90.0/m1  m1=90.0
+ch1_036.json    d=   90.0  via=m1:m1  light=(130,90)  hinge=(220,90)  dir=0  near=90.0/m1  m1=90.0
+ch1_040.json    d=   90.0  via=m1:m1  light=(130,90)  hinge=(220,90)  dir=0  near=90.0/m1  m1=90.0
+ch1_044.json    d=   90.0  via=m1:m1  light=(130,1490)  hinge=(220,1490)  dir=0  near=90.0/m1  m1=90.0
+ch1_048.json    d=   90.0  via=m1:m1  light=(130,440)  hinge=(220,440)  dir=0  near=90.0/m1  m1=90.0
+ch1_052.json    d=   90.0  via=m1:m1  light=(130,790)  hinge=(220,790)  dir=0  near=90.0/m1  m1=90.0
+ch1_056.json    d=   90.0  via=m1:m1  light=(130,1140)  hinge=(220,1140)  dir=0  near=90.0/m1  m1=90.0
+ch1_060.json    d=   90.0  via=m1:m1  light=(130,790)  hinge=(220,790)  dir=0  near=90.0/m1  m1=90.0
+ch1_064.json    d=   90.0  via=m1:m1  light=(130,1140)  hinge=(220,1140)  dir=0  near=90.0/m1  m1=90.0
+ch1_068.json    d=   90.0  via=m1:m1  light=(130,790)  hinge=(220,790)  dir=0  near=90.0/m1  m1=90.0
+ch1_072.json    d=   90.0  via=m1:m1  light=(130,440)  hinge=(220,440)  dir=0  near=90.0/m1  m1=90.0
+ch1_076.json    d=   90.0  via=m1:m1  light=(130,1840)  hinge=(220,1840)  dir=0  near=90.0/m1  m1=90.0
+ch1_080.json    d=   90.0  via=m1:m1  light=(130,1140)  hinge=(220,1140)  dir=0  near=90.0/m1  m1=90.0
+ch1_084.json    d=   90.0  via=m1:m1  light=(130,440)  hinge=(220,440)  dir=0  near=90.0/m1  m1=90.0
+ch1_088.json    d=   90.0  via=m1:m1  light=(130,440)  hinge=(220,440)  dir=0  near=90.0/m1  m1=90.0
+ch1_092.json    d=   90.0  via=m1:m1  light=(130,1490)  hinge=(220,1490)  dir=0  near=90.0/m1  m1=90.0
+ch1_096.json    d=   90.0  via=m1:m1  light=(130,440)  hinge=(220,440)  dir=0  near=90.0/m1  m1=90.0
+ch1_100.json    d=   90.0  via=m1:m1  light=(130,440)  hinge=(220,440)  dir=0  near=90.0/m1  m1=90.0
+ch1_020.json    d=  110.0  via=m1:m1  light=(1030,300)  hinge=(920,300)  dir=180  near=110.0/m1  m1=110.0
+ch1_030.json    d=  110.0  via=m1:m1  light=(600,130)  hinge=(600,240)  dir=90  near=110.0/m1  m1=110.0
+ch1_034.json    d=  110.0  via=m1:m1  light=(980,130)  hinge=(980,240)  dir=90  near=110.0/m1  m1=110.0
+
+Side distribution among primary<150: {'east(180)': 240, 'south(270)': 137, 'north(90)': 141, 'west(0)': 235}
+
+WORST OFFENDERS (smallest primary gap, top 40):
+------------------------------------------------------------------------
+ch1_031.json    d=   10.0  light=(950.0,1020.0)  m1@(960.0,1020.0)  dir=180  d_near=10.0  d_m1=10.0
+ch1_033.json    d=   10.0  light=(560.0,1790.0)  m1@(560.0,1780.0)  dir=270  d_near=10.0  d_m1=10.0
+ch1_035.json    d=   10.0  light=(950.0,1840.0)  m1@(960.0,1840.0)  dir=180  d_near=10.0  d_m1=10.0
+ch10_001.json   d=   20.0  light=(950.0,1148.0)  m1@(970.0,1148.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_005.json   d=   20.0  light=(950.0,456.0)  m1@(970.0,456.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_009.json   d=   20.0  light=(950.0,440.0)  m1@(970.0,440.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_013.json   d=   20.0  light=(950.0,1148.0)  m1@(970.0,1148.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_017.json   d=   20.0  light=(950.0,1506.0)  m1@(970.0,1506.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_021.json   d=   20.0  light=(950.0,440.0)  m1@(970.0,440.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_025.json   d=   20.0  light=(950.0,798.0)  m1@(970.0,798.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_029.json   d=   20.0  light=(950.0,456.0)  m1@(970.0,456.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_033.json   d=   20.0  light=(950.0,440.0)  m1@(970.0,440.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_037.json   d=   20.0  light=(950.0,448.0)  m1@(970.0,448.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_041.json   d=   20.0  light=(950.0,456.0)  m1@(970.0,456.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_045.json   d=   20.0  light=(950.0,440.0)  m1@(970.0,440.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_049.json   d=   20.0  light=(950.0,448.0)  m1@(970.0,448.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_053.json   d=   20.0  light=(950.0,456.0)  m1@(970.0,456.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_057.json   d=   20.0  light=(950.0,440.0)  m1@(970.0,440.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_058.json   d=   20.0  light=(950.0,1148.0)  m1@(970.0,1148.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_061.json   d=   20.0  light=(950.0,798.0)  m1@(970.0,798.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_065.json   d=   20.0  light=(950.0,456.0)  m1@(970.0,456.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_069.json   d=   20.0  light=(950.0,440.0)  m1@(970.0,440.0)  dir=180  d_near=20.0  d_m1=20.0
+ch10_073.json   d=   20.0  light=(950.0,448.0)  m1@(970.0,448.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_003.json    d=   20.0  light=(950.0,450.0)  m1@(970.0,450.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_007.json    d=   20.0  light=(950.0,808.0)  m1@(970.0,808.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_011.json    d=   20.0  light=(950.0,460.0)  m1@(970.0,460.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_014.json    d=   20.0  light=(590.0,130.0)  m1@(590.0,110.0)  dir=90  d_near=20.0  d_m1=20.0
+ch2_015.json    d=   20.0  light=(950.0,1500.0)  m1@(970.0,1500.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_019.json    d=   20.0  light=(950.0,458.0)  m1@(970.0,458.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_023.json    d=   20.0  light=(950.0,1510.0)  m1@(970.0,1510.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_026.json    d=   20.0  light=(210.0,130.0)  m1@(210.0,110.0)  dir=90  d_near=20.0  d_m1=20.0
+ch2_027.json    d=   20.0  light=(950.0,800.0)  m1@(970.0,800.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_031.json    d=   20.0  light=(950.0,1158.0)  m1@(970.0,1158.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_035.json    d=   20.0  light=(950.0,810.0)  m1@(970.0,810.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_038.json    d=   20.0  light=(970.0,130.0)  m1@(970.0,110.0)  dir=90  d_near=20.0  d_m1=20.0
+ch2_039.json    d=   20.0  light=(950.0,1150.0)  m1@(970.0,1150.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_043.json    d=   20.0  light=(950.0,108.0)  m1@(970.0,108.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_047.json    d=   20.0  light=(950.0,1160.0)  m1@(970.0,1160.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_051.json    d=   20.0  light=(950.0,450.0)  m1@(970.0,450.0)  dir=180  d_near=20.0  d_m1=20.0
+ch2_055.json    d=   20.0  light=(950.0,1508.0)  m1@(970.0,1508.0)  dir=180  d_near=20.0  d_m1=20.0
+
+BEAM-AXIS GAP (for primary<150): signed travel from light to hinge
+along beam direction unit vector (positive = hinge ahead of light):
+------------------------------------------------------------------------
+ch1_031.json    euclid=   10.0  axial=  -10.0  perp=   0.0
+ch1_033.json    euclid=   10.0  axial=   10.0  perp=   0.0
+ch1_035.json    euclid=   10.0  axial=  -10.0  perp=   0.0
+ch10_001.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_005.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_009.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_013.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_017.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_021.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_025.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_029.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_033.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_037.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_041.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_045.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_049.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_053.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_057.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_058.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_061.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_065.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_069.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch10_073.json   euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_003.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_007.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_011.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_014.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_015.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_019.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_023.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_026.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_027.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_031.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_035.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_038.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_039.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_043.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_047.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_051.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_055.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_059.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_063.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_067.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_071.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_075.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_079.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_083.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_086.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_087.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_091.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_095.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch2_099.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_002.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_003.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_007.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_011.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_015.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_018.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_019.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_023.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_027.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_030.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_031.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_034.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_035.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_038.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_039.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_042.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_043.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_046.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_047.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_050.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_051.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_054.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_055.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_058.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_059.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_062.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_063.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+ch3_066.json    euclid=   20.0  axial=  -20.0  perp=   0.0
+
+REFERENCE: light_setup(direction, first) in tool/_harden_one.py
+------------------------------------------------------------------------
+  dir≈180 → light_xy=(950, first.y), tip/light_m=(1028, first.y), beam=(-1,0), side=east
+  dir≈0   → light_xy=(130, first.y), tip/light_m=(52, first.y),  beam=(1,0),  side=west
+  dir≈90  → light_xy=(first.x, 130), tip/light_m=(first.x, 52),  beam=(0,1),  side=north
+  else270 → light_xy=(first.x, 1790), tip/light_m=(first.x, 1868), beam=(0,-1), side=south
+  Note: lightSources[].position stores light_xy (fixture), simulation uses
+  mounted_origin(pos, direction) which snaps tip to WALL_INSET=52 on the
+  entry wall (matching light_m). Euclidean light_xy→first hinge is therefore
+  |950-first.x| for east starts, |130-first.x| west, |130-first.y| north,
+  |1790-first.y| south — IF first hinge shares the axis coordinate.
+  candidate_starts places first hinge on XS[-1]/XS[0]/YS[0..1]/YS[-1..-2],
+  so gap depends on grid edge vs fixed light fixture coords.
+
+ROOT CAUSE
+------------------------------------------------------------------------
+light_setup uses FIXED fixture coords (950/130/130/1790) independent of first.x/y
+beyond sharing the cross-axis. candidate_starts pins first hinge to the EDGE
+lattice column/row:
+
+  east:  first≈(970–980,y) vs light x=950  → gap 20–30, often axial NEGATIVE
+         (fixture past hinge along beam; tip@1028 → hinge@970 → fixture@950)
+  west:  first≈(220,y) vs light x=130       → gap ~90 (OK-ish, axial+)
+  north: first≈(x,90–110) vs light y=130    → gap 20–40, often axial NEGATIVE
+  south: first≈(x,1780–1840) vs light y=1790→ gap 10–50
+
+Contrast generate_levels_extreme.build_axis:
+  first = tip + beam_dir * {450,500,550,600}  → hundreds of px of beam travel.
+
+Many <150 levels have axial < 0: lightSources.position is PAST m1 along the
+beam, so the emitter sprite sits on/beyond the first mirror (barely visible beam).
+
+PROPOSED FIX (prefer b; do not batch-mutate yet without re-validate)
+------------------------------------------------------------------------
+(b1) Rewrite light_setup(direction, first) relative to first + tip:
+
+  MIN_FIXTURE_GAP = 120.0   # lightSources.position → first hinge along beam
+  MIN_TIP_GAP     = 160.0   # mounted tip → first hinge (room for visible beam)
+
+  tip stays on wall (WALL_INSET / ROOM-WALL_INSET) as today.
+  Require |first - tip| along beam >= MIN_TIP_GAP (else caller must pick
+  inward first / reject start).
+  light_xy = first - beam_unit * MIN_FIXTURE_GAP, clamped so it lies strictly
+  between tip and first (axial > 0).
+
+  Example east with first.x=970 is IMPOSSIBLE for gap≥120 (tip@1028 only
+  leaves 58px). So also:
+
+(b2) Fix candidate_starts for sides that start on the outer lattice:
+  east:  prefer XS[-2] (middle~600) or require XS[-1] only if first.x <= tip.x - MIN_TIP_GAP
+         (i.e. push first inward, e.g. first.x = tip.x - 200 ≈ 828)
+  north: prefer YS[1] over YS[0], or clamp first.y >= tip.y + MIN_TIP_GAP
+  south: prefer YS[-2], or clamp first.y <= tip.y - MIN_TIP_GAP
+  west:  already ~168 tip→hinge; bump fixture gap if desired
+
+(a) Cosmetic-only batch: move light toward tip so axial>0 and euclid>=min(available,80).
+  Safe for validation (ray origin is mounted_origin tip, not fixture), but does
+  NOT create a long visible beam when tip→hinge is only ~50–60px (east XS[-1]).
+  Not recommended as sole fix for the 379 levels with gap<50.
+
+Recommended pipeline:
+  1. Patch light_setup + candidate_starts (b1+b2).
+  2. Batch-rewrite lightSources[0].position for levels where tip→m1 already
+     >= MIN_TIP_GAP: set light = m1 - dir*MIN_FIXTURE_GAP (between tip and m1).
+  3. Re-harden / regenerate levels where tip→m1 < MIN_TIP_GAP (mostly east edge
+     starts and north YS[0] / south YS[-1]) with inward first hinge.
+  4. Re-run validate+simulate on every touched file before commit.

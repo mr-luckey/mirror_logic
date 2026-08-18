@@ -1,0 +1,49 @@
+{
+  "harden_stdout": "ch5_030 strict family=nested_frames side=south unique=8 catalog=nested_frames_helix_descent_north_11_0598\n  top sc=9.41 n=13 start=(210,1150) xr=5 yr=2 ch=LLLRRRRLLRRR\n  strict exhausted after 0 wall-tries\nch5_030 loose family=nested_frames side=south unique=107 catalog=nested_frames_helix_descent_north_11_0598\n  top sc=-10.00 n=12 start=(210,1150) xr=4 yr=1 ch=LRRLLRLLLRR\n  try#1 n=10 walls=7 lit={'c1'} hits=10 ok=True c=(970,1580)\nWROTE assets/levels/ch5_030.json\npath [(210.0, 1500.0), (590.0, 1500.0), (590.0, 800.0), (970.0, 800.0), (970.0, 450.0), (590.0, 450.0), (590.0, 100.0), (210.0, 100.0), (210.0, 1150.0), (970.0, 1150.0)]\ncrystal 970.0 1580.0 walls 7 chirs LRLRRLRRR",
+  "harden_exit": 0,
+  "validate_exit": 0,
+  "PRE": {
+    "title": "Labyrinth Gate",
+    "mirrors": 10,
+    "obstacles": 8,
+    "req": 10,
+    "metadata": {
+      "designer": "canonical_v2",
+      "difficultyBand": "ch1",
+      "difficultyScore": 30.0,
+      "hardness": 0.65,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "nested_frames_helix_descent_north_14_0638"
+    }
+  },
+  "FINAL": {
+    "title": "Labyrinth Gate",
+    "mirrors": 10,
+    "obstacles": 7,
+    "req": 10,
+    "metadata": {
+      "designer": "canonical_v2_hardened",
+      "difficultyBand": "ch5_insane",
+      "difficultyScore": 97.0,
+      "hardness": 0.97,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "nested_frames_helix_descent_north_11_0598"
+    },
+    "tip_m1": 368.0,
+    "tip": [
+      210.0,
+      1868.0
+    ],
+    "m1": [
+      210.0,
+      1500.0
+    ],
+    "ok_full": true,
+    "validate_ok": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 10
+  },
+  "harden_stderr": ""
+}

@@ -109,13 +109,22 @@ class AudioService {
   Future<void> init() async {
     if (_ready) return;
     try {
+      // USAGE_GAME / MEDIA so Android screen recorders can capture playback.
+      // respectSilence used to force USAGE_NOTIFICATION_RINGTONE, which the
+      // AudioPlaybackCapture API deliberately excludes — recorders heard silence.
       await AudioPlayer.global.setAudioContext(
-        AudioContextConfig(
-          // The puzzle is playable in silence, so never interrupt whatever the
-          // player already has going; just mix under it.
-          focus: AudioContextConfigFocus.mixWithOthers,
-          respectSilence: true,
-        ).build(),
+        AudioContext(
+          android: const AudioContextAndroid(
+            usageType: AndroidUsageType.game,
+            contentType: AndroidContentType.music,
+            // Mix under whatever the player already has going.
+            audioFocus: AndroidAudioFocus.none,
+          ),
+          iOS: AudioContextIOS(
+            category: AVAudioSessionCategory.ambient,
+            options: const {AVAudioSessionOptions.mixWithOthers},
+          ),
+        ),
       );
 
       for (var i = 0; i < _poolSize; i++) {

@@ -1,0 +1,44 @@
+{
+  "harden_stdout": "ch5_025 strict family=vertical_switchback side=west unique=28 catalog=corridor_gauntlet_west_cascade_fan_north_11_0586\n  top sc=8.10 n=12 start=(232,1858) xr=4 yr=2 ch=RLRRLLRRRRR\n  try#1 n=11 walls=7 lit={'c1'} hits=11 ok=True c=(612,1348)\nWROTE assets/levels/ch5_025.json\npath [(232.0, 808.0), (232.0, 1158.0), (612.0, 1158.0), (612.0, 458.0), (232.0, 458.0), (232.0, 108.0), (992.0, 108.0), (992.0, 1508.0), (232.0, 1508.0), (232.0, 1858.0), (612.0, 1858.0)]\ncrystal 612.0 1348.0 walls 7 chirs LRRRLLLLRR",
+  "harden_stderr": "",
+  "harden_exit": 0,
+  "validate_exit": 0,
+  "PRE": {
+    "title": "Vault Bend",
+    "mirrors": 12,
+    "obstacles": 10,
+    "req": 12,
+    "metadata": {
+      "designer": "canonical_v2",
+      "difficultyBand": "ch1",
+      "difficultyScore": 25.0,
+      "hardness": 0.6000000000000001,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "zigzag_basin_east_cascade_hourglass_west_11_0595"
+    }
+  },
+  "FINAL": {
+    "title": "Vault Bend",
+    "mirrors": 11,
+    "obstacles": 7,
+    "req": 11,
+    "metadata": {
+      "designer": "canonical_v2_hardened",
+      "difficultyBand": "ch5_insane",
+      "difficultyScore": 97.0,
+      "hardness": 0.97,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "corridor_gauntlet_west_cascade_fan_north_11_0586"
+    },
+    "tip_m1": 180.0,
+    "tip": [
+      52.0,
+      808.0
+    ],
+    "m1": [
+      232.0,
+      808.0
+    ],
+    "ok_full": true
+  }
+}

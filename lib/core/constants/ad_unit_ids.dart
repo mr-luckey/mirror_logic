@@ -29,27 +29,27 @@ abstract final class AdUnitIds {
   /// on purpose: five distinct placeholders would only mean five identical
   /// requests. Swap each line for its real unit before shipping.
   static const List<String> _androidBanner = [
-    'ca-app-pub-5561438827097019/4062417943',
-    'ca-app-pub-5561438827097019/7019487844',
-    'ca-app-pub-5561438827097019/2680073570',
-    'ca-app-pub-5561438827097019/6344700428',
-    'ca-app-pub-5561438827097019/4884279091',
+    'ca-app-pub-6018501407074634/9018064835',
+    'ca-app-pub-6018501407074634/6419821659',
+    'ca-app-pub-6018501407074634/7541331633',
+    'ca-app-pub-6018501407074634/2144062547',
+    'ca-app-pub-6018501407074634/3518326144',
   ];
 
   static const List<String> _androidInterstitial = [
-    'ca-app-pub-5561438827097019/1366991906',
-    'ca-app-pub-5561438827097019/2038623907',
-    'ca-app-pub-5561438827097019/3571197422',
-    'ca-app-pub-5561438827097019/9454079490',
-    'ca-app-pub-5561438827097019/5529598191',
+    'ca-app-pub-6018501407074634/5476802894',
+    'ca-app-pub-6018501407074634/5883997006',
+    'ca-app-pub-6018501407074634/4083684384',
+    'ca-app-pub-6018501407074634/1697194191',
+    'ca-app-pub-6018501407074634/6228249967',
   ];
 
   static const List<String> _androidRewarded = [
-    'ca-app-pub-5561438827097019/2258115758',
-    'ca-app-pub-5561438827097019/2749336272',
-    'ca-app-pub-5561438827097019/9123172931',
-    'ca-app-pub-5561438827097019/7810091269',
-    'ca-app-pub-5561438827097019/4201752816',
+    'ca-app-pub-6018501407074634/2850639558',
+    'ca-app-pub-6018501407074634/9384112521',
+    'ca-app-pub-6018501407074634/2452656484',
+    'ca-app-pub-6018501407074634/1457521047',
+    'ca-app-pub-6018501407074634/7911394547',
   ];
 
   static const List<String> _iosBanner = [

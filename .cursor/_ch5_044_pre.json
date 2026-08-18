@@ -1,0 +1,29 @@
+{
+  "title": "Atrium Loop",
+  "mirrors": 12,
+  "obstacles": 10,
+  "req": 12,
+  "metadata": {
+    "designer": "canonical_v2",
+    "difficultyBand": "ch1",
+    "difficultyScore": 44.0,
+    "hardness": 0.5900000000000001,
+    "wallStyle": "mid_segment_rails",
+    "patternId": "pillar_maze_west_cascade_fan_west_14_0611"
+  },
+  "ok_full": true,
+  "validate_ok": true,
+  "lit": [
+    "c1"
+  ],
+  "hits": 12,
+  "tip": [
+    1028.0,
+    460.0
+  ],
+  "m1": [
+    970.0,
+    460.0
+  ],
+  "tip_m1": 58.0
+}

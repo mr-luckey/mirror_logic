@@ -1,0 +1,40 @@
+{
+  "pre": {
+    "ok": true,
+    "ok_full": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 11,
+    "tip_m1": 408.0,
+    "designer": "canonical_v2_hardened",
+    "difficultyBand": "ch5_insane",
+    "difficultyScore": 97.0,
+    "hardness": 0.97,
+    "wallStyle": "mid_segment_rails",
+    "title": "Stone Bounce",
+    "mirrors": 11,
+    "req": 11,
+    "patternId": "mirror_cathedral_west_cascade_fan_east_11_0616"
+  },
+  "final": {
+    "ok": true,
+    "ok_full": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 11,
+    "tip_m1": 408.0,
+    "designer": "canonical_v2_hardened",
+    "difficultyBand": "ch5_insane",
+    "difficultyScore": 97.0,
+    "hardness": 0.97,
+    "wallStyle": "mid_segment_rails",
+    "title": "Stone Bounce",
+    "mirrors": 11,
+    "req": 11,
+    "patternId": "mirror_cathedral_west_cascade_fan_east_11_0616"
+  },
+  "harden_stdout": "WROTE assets/levels/ch5_035.json; loose try#5 n=11 walls=9 lit=c1 hits=11 ok=True",
+  "harden_exit": 0
+}

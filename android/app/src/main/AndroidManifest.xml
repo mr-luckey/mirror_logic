@@ -4,7 +4,8 @@
     <application
         android:label="Mirror Logic"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowAudioPlaybackCapture="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -33,7 +34,7 @@
              in lib/core/constants/ad_unit_ids.dart. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5561438827097019~9645651189" />
+            android:value="ca-app-pub-6018501407074634~2414495014" />
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

@@ -1,0 +1,31 @@
+{
+  "PRE": {
+    "title": "Bastion Echo",
+    "mirrors": 12,
+    "obstacles": 8,
+    "req": 12,
+    "metadata": {
+      "designer": "canonical_v2",
+      "difficultyBand": "ch1",
+      "difficultyScore": 42.0,
+      "hardness": 0.5700000000000001,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "cascade_chamber_axis_backtrack_north_11_0622"
+    },
+    "ok_full": true,
+    "validate_ok": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 12,
+    "tip": [
+      590.0,
+      1868.0
+    ],
+    "m1": [
+      590.0,
+      1500.0
+    ],
+    "tip_m1": 368.0
+  }
+}

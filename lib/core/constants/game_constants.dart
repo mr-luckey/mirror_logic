@@ -26,7 +26,8 @@ abstract final class GameConstants {
   /// chapter total — every level has to be cleared at three stars.
   static const int starsToUnlockNextChapter = 300;
 
-  /// Set to false before shipping. When true, all chapters/levels are playable.
+  /// Set to false before shipping. When true, all chapters/levels are playable
+  /// and hints skip the rewarded-ad gate (same QA shortcut).
   static const bool unlockAllLevelsForTesting = false;
 
   /// Set to false before shipping. When true, every hall is owned and equippable
@@ -42,7 +43,8 @@ abstract final class GameConstants {
   /// Rolling window starts on the first earned ad and resets after this.
   static const Duration rewardedAdsWindow = Duration(hours: 24);
 
-  /// Set to true before shipping. When false, ads never init, load, or show.
+  /// Set to true before shipping. When false, ads never init, load, or show,
+  /// and hints are free (no rewarded video) so QA can still use them.
   static const bool adsEnabled = true;
 
   static const String chapter1Id = 'ch1';

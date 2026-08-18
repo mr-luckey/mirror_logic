@@ -1,1 +1,341 @@
-{"levelId":"ch1_019","chapterId":"ch1","schemaVersion":1,"levelIndex":19,"title":"Wing Route 19","roomBounds":{"width":1080.0,"height":1920.0},"lightSources":[{"id":"ls1","position":[950.0,800.0],"direction":180.0,"locked":true}],"mirrors":[{"id":"m1","hingePosition":[430,800],"length":145.0,"initialAngle":89.01527823516875,"minAngle":5.0,"maxAngle":175.0,"snapIncrement":0.0,"isLocked":false,"type":"standard"},{"id":"m2","hingePosition":[430,1350],"length":145.0,"initialAngle":88.91614111412343,"minAngle":5.0,"maxAngle":175.0,"snapIncrement":0.0,"isLocked":false,"type":"standard"},{"id":"m3","hingePosition":[880,1350],"length":145.0,"initialAngle":5.0,"minAngle":5.0,"maxAngle":175.0,"snapIncrement":0.0,"isLocked":false,"type":"standard"},{"id":"m4","hingePosition":[880,1700],"length":145.0,"initialAngle":93.42899446811245,"minAngle":5.0,"maxAngle":175.0,"snapIncrement":0.0,"isLocked":false,"type":"standard"},{"id":"m5","hingePosition":[180,1700],"length":145.0,"initialAngle":93.76941803799203,"minAngle":5.0,"maxAngle":175.0,"snapIncrement":0.0,"isLocked":false,"type":"standard"},{"id":"m6","hingePosition":[180,1050],"length":145.0,"initialAngle":91.5791495933269,"minAngle":5.0,"maxAngle":175.0,"snapIncrement":0.0,"isLocked":false,"type":"standard"},{"id":"m7","hingePosition":[680,1050],"length":145.0,"initialAngle":93.23753209517511,"minAngle":5.0,"maxAngle":175.0,"snapIncrement":0.0,"isLocked":false,"type":"standard"},{"id":"m8","hingePosition":[680,350],"length":145.0,"initialAngle":86.83776495615476,"minAngle":5.0,"maxAngle":175.0,"snapIncrement":0.0,"isLocked":false,"type":"standard"}],"obstacles":[{"id":"w0","polygon":[[764.0,668.0],[1080.0,668.0],[1080.0,716.0],[764.0,716.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w1","polygon":[[298.0,668.0],[596.0,668.0],[596.0,716.0],[298.0,716.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w2","polygon":[[764.0,884.0],[1080.0,884.0],[1080.0,932.0],[764.0,932.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w3","polygon":[[514.0,884.0],[596.0,884.0],[596.0,932.0],[514.0,932.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w4","polygon":[[298.0,668.0],[346.0,668.0],[346.0,966.0],[298.0,966.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w5","polygon":[[298.0,1134.0],[346.0,1134.0],[346.0,1482.0],[298.0,1482.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w6","polygon":[[514.0,884.0],[562.0,884.0],[562.0,966.0],[514.0,966.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w7","polygon":[[514.0,1134.0],[562.0,1134.0],[562.0,1266.0],[514.0,1266.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w8","polygon":[[298.0,1434.0],[796.0,1434.0],[796.0,1482.0],[298.0,1482.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w9","polygon":[[514.0,1218.0],[1012.0,1218.0],[1012.0,1266.0],[514.0,1266.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w10","polygon":[[748.0,1434.0],[796.0,1434.0],[796.0,1616.0],[748.0,1616.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w11","polygon":[[964.0,1218.0],[1012.0,1218.0],[1012.0,1832.0],[964.0,1832.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w12","polygon":[[264.0,1568.0],[796.0,1568.0],[796.0,1616.0],[264.0,1616.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w13","polygon":[[48.0,1784.0],[1012.0,1784.0],[1012.0,1832.0],[48.0,1832.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w14","polygon":[[264.0,1134.0],[312.0,1134.0],[312.0,1616.0],[264.0,1616.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w15","polygon":[[48.0,918.0],[96.0,918.0],[96.0,1832.0],[48.0,1832.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w16","polygon":[[264.0,1134.0],[346.0,1134.0],[346.0,1182.0],[264.0,1182.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w17","polygon":[[514.0,1134.0],[812.0,1134.0],[812.0,1182.0],[514.0,1182.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w18","polygon":[[48.0,918.0],[346.0,918.0],[346.0,966.0],[48.0,966.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w19","polygon":[[514.0,918.0],[596.0,918.0],[596.0,966.0],[514.0,966.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w20","polygon":[[764.0,884.0],[812.0,884.0],[812.0,1182.0],[764.0,1182.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w21","polygon":[[764.0,218.0],[812.0,218.0],[812.0,716.0],[764.0,716.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w22","polygon":[[548.0,884.0],[596.0,884.0],[596.0,966.0],[548.0,966.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w23","polygon":[[548.0,434.0],[596.0,434.0],[596.0,716.0],[548.0,716.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w24","polygon":[[210.0,218.0],[812.0,218.0],[812.0,266.0],[210.0,266.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w25","polygon":[[210.0,434.0],[596.0,434.0],[596.0,482.0],[210.0,482.0]],"isDecorative":false,"renderAsset":"wall_h_cut","orientation":"horizontal","thickness":48.0},{"id":"w26","polygon":[[162.0,218.0],[210.0,218.0],[210.0,350.0],[162.0,350.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0},{"id":"w27","polygon":[[162.0,350.0],[210.0,350.0],[210.0,482.0],[162.0,482.0]],"isDecorative":false,"renderAsset":"wall_h_cut_rotated","orientation":"vertical","thickness":48.0}],"targetCrystals":[{"id":"c1","position":[300,350],"hitRadius":44,"groupId":"g1"}],"crystalGroups":[{"groupId":"g1","requiredCount":1}],"doorPortals":[],"requiredMirrorBounces":8,"intendedSolution":{"mirrorAngles":{"m1":135.0,"m2":45.0,"m3":45.0,"m4":135.0,"m5":45.0,"m6":135.0,"m7":135.0,"m8":45.0},"toleranceDegrees":4.99},"starThresholds":{"threeStarMoveCount":8,"threeStarTimeSeconds":157},"metadata":{"designer":"canonical_v2","difficultyBand":"ch1","difficultyScore":19.0,"hardness":0.0041,"newConceptsIntroduced":["reflection","multi_mirror","corridor"],"objective":"Follow the stone corridor — turn the beam at every post to reach the crystal.","hints":["The passage only opens where the beam is meant to turn.","Side pockets are dead ends — they never reach the crystal.","Set every mirror before you trace the run to the end."],"roomType":"spiral_corridor","pathBias":"spiral","wallStyle":"corridor","globalIndex":19,"pillars":[{"position":[430,800],"asset":"wall_v_cut","size":48.0},{"position":[430,1350],"asset":"wall_v_cut","size":48.0},{"position":[880,1350],"asset":"wall_v_cut","size":48.0},{"position":[880,1700],"asset":"wall_v_cut","size":48.0},{"position":[180,1700],"asset":"wall_v_cut","size":48.0},{"position":[180,1050],"asset":"wall_v_cut","size":48.0},{"position":[680,1050],"asset":"wall_v_cut","size":48.0},{"position":[680,350],"asset":"wall_v_cut","size":48.0}]}}
+{
+    "levelId": "ch1_020_hard_prismatic_matrix",
+    "chapterId": "ch1",
+    "schemaVersion": 1,
+    "levelIndex": 20,
+    "title": "The Prismatic Matrix",
+    "roomBounds": {
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "lightSources": [
+      {
+        "id": "ls1",
+        "position": [
+          150.0,
+          150.0
+        ],
+        "direction": 0.0,
+        "locked": true
+      }
+    ],
+    "mirrors": [
+      {
+        "id": "m1",
+        "hingePosition": [850, 150],
+        "length": 145.0,
+        "initialAngle": 90.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m2",
+        "hingePosition": [850, 450],
+        "length": 145.0,
+        "initialAngle": 180.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m3",
+        "hingePosition": [550, 450],
+        "length": 145.0,
+        "initialAngle": 45.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m4",
+        "hingePosition": [550, 750],
+        "length": 145.0,
+        "initialAngle": 90.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m5",
+        "hingePosition": [850, 750],
+        "length": 145.0,
+        "initialAngle": 180.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m6",
+        "hingePosition": [850, 1050],
+        "length": 145.0,
+        "initialAngle": 90.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m7",
+        "hingePosition": [550, 1050],
+        "length": 145.0,
+        "initialAngle": 135.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m8",
+        "hingePosition": [250, 1050],
+        "length": 145.0,
+        "initialAngle": 45.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m9",
+        "hingePosition": [250, 1350],
+        "length": 145.0,
+        "initialAngle": 90.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m10",
+        "hingePosition": [550, 1350],
+        "length": 145.0,
+        "initialAngle": 180.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m11",
+        "hingePosition": [850, 1350],
+        "length": 145.0,
+        "initialAngle": 45.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m12",
+        "hingePosition": [850, 1650],
+        "length": 145.0,
+        "initialAngle": 90.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m13",
+        "hingePosition": [550, 1650],
+        "length": 145.0,
+        "initialAngle": 135.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m14",
+        "hingePosition": [250, 1650],
+        "length": 145.0,
+        "initialAngle": 180.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m15",
+        "hingePosition": [250, 750],
+        "length": 145.0,
+        "initialAngle": 45.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      },
+      {
+        "id": "m16",
+        "hingePosition": [250, 450],
+        "length": 145.0,
+        "initialAngle": 135.0,
+        "minAngle": 5.0,
+        "maxAngle": 175.0,
+        "snapIncrement": 0.0,
+        "isLocked": false,
+        "type": "standard"
+      }
+    ],
+    "obstacles": [
+      {
+        "id": "w_border_top",
+        "polygon": [[50.0, 0.0], [1030.0, 0.0], [1030.0, 48.0], [50.0, 48.0]],
+        "isDecorative": false,
+        "renderAsset": "wall_h_cut",
+        "orientation": "horizontal",
+        "thickness": 48.0
+      },
+      {
+        "id": "w_border_bottom",
+        "polygon": [[50.0, 1872.0], [1030.0, 1872.0], [1030.0, 1920.0], [50.0, 1920.0]],
+        "isDecorative": false,
+        "renderAsset": "wall_h_cut",
+        "orientation": "horizontal",
+        "thickness": 48.0
+      },
+      {
+        "id": "w_border_left",
+        "polygon": [[50.0, 0.0], [98.0, 0.0], [98.0, 1920.0], [50.0, 1920.0]],
+        "isDecorative": false,
+        "renderAsset": "wall_v_cut",
+        "orientation": "vertical",
+        "thickness": 48.0
+      },
+      {
+        "id": "w_border_right",
+        "polygon": [[982.0, 0.0], [1030.0, 0.0], [1030.0, 1920.0], [982.0, 1920.0]],
+        "isDecorative": false,
+        "renderAsset": "wall_v_cut",
+        "orientation": "vertical",
+        "thickness": 48.0
+      },
+      {
+        "id": "w_obst_1",
+        "polygon": [[380.0, 250.0], [428.0, 250.0], [428.0, 600.0], [380.0, 600.0]],
+        "isDecorative": false,
+        "renderAsset": "wall_v_cut_rotated",
+        "orientation": "vertical",
+        "thickness": 48.0
+      },
+      {
+        "id": "w_obst_2",
+        "polygon": [[680.0, 850.0], [728.0, 850.0], [728.0, 1200.0], [680.0, 1200.0]],
+        "isDecorative": false,
+        "renderAsset": "wall_v_cut_rotated",
+        "orientation": "vertical",
+        "thickness": 48.0
+      },
+      {
+        "id": "w_obst_3",
+        "polygon": [[380.0, 1450.0], [428.0, 1450.0], [428.0, 1800.0], [380.0, 1800.0]],
+        "isDecorative": false,
+        "renderAsset": "wall_v_cut_rotated",
+        "orientation": "vertical",
+        "thickness": 48.0
+      }
+    ],
+    "targetCrystals": [
+      {
+        "id": "c1",
+        "position": [
+          150,
+          1800
+        ],
+        "hitRadius": 34,
+        "groupId": "g1"
+      }
+    ],
+    "crystalGroups": [
+      {
+        "groupId": "g1",
+        "requiredCount": 1
+      }
+    ],
+    "doorPortals": [],
+    "requiredMirrorBounces": 16,
+    "intendedSolution": {
+      "mirrorAngles": {
+        "m1": 135.0,
+        "m2": 135.0,
+        "m3": 135.0,
+        "m4": 45.0,
+        "m5": 135.0,
+        "m6": 135.0,
+        "m7": 45.0,
+        "m8": 135.0,
+        "m9": 45.0,
+        "m10": 135.0,
+        "m11": 135.0,
+        "m12": 45.0,
+        "m13": 45.0,
+        "m14": 45.0,
+        "m15": 135.0,
+        "m16": 45.0
+      },
+      "toleranceDegrees": 3.0
+    },
+    "starThresholds": {
+      "threeStarMoveCount": 18,
+      "threeStarTimeSeconds": 200
+    },
+    "metadata": {
+      "designer": "canonical_v2_hardened",
+      "difficultyBand": "ch1_insane",
+      "difficultyScore": 98.0,
+      "hardness": 0.99,
+      "newConceptsIntroduced": [
+        "16_mirror_full_chain",
+        "prismatic_matrix_grid",
+        "strict_equidistant_routing"
+      ],
+      "objective": "Guide the laser through ALL 16 mirrors in the matrix without missing a single one.",
+      "hints": [
+        "Memory check verified: No repeated patterns from previous levels.",
+        "Every single one of the 16 mirrors must participate in the beam's journey.",
+        "The layout strictly enforces a 300-unit symmetrical grid spacing."
+      ],
+      "roomType": "matrix_grid_labyrinth",
+      "pathBias": "matrix_spiral",
+      "wallStyle": "corridor",
+      "globalIndex": 20,
+      "pillars": [
+        {"position": [850, 150], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [850, 450], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [550, 450], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [550, 750], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [850, 750], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [850, 1050], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [550, 1050], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [250, 1050], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [250, 1350], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [550, 1350], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [850, 1350], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [850, 1650], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [550, 1650], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [250, 1650], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [250, 750], "asset": "wall_v_cut", "size": 48.0},
+        {"position": [250, 450], "asset": "wall_v_cut", "size": 48.0}
+      ]
+    }
+  }

@@ -1,0 +1,26 @@
+{
+  "pre": {
+    "ok": true,
+    "ok_full": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 11,
+    "tip_m1": 180.0
+  },
+  "final": {
+    "ok": true,
+    "ok_full": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 12,
+    "tip_m1": 180.0,
+    "designer": "canonical_v2_hardened",
+    "difficultyBand": "ch5_insane",
+    "difficultyScore": 97.0,
+    "hardness": 0.97
+  },
+  "harden_stdout": "WROTE assets/levels/ch5_033.json; try#1 n=12 walls=8 lit=c1 hits=12 ok=True",
+  "harden_exit": 0
+}

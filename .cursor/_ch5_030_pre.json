@@ -1,0 +1,14 @@
+{
+  "title": "Labyrinth Gate",
+  "mirrors": 10,
+  "obstacles": 8,
+  "req": 10,
+  "metadata": {
+    "designer": "canonical_v2",
+    "difficultyBand": "ch1",
+    "difficultyScore": 30.0,
+    "hardness": 0.65,
+    "wallStyle": "mid_segment_rails",
+    "patternId": "nested_frames_helix_descent_north_14_0638"
+  }
+}

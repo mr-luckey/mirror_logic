@@ -1,0 +1,51 @@
+{
+  "harden_stdout": "ch5_031 strict family=funnel_drop side=north unique=35 catalog=funnel_drop_axis_backtrack_east_14_0632\n  top sc=10.51 n=13 start=(210,808) xr=3 yr=3 ch=RLRLLLLRRRLL\n  try#1 n=11 walls=7 lit={'c1'} hits=11 ok=False c=(680,458)\n  try#2 n=11 walls=7 lit={'c1'} hits=11 ok=True c=(420,458)\nWROTE assets/levels/ch5_031.json\npath [(590.0, 808.0), (970.0, 808.0), (970.0, 1858.0), (210.0, 1858.0), (210.0, 1508.0), (590.0, 1508.0), (590.0, 1158.0), (210.0, 1158.0), (210.0, 108.0), (970.0, 108.0), (970.0, 458.0)]\ncrystal 420.0 458.0 walls 7 chirs RLLLLRRLLL",
+  "validate_exit": 0,
+  "PRE": {
+    "title": "Twin Pillars",
+    "mirrors": 11,
+    "obstacles": 8,
+    "req": 11,
+    "metadata": {
+      "designer": "canonical_v2",
+      "difficultyBand": "ch1",
+      "difficultyScore": 31.0,
+      "hardness": 0.66,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "funnel_drop_axis_backtrack_east_14_0632"
+    },
+    "ok_full": true,
+    "tip_m1": 56.0
+  },
+  "FINAL": {
+    "title": "Twin Pillars",
+    "mirrors": 11,
+    "obstacles": 7,
+    "req": 11,
+    "metadata": {
+      "designer": "canonical_v2_hardened",
+      "difficultyBand": "ch5_insane",
+      "difficultyScore": 97.0,
+      "hardness": 0.97,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "funnel_drop_axis_backtrack_east_14_0632"
+    },
+    "tip_m1": 756.0,
+    "tip": [
+      590.0,
+      52.0
+    ],
+    "m1": [
+      590.0,
+      808.0
+    ],
+    "ok_full": true,
+    "validate_ok": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 11
+  },
+  "harden_stderr": "",
+  "harden_exit": 0
+}

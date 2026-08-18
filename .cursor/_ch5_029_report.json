@@ -1,0 +1,49 @@
+{
+  "harden_stdout": "ch5_029 strict family=split_yoke side=west unique=13 catalog=split_yoke_axis_backtrack_south_14_0617\n  top sc=8.29 n=12 start=(232,1860) xr=2 yr=4 ch=RLRLLLLLLRR\n  try#1 n=11 walls=7 lit={'c1'} hits=11 ok=True c=(612,540)\nWROTE assets/levels/ch5_029.json\npath [(232.0, 1160.0), (232.0, 810.0), (612.0, 810.0), (612.0, 1510.0), (232.0, 1510.0), (232.0, 1860.0), (992.0, 1860.0), (992.0, 460.0), (232.0, 460.0), (232.0, 110.0), (612.0, 110.0)]\ncrystal 612.0 540.0 walls 7 chirs RLLLRRRRLL",
+  "harden_exit": 0,
+  "validate_exit": 0,
+  "PRE": {
+    "title": "Atrium Loop",
+    "mirrors": 12,
+    "obstacles": 9,
+    "req": 12,
+    "metadata": {
+      "designer": "canonical_v2",
+      "difficultyBand": "ch1",
+      "difficultyScore": 29.0,
+      "hardness": 0.64,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "split_yoke_axis_backtrack_south_14_0617"
+    }
+  },
+  "FINAL": {
+    "title": "Atrium Loop",
+    "mirrors": 11,
+    "obstacles": 7,
+    "req": 11,
+    "metadata": {
+      "designer": "canonical_v2_hardened",
+      "difficultyBand": "ch5_insane",
+      "difficultyScore": 97.0,
+      "hardness": 0.97,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "split_yoke_axis_backtrack_south_14_0617"
+    },
+    "tip_m1": 180.0,
+    "tip": [
+      52.0,
+      1160.0
+    ],
+    "m1": [
+      232.0,
+      1160.0
+    ],
+    "ok_full": true,
+    "validate_ok": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 11
+  },
+  "harden_stderr": ""
+}

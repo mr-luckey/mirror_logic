@@ -1,0 +1,30 @@
+{
+  "levelId": "ch5_023_hard_keep_passage",
+  "levelIndex": 23,
+  "metadata": {
+    "designer": "canonical_v2",
+    "difficultyBand": "ch1",
+    "difficultyScore": 23.0,
+    "hardness": 0.5800000000000001,
+    "newConceptsIntroduced": [
+      "reflection",
+      "multi_mirror",
+      "diagonal_stair"
+    ],
+    "objective": "Thread the keep passage \u2014 every post is required.",
+    "hints": [
+      "Rails fence the mid-spans so you cannot skip a corner.",
+      "Wrong angles die in the walls.",
+      "The crystal only opens from the last turn."
+    ],
+    "roomType": "meander_corridor",
+    "pathBias": "diagonal_stair",
+    "wallStyle": "mid_segment_rails",
+    "globalIndex": 23,
+    "patternId": "diagonal_stair_ridge_traverse_west_14_0599",
+    "pillars": []
+  },
+  "mirrors": 11,
+  "walls": 0,
+  "lights": 0
+}

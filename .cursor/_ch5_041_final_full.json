@@ -1,0 +1,31 @@
+{
+  "FINAL": {
+    "title": "Gallery Path",
+    "mirrors": 12,
+    "obstacles": 11,
+    "req": 12,
+    "metadata": {
+      "designer": "canonical_v2_hardened",
+      "difficultyBand": "ch5_insane",
+      "difficultyScore": 97.0,
+      "hardness": 0.97,
+      "wallStyle": "mid_segment_rails",
+      "patternId": "ladder_ascent_west_cascade_fan_south_11_0601"
+    },
+    "ok_full": true,
+    "validate_ok": true,
+    "lit": [
+      "c1"
+    ],
+    "hits": 12,
+    "tip": [
+      52.0,
+      110.0
+    ],
+    "m1": [
+      232.0,
+      110.0
+    ],
+    "tip_m1": 180.0
+  }
+}

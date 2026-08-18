@@ -1,0 +1,29 @@
+{
+  "title": "Corridor Turn",
+  "mirrors": 11,
+  "obstacles": 6,
+  "req": 11,
+  "metadata": {
+    "designer": "canonical_v2",
+    "difficultyBand": "ch1",
+    "difficultyScore": 36.0,
+    "hardness": 0.7100000000000001,
+    "wallStyle": "mid_segment_rails",
+    "patternId": "zigzag_basin_east_cascade_hourglass_west_14_0635"
+  },
+  "ok_full": true,
+  "validate_ok": true,
+  "lit": [
+    "c1"
+  ],
+  "hits": 11,
+  "tip": [
+    1028.0,
+    1500.0
+  ],
+  "m1": [
+    970.0,
+    1500.0
+  ],
+  "tip_m1": 58.0
+}

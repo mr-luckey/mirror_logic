@@ -1,0 +1,751 @@
+DONE ok=50 fail=0 last tried ch5_100 range
+
+=== ch5_051 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+matrix_spiral side=north unique=85 catalog=pillar_maze_west_cascade_fan_west_11_0631
+  top sc=-10.00 n=12 start=(210,450) xr=3 yr=1 ch=RRLLLRLRRLL
+  try#1 n=11 walls=7 lit={'c1'} hits=11 ok=False c=(680,450)
+  loose exhausted after 1 wall-tries
+ch5_051 emergency family=matrix_spiral side=north unique=476 catalog=pillar_maze_west_cascade_fan_west_11_0631
+  top sc=10.02 n=12 start=(590,450) xr=4 yr=2 ch=LLLLLRLLLRR
+  try#1 n=12 walls=9 lit={'c1'} hits=12 ok=True c=(210,800)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_051.json
+path [(590.0, 450.0), (210.0, 450.0), (210.0, 100.0), (970.0, 100.0), (970.0, 800.0), (590.0, 800.0), (590.0, 1850.0), (210.0, 1850.0), (210.0, 1500.0), (970.0, 1500.0), (970.0, 1150.0), (210.0, 1150.0)]
+crystal 210.0 800.0 walls 9 chirs LLLLLRLLLRR
+FINAL mirrors=12 walls=9 tip_m1=398.0 ok_full=True lit={'c1'} hits=12 pattern=pillar_maze_west_cascade_fan_west_11_0631
+OK
+
+=== ch5_052 ===
+PRE mirrors=11 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_052 strict family=hourglass_helix side=east unique=68 catalog=hourglass_helix_east_cascade_hourglass_east_11_0640
+  top sc=10.09 n=12 start=(590,1508) xr=3 yr=4 ch=LLLLLLRLLLL
+  strict exhausted after 0 wall-tries
+ch5_052 loose family=hourglass_helix side=east unique=356 catalog=hourglass_helix_east_cascade_hourglass_east_11_0640
+  top sc=11.48 n=12 start=(590,1508) xr=4 yr=5 ch=RLLLLLLLLLL
+  try#1 n=10 walls=10 lit={'c1'} hits=10 ok=True c=(560,108)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_052.json
+path [(590.0, 1508.0), (590.0, 1158.0), (210.0, 1158.0), (210.0, 1858.0), (970.0, 1858.0), (970.0, 458.0), (590.0, 458.0), (590.0, 808.0), (210.0, 808.0), (210.0, 108.0)]
+crystal 560.0 108.0 walls 10 chirs LRRRRRRLL
+FINAL mirrors=10 walls=10 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=hourglass_helix_east_cascade_hourglass_east_11_0640
+OK
+
+=== ch5_053 ===
+PRE mirrors=11 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_053 strict family=split_yoke side=west unique=3 catalog=split_yoke_axis_backtrack_south_11_0637
+  top sc=6.84 n=11 start=(232,810) xr=3 yr=2 ch=LRRRRRLLRL
+  try#1 n=11 walls=9 lit={'c1'} hits=11 ok=True c=(232,1510)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_053.json
+path [(232.0, 810.0), (232.0, 1160.0), (612.0, 1160.0), (612.0, 110.0), (232.0, 110.0), (232.0, 460.0), (992.0, 460.0), (992.0, 1510.0), (612.0, 1510.0), (612.0, 1860.0), (232.0, 1860.0)]
+crystal 232.0 1510.0 walls 9 chirs LRRRRRLLRL
+FINAL mirrors=11 walls=9 tip_m1=180.0 ok_full=True lit={'c1'} hits=11 pattern=split_yoke_axis_backtrack_south_11_0637
+OK
+
+=== ch5_054 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_054 strict family=nested_frames side=south unique=4 catalog=nested_frames_helix_descent_north_14_0638
+  top sc=9.55 n=13 start=(210,1150) xr=5 yr=2 ch=LLLRRRRLLRRR
+  strict exhausted after 0 wall-tries
+ch5_054 loose family=nested_frames side=south unique=89 catalog=nested_frames_helix_descent_north_14_0638
+  top sc=-10.00 n=12 start=(210,1150) xr=4 yr=1 ch=LRRLLRLLLRR
+  try#1 n=10 walls=7 lit={'c1'} hits=10 ok=True c=(210,1820)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_054.json
+path [(970.0, 1500.0), (590.0, 1500.0), (590.0, 800.0), (210.0, 800.0), (210.0, 450.0), (590.0, 450.0), (590.0, 100.0), (970.0, 100.0), (970.0, 1150.0), (210.0, 1150.0)]
+crystal 210.0 1820.0 walls 7 chirs RLRLLRLLL
+FINAL mirrors=10 walls=7 tip_m1=368.0 ok_full=True lit={'c1'} hits=10 pattern=nested_frames_helix_descent_north_14_0638
+OK
+
+=== ch5_055 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+walls=7 lit={'c1'} hits=11 ok=False c=(680,458)
+  try#2 n=11 walls=6 lit={'c1'} hits=11 ok=False c=(680,458)
+  strict exhausted after 2 wall-tries
+ch5_055 loose family=funnel_drop side=north unique=156 catalog=funnel_drop_axis_backtrack_east_11_0652
+  top sc=-10.00 n=12 start=(210,808) xr=4 yr=1 ch=RLLRRLRRRLL
+  try#1 n=11 walls=7 lit={'c1'} hits=11 ok=False c=(680,458)
+  try#2 n=11 walls=6 lit={'c1'} hits=11 ok=False c=(680,458)
+  try#3 n=11 walls=9 lit={'c1'} hits=11 ok=True c=(600,108)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_055.json
+path [(970.0, 458.0), (590.0, 458.0), (590.0, 808.0), (970.0, 808.0), (970.0, 1158.0), (590.0, 1158.0), (590.0, 1508.0), (970.0, 1508.0), (970.0, 1858.0), (210.0, 1858.0), (210.0, 108.0)]
+crystal 600.0 108.0 walls 9 chirs LRRLLRRLLL
+FINAL mirrors=11 walls=9 tip_m1=406.0 ok_full=True lit={'c1'} hits=11 pattern=funnel_drop_axis_backtrack_east_11_0652
+OK
+
+=== ch5_056 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_056 strict family=island_hop side=east unique=23 catalog=island_hop_axis_backtrack_west_14_0647
+  top sc=10.03 n=12 start=(590,460) xr=4 yr=3 ch=RLLLLLRRRRL
+  strict exhausted after 0 wall-tries
+ch5_056 loose family=island_hop side=east unique=285 catalog=island_hop_axis_backtrack_west_14_0647
+  top sc=10.03 n=12 start=(590,460) xr=4 yr=3 ch=RLLLLLRRLLL
+  try#1 n=10 walls=7 lit={'c1'} hits=10 ok=True c=(680,460)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_056.json
+path [(590.0, 1510.0), (590.0, 1160.0), (210.0, 1160.0), (210.0, 1860.0), (970.0, 1860.0), (970.0, 110.0), (590.0, 110.0), (590.0, 810.0), (210.0, 810.0), (210.0, 460.0)]
+crystal 680.0 460.0 walls 7 chirs LRRRRRRLL
+FINAL mirrors=10 walls=7 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=island_hop_axis_backtrack_west_14_0647
+OK
+
+=== ch5_057 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_057 strict family=ridge_climb side=west unique=20 catalog=ridge_climb_helix_descent_south_14_0653
+  top sc=9.04 n=11 start=(232,450) xr=3 yr=3 ch=LRRLLLRRRR
+  try#1 n=11 walls=7 lit={'c1'} hits=11 ok=True c=(612,610)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_057.json
+path [(232.0, 1150.0), (232.0, 800.0), (612.0, 800.0), (612.0, 1500.0), (232.0, 1500.0), (232.0, 1850.0), (992.0, 1850.0), (992.0, 450.0), (232.0, 450.0), (232.0, 100.0), (612.0, 100.0)]
+crystal 612.0 610.0 walls 7 chirs RLLLRRRRLL
+FINAL mirrors=11 walls=7 tip_m1=180.0 ok_full=True lit={'c1'} hits=11 pattern=ridge_climb_helix_descent_south_14_0653
+OK
+
+=== ch5_058 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+RRLLRRR
+  strict exhausted after 0 wall-tries
+ch5_058 loose family=orbit_ring side=south unique=140 catalog=orbit_ring_ridge_traverse_north_11_0634
+  top sc=11.85 n=12 start=(210,1158) xr=5 yr=2 ch=LLLRRRRLLLL
+  loose exhausted after 0 wall-tries
+ch5_058 emergency family=orbit_ring side=south unique=451 catalog=orbit_ring_ridge_traverse_north_11_0634
+  top sc=10.94 n=12 start=(590,1508) xr=4 yr=2 ch=RRRRRLRRRLL
+  try#1 n=12 walls=9 lit={'c1'} hits=12 ok=True c=(210,1158)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_058.json
+path [(590.0, 1508.0), (210.0, 1508.0), (210.0, 1858.0), (970.0, 1858.0), (970.0, 1158.0), (590.0, 1158.0), (590.0, 108.0), (210.0, 108.0), (210.0, 458.0), (970.0, 458.0), (970.0, 808.0), (210.0, 808.0)]
+crystal 210.0 1158.0 walls 9 chirs RRRRRLRRRLL
+FINAL mirrors=12 walls=9 tip_m1=360.0 ok_full=True lit={'c1'} hits=12 pattern=orbit_ring_ridge_traverse_north_11_0634
+OK
+
+=== ch5_059 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ted after 0 wall-tries
+ch5_059 loose family=mirror_cathedral side=north unique=142 catalog=mirror_cathedral_west_cascade_fan_east_14_0656
+  top sc=-10.00 n=12 start=(210,810) xr=4 yr=1 ch=RLLRRLRRRLL
+  loose exhausted after 0 wall-tries
+ch5_059 emergency family=mirror_cathedral side=north unique=472 catalog=mirror_cathedral_west_cascade_fan_east_14_0656
+  top sc=11.01 n=12 start=(590,460) xr=4 yr=2 ch=LLLLLRLLLRR
+  try#1 n=12 walls=9 lit={'c1'} hits=12 ok=True c=(210,810)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_059.json
+path [(590.0, 460.0), (210.0, 460.0), (210.0, 110.0), (970.0, 110.0), (970.0, 810.0), (590.0, 810.0), (590.0, 1860.0), (210.0, 1860.0), (210.0, 1510.0), (970.0, 1510.0), (970.0, 1160.0), (210.0, 1160.0)]
+crystal 210.0 810.0 walls 9 chirs LLLLLRLLLRR
+FINAL mirrors=12 walls=9 tip_m1=408.0 ok_full=True lit={'c1'} hits=12 pattern=mirror_cathedral_west_cascade_fan_east_14_0656
+OK
+
+=== ch5_060 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_060 strict family=zigzag_basin side=east unique=38 catalog=zigzag_basin_east_cascade_hourglass_west_14_0635
+  top sc=10.84 n=12 start=(590,450) xr=4 yr=3 ch=RLLLLLRRLLL
+  strict exhausted after 0 wall-tries
+ch5_060 loose family=zigzag_basin side=east unique=174 catalog=zigzag_basin_east_cascade_hourglass_west_14_0635
+  top sc=10.84 n=12 start=(590,450) xr=4 yr=3 ch=RLLLLLRRLLL
+  try#1 n=10 walls=10 lit={'c1'} hits=10 ok=True c=(420,800)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_060.json
+path [(590.0, 450.0), (590.0, 100.0), (210.0, 100.0), (210.0, 1150.0), (590.0, 1150.0), (590.0, 1500.0), (210.0, 1500.0), (210.0, 1850.0), (970.0, 1850.0), (970.0, 800.0)]
+crystal 420.0 800.0 walls 10 chirs LRRRLLRRR
+FINAL mirrors=10 walls=10 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=zigzag_basin_east_cascade_hourglass_west_14_0635
+OK
+
+=== ch5_061 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+RLLRRR
+  strict exhausted after 0 wall-tries
+ch5_061 loose family=double_loop side=south unique=140 catalog=double_loop_helix_descent_east_14_0668
+  top sc=10.86 n=12 start=(210,1158) xr=5 yr=2 ch=LLLRRRRLLLL
+  loose exhausted after 0 wall-tries
+ch5_061 emergency family=double_loop side=south unique=450 catalog=double_loop_helix_descent_east_14_0668
+  top sc=8.22 n=12 start=(210,1508) xr=3 yr=2 ch=LLRRRLRLLLL
+  try#1 n=12 walls=10 lit={'c1'} hits=12 ok=True c=(210,1158)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_061.json
+path [(210.0, 1508.0), (590.0, 1508.0), (590.0, 1858.0), (970.0, 1858.0), (970.0, 1158.0), (590.0, 1158.0), (590.0, 458.0), (210.0, 458.0), (210.0, 108.0), (970.0, 108.0), (970.0, 808.0), (210.0, 808.0)]
+crystal 210.0 1158.0 walls 10 chirs LLRRRLRLLLL
+FINAL mirrors=12 walls=10 tip_m1=360.0 ok_full=True lit={'c1'} hits=12 pattern=double_loop_helix_descent_east_14_0668
+OK
+
+=== ch5_062 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+hausted after 0 wall-tries
+ch5_062 loose family=cross_weave side=south unique=140 catalog=cross_weave_east_cascade_hourglass_north_14_0650
+  top sc=12.23 n=12 start=(210,1160) xr=5 yr=2 ch=LLLRRRRLLLL
+  loose exhausted after 0 wall-tries
+ch5_062 emergency family=cross_weave side=south unique=449 catalog=cross_weave_east_cascade_hourglass_north_14_0650
+  top sc=9.59 n=12 start=(970,1510) xr=3 yr=2 ch=RRLLLRLRRRR
+  try#1 n=12 walls=9 lit={'c1'} hits=12 ok=True c=(970,1160)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_062.json
+path [(970.0, 1510.0), (590.0, 1510.0), (590.0, 1860.0), (210.0, 1860.0), (210.0, 1160.0), (590.0, 1160.0), (590.0, 460.0), (970.0, 460.0), (970.0, 110.0), (210.0, 110.0), (210.0, 810.0), (970.0, 810.0)]
+crystal 970.0 1160.0 walls 9 chirs RRLLLRLRRRR
+FINAL mirrors=12 walls=9 tip_m1=358.0 ok_full=True lit={'c1'} hits=12 pattern=cross_weave_east_cascade_hourglass_north_14_0650
+OK
+
+=== ch5_063 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+LLRRLLL
+  strict exhausted after 0 wall-tries
+ch5_063 loose family=spiral_helix side=north unique=80 catalog=spiral_helix_helix_descent_west_11_0643
+  top sc=-10.00 n=12 start=(210,450) xr=3 yr=1 ch=RRLLLRLRRLL
+  loose exhausted after 0 wall-tries
+ch5_063 emergency family=spiral_helix side=north unique=475 catalog=spiral_helix_helix_descent_west_11_0643
+  top sc=10.09 n=12 start=(590,450) xr=4 yr=2 ch=RRRRRLRRRLL
+  try#1 n=12 walls=8 lit={'c1'} hits=12 ok=True c=(970,800)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_063.json
+path [(590.0, 450.0), (970.0, 450.0), (970.0, 100.0), (210.0, 100.0), (210.0, 800.0), (590.0, 800.0), (590.0, 1850.0), (970.0, 1850.0), (970.0, 1500.0), (210.0, 1500.0), (210.0, 1150.0), (970.0, 1150.0)]
+crystal 970.0 800.0 walls 8 chirs RRRRRLRRRLL
+FINAL mirrors=12 walls=8 tip_m1=398.0 ok_full=True lit={'c1'} hits=12 pattern=spiral_helix_helix_descent_west_11_0643
+OK
+
+=== ch5_064 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_064 strict family=switchback_delta side=east unique=53 catalog=switchback_delta_ridge_traverse_east_14_0644
+  top sc=9.82 n=12 start=(590,458) xr=4 yr=3 ch=RLLLLLRRLLL
+  strict exhausted after 0 wall-tries
+ch5_064 loose family=switchback_delta side=east unique=274 catalog=switchback_delta_ridge_traverse_east_14_0644
+  top sc=9.82 n=12 start=(590,458) xr=4 yr=3 ch=RLLLLLRRLLL
+  try#1 n=10 walls=9 lit={'c1'} hits=10 ok=True c=(600,458)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_064.json
+path [(590.0, 1508.0), (590.0, 1858.0), (210.0, 1858.0), (210.0, 808.0), (590.0, 808.0), (590.0, 1158.0), (970.0, 1158.0), (970.0, 108.0), (210.0, 108.0), (210.0, 458.0)]
+crystal 600.0 458.0 walls 9 chirs RLLLLRRRR
+FINAL mirrors=10 walls=9 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=switchback_delta_ridge_traverse_east_14_0644
+OK
+
+=== ch5_065 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_065 strict family=ladder_ascent side=west unique=25 catalog=ladder_ascent_west_cascade_fan_south_14_0641
+  top sc=8.00 n=12 start=(232,1860) xr=4 yr=1 ch=RLRRLLRRLLL
+  try#1 n=12 walls=11 lit={'c1'} hits=12 ok=True c=(142,110)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_065.json
+path [(232.0, 460.0), (232.0, 810.0), (612.0, 810.0), (612.0, 1160.0), (232.0, 1160.0), (232.0, 1510.0), (612.0, 1510.0), (612.0, 1860.0), (992.0, 1860.0), (992.0, 460.0), (612.0, 460.0), (612.0, 110.0)]
+crystal 142.0 110.0 walls 11 chirs LRLLRRLRRRL
+FINAL mirrors=12 walls=11 tip_m1=180.0 ok_full=True lit={'c1'} hits=12 pattern=ladder_ascent_west_cascade_fan_south_14_0641
+OK
+
+=== ch5_066 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+austed after 0 wall-tries
+ch5_066 loose family=cascade_chamber side=south unique=84 catalog=cascade_chamber_axis_backtrack_north_14_0662
+  top sc=-10.00 n=12 start=(210,1150) xr=4 yr=1 ch=LRRLLRLLLRR
+  loose exhausted after 0 wall-tries
+ch5_066 emergency family=cascade_chamber side=south unique=452 catalog=cascade_chamber_axis_backtrack_north_14_0662
+  top sc=10.30 n=12 start=(590,1500) xr=4 yr=2 ch=LLLLLRLLLRR
+  try#1 n=12 walls=8 lit={'c1'} hits=12 ok=True c=(970,1150)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_066.json
+path [(590.0, 1500.0), (970.0, 1500.0), (970.0, 1850.0), (210.0, 1850.0), (210.0, 1150.0), (590.0, 1150.0), (590.0, 100.0), (970.0, 100.0), (970.0, 450.0), (210.0, 450.0), (210.0, 800.0), (970.0, 800.0)]
+crystal 970.0 1150.0 walls 8 chirs LLLLLRLLLRR
+FINAL mirrors=12 walls=8 tip_m1=368.0 ok_full=True lit={'c1'} hits=12 pattern=cascade_chamber_axis_backtrack_north_14_0662
+OK
+
+=== ch5_067 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+  strict exhausted after 0 wall-tries
+ch5_067 loose family=prism_fan side=north unique=138 catalog=prism_fan_east_cascade_hourglass_south_14_0665
+  top sc=-10.00 n=12 start=(210,808) xr=4 yr=1 ch=RLLRRLRRRLL
+  loose exhausted after 0 wall-tries
+ch5_067 emergency family=prism_fan side=north unique=476 catalog=prism_fan_east_cascade_hourglass_south_14_0665
+  top sc=9.60 n=12 start=(590,458) xr=4 yr=2 ch=LLLLLRLLLRR
+  try#1 n=12 walls=9 lit={'c1'} hits=12 ok=True c=(210,808)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_067.json
+path [(590.0, 458.0), (210.0, 458.0), (210.0, 108.0), (970.0, 108.0), (970.0, 808.0), (590.0, 808.0), (590.0, 1858.0), (210.0, 1858.0), (210.0, 1508.0), (970.0, 1508.0), (970.0, 1158.0), (210.0, 1158.0)]
+crystal 210.0 808.0 walls 9 chirs LLLLLRLLLRR
+FINAL mirrors=12 walls=9 tip_m1=406.0 ok_full=True lit={'c1'} hits=12 pattern=prism_fan_east_cascade_hourglass_south_14_0665
+OK
+
+=== ch5_068 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_068 strict family=pillar_maze side=east unique=23 catalog=pillar_maze_west_cascade_fan_west_14_0671
+  top sc=10.10 n=12 start=(590,460) xr=4 yr=3 ch=RLLLLLRRRRL
+  strict exhausted after 0 wall-tries
+ch5_068 loose family=pillar_maze side=east unique=266 catalog=pillar_maze_west_cascade_fan_west_14_0671
+  top sc=10.10 n=12 start=(590,460) xr=4 yr=3 ch=RLLLLLRRLLL
+  try#1 n=10 walls=10 lit={'c1'} hits=10 ok=True c=(560,1160)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_068.json
+path [(590.0, 460.0), (590.0, 810.0), (210.0, 810.0), (210.0, 110.0), (970.0, 110.0), (970.0, 1510.0), (590.0, 1510.0), (590.0, 1860.0), (210.0, 1860.0), (210.0, 1160.0)]
+crystal 560.0 1160.0 walls 10 chirs RLLLLLRLL
+FINAL mirrors=10 walls=10 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=pillar_maze_west_cascade_fan_west_14_0671
+OK
+
+=== ch5_069 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_069 strict family=serpentine_ridge side=west unique=18 catalog=serpentine_ridge_ridge_traverse_south_11_0649
+  top sc=10.41 n=11 start=(232,450) xr=3 yr=3 ch=LRRLLLRRRR
+  try#1 n=11 walls=8 lit={'c1'} hits=11 ok=True c=(612,650)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_069.json
+path [(232.0, 1500.0), (232.0, 1150.0), (612.0, 1150.0), (612.0, 1500.0), (992.0, 1500.0), (992.0, 800.0), (232.0, 800.0), (232.0, 450.0), (992.0, 450.0), (992.0, 100.0), (612.0, 100.0)]
+crystal 612.0 650.0 walls 8 chirs RLLRRRLLRR
+FINAL mirrors=11 walls=8 tip_m1=180.0 ok_full=True lit={'c1'} hits=11 pattern=serpentine_ridge_ridge_traverse_south_11_0649
+OK
+
+=== ch5_070 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+r 0 wall-tries
+ch5_070 loose family=corridor_gauntlet side=south unique=119 catalog=corridor_gauntlet_west_cascade_fan_north_11_0646
+  top sc=10.72 n=12 start=(210,1158) xr=5 yr=2 ch=LLLRRRRLLLL
+  loose exhausted after 0 wall-tries
+ch5_070 emergency family=corridor_gauntlet side=south unique=449 catalog=corridor_gauntlet_west_cascade_fan_north_11_0646
+  top sc=8.08 n=12 start=(970,1508) xr=3 yr=2 ch=RRLLLRLRRRR
+  try#1 n=12 walls=9 lit={'c1'} hits=12 ok=True c=(970,1158)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_070.json
+path [(970.0, 1508.0), (590.0, 1508.0), (590.0, 1858.0), (210.0, 1858.0), (210.0, 1158.0), (590.0, 1158.0), (590.0, 458.0), (970.0, 458.0), (970.0, 108.0), (210.0, 108.0), (210.0, 808.0), (970.0, 808.0)]
+crystal 970.0 1158.0 walls 9 chirs RRLLLRLRRRR
+FINAL mirrors=12 walls=9 tip_m1=360.0 ok_full=True lit={'c1'} hits=12 pattern=corridor_gauntlet_west_cascade_fan_north_11_0646
+OK
+
+=== ch5_071 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+rict exhausted after 0 wall-tries
+ch5_071 loose family=diagonal_stair side=north unique=107 catalog=diagonal_stair_ridge_traverse_west_14_0659
+  top sc=-10.00 n=12 start=(210,810) xr=4 yr=1 ch=RLLRRLRRRLL
+  loose exhausted after 0 wall-tries
+ch5_071 emergency family=diagonal_stair side=north unique=471 catalog=diagonal_stair_ridge_traverse_west_14_0659
+  top sc=8.15 n=12 start=(210,460) xr=3 yr=2 ch=RRLLLRLRRRR
+  try#1 n=12 walls=10 lit={'c1'} hits=12 ok=True c=(210,810)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_071.json
+path [(210.0, 460.0), (590.0, 460.0), (590.0, 110.0), (970.0, 110.0), (970.0, 810.0), (590.0, 810.0), (590.0, 1510.0), (210.0, 1510.0), (210.0, 1860.0), (970.0, 1860.0), (970.0, 1160.0), (210.0, 1160.0)]
+crystal 210.0 810.0 walls 10 chirs RRLLLRLRRRR
+FINAL mirrors=12 walls=10 tip_m1=408.0 ok_full=True lit={'c1'} hits=12 pattern=diagonal_stair_ridge_traverse_west_14_0659
+OK
+
+=== ch5_072 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_072 strict family=phantom_grid side=east unique=19 catalog=zigzag_basin_east_cascade_hourglass_west_11_0655
+  top sc=9.13 n=12 start=(590,800) xr=4 yr=2 ch=LRLLLLRRLLL
+  strict exhausted after 0 wall-tries
+ch5_072 loose family=phantom_grid side=east unique=110 catalog=zigzag_basin_east_cascade_hourglass_west_11_0655
+  top sc=9.61 n=12 start=(590,1500) xr=4 yr=3 ch=LRRRRRLLRRR
+  try#1 n=10 walls=8 lit={'c1'} hits=10 ok=True c=(340,800)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_072.json
+path [(590.0, 450.0), (590.0, 100.0), (210.0, 100.0), (210.0, 1150.0), (590.0, 1150.0), (590.0, 1850.0), (210.0, 1850.0), (210.0, 1500.0), (970.0, 1500.0), (970.0, 800.0)]
+crystal 340.0 800.0 walls 8 chirs LRRRLLLLR
+FINAL mirrors=10 walls=8 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=zigzag_basin_east_cascade_hourglass_west_11_0655
+OK
+
+=== ch5_073 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_073 strict family=vertical_switchback side=west unique=8 catalog=nested_frames_helix_descent_north_11_0658
+  top sc=6.70 n=11 start=(232,458) xr=3 yr=2 ch=LRRLLLRRLL
+  try#1 n=11 walls=11 lit={'c1'} hits=11 ok=True c=(232,1468)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_073.json
+path [(232.0, 458.0), (232.0, 808.0), (612.0, 808.0), (612.0, 108.0), (992.0, 108.0), (992.0, 1158.0), (612.0, 1158.0), (612.0, 1508.0), (992.0, 1508.0), (992.0, 1858.0), (232.0, 1858.0)]
+crystal 232.0 1468.0 walls 11 chirs LRRLLLRRLL
+FINAL mirrors=11 walls=11 tip_m1=180.0 ok_full=True lit={'c1'} hits=11 pattern=nested_frames_helix_descent_north_11_0658
+OK
+
+=== ch5_074 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+t exhausted after 0 wall-tries
+ch5_074 loose family=woven_lattice side=south unique=119 catalog=ladder_ascent_west_cascade_fan_south_11_0661
+  top sc=11.00 n=12 start=(210,1160) xr=5 yr=2 ch=LLLRRRRLLLL
+  loose exhausted after 0 wall-tries
+ch5_074 emergency family=woven_lattice side=south unique=448 catalog=ladder_ascent_west_cascade_fan_south_11_0661
+  top sc=8.36 n=12 start=(970,1510) xr=3 yr=2 ch=RRLLLRLLLRR
+  try#1 n=12 walls=8 lit={'c1'} hits=12 ok=True c=(970,1160)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_074.json
+path [(970.0, 1510.0), (590.0, 1510.0), (590.0, 1860.0), (210.0, 1860.0), (210.0, 1160.0), (590.0, 1160.0), (590.0, 110.0), (970.0, 110.0), (970.0, 460.0), (210.0, 460.0), (210.0, 810.0), (970.0, 810.0)]
+crystal 970.0 1160.0 walls 8 chirs RRLLLRLLLRR
+FINAL mirrors=12 walls=8 tip_m1=358.0 ok_full=True lit={'c1'} hits=12 pattern=ladder_ascent_west_cascade_fan_south_11_0661
+OK
+
+=== ch5_075 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ict exhausted after 0 wall-tries
+ch5_075 loose family=matrix_spiral side=north unique=45 catalog=switchback_delta_ridge_traverse_east_11_0664
+  top sc=-10.00 n=12 start=(210,450) xr=3 yr=1 ch=RRLLLRLRRLL
+  loose exhausted after 0 wall-tries
+ch5_075 emergency family=matrix_spiral side=north unique=474 catalog=switchback_delta_ridge_traverse_east_11_0664
+  top sc=8.43 n=12 start=(210,450) xr=3 yr=2 ch=RRLLLRLRRRR
+  try#1 n=12 walls=10 lit={'c1'} hits=12 ok=True c=(210,800)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_075.json
+path [(210.0, 450.0), (590.0, 450.0), (590.0, 100.0), (970.0, 100.0), (970.0, 800.0), (590.0, 800.0), (590.0, 1500.0), (210.0, 1500.0), (210.0, 1850.0), (970.0, 1850.0), (970.0, 1150.0), (210.0, 1150.0)]
+crystal 210.0 800.0 walls 10 chirs RRLLLRLRRRR
+FINAL mirrors=12 walls=10 tip_m1=398.0 ok_full=True lit={'c1'} hits=12 pattern=switchback_delta_ridge_traverse_east_11_0664
+OK
+
+=== ch5_076 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_076 strict family=hourglass_helix side=east unique=37 catalog=hourglass_helix_east_cascade_hourglass_east_14_0680
+  top sc=9.89 n=12 start=(590,458) xr=4 yr=3 ch=RRRRRRLLRRR
+  strict exhausted after 0 wall-tries
+ch5_076 loose family=hourglass_helix side=east unique=211 catalog=hourglass_helix_east_cascade_hourglass_east_14_0680
+  top sc=9.89 n=12 start=(590,458) xr=4 yr=3 ch=RRRRRRLLRRR
+  try#1 n=10 walls=10 lit={'c1'} hits=10 ok=True c=(600,1158)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_076.json
+path [(590.0, 458.0), (590.0, 808.0), (210.0, 808.0), (210.0, 108.0), (970.0, 108.0), (970.0, 1508.0), (590.0, 1508.0), (590.0, 1858.0), (210.0, 1858.0), (210.0, 1158.0)]
+crystal 600.0 1158.0 walls 10 chirs RLLLLLRLL
+FINAL mirrors=10 walls=10 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=hourglass_helix_east_cascade_hourglass_east_14_0680
+OK
+
+=== ch5_077 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_077 strict family=split_yoke side=west unique=2 catalog=split_yoke_axis_backtrack_south_14_0677
+  top sc=6.98 n=11 start=(232,1160) xr=3 yr=2 ch=RLLLLLRRLR
+  try#1 n=11 walls=9 lit={'c1'} hits=11 ok=True c=(232,500)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_077.json
+path [(232.0, 1160.0), (232.0, 810.0), (612.0, 810.0), (612.0, 1860.0), (232.0, 1860.0), (232.0, 1510.0), (992.0, 1510.0), (992.0, 460.0), (612.0, 460.0), (612.0, 110.0), (232.0, 110.0)]
+crystal 232.0 500.0 walls 9 chirs RLLLLLRRLR
+FINAL mirrors=11 walls=9 tip_m1=180.0 ok_full=True lit={'c1'} hits=11 pattern=split_yoke_axis_backtrack_south_14_0677
+OK
+
+=== ch5_078 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ strict exhausted after 0 wall-tries
+ch5_078 loose family=nested_frames side=south unique=64 catalog=nested_frames_helix_descent_north_14_0698
+  top sc=-10.00 n=12 start=(210,1150) xr=4 yr=1 ch=LRRLLRLLLRR
+  loose exhausted after 0 wall-tries
+ch5_078 emergency family=nested_frames side=south unique=451 catalog=nested_frames_helix_descent_north_14_0698
+  top sc=9.60 n=12 start=(590,1500) xr=4 yr=2 ch=RRRRRLRRRLL
+  try#1 n=12 walls=9 lit={'c1'} hits=12 ok=True c=(210,1150)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_078.json
+path [(590.0, 1500.0), (210.0, 1500.0), (210.0, 1850.0), (970.0, 1850.0), (970.0, 1150.0), (590.0, 1150.0), (590.0, 100.0), (210.0, 100.0), (210.0, 450.0), (970.0, 450.0), (970.0, 800.0), (210.0, 800.0)]
+crystal 210.0 1150.0 walls 9 chirs RRRRRLRRRLL
+FINAL mirrors=12 walls=9 tip_m1=368.0 ok_full=True lit={'c1'} hits=12 pattern=nested_frames_helix_descent_north_14_0698
+OK
+
+=== ch5_079 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+RRRLLRRR
+  strict exhausted after 0 wall-tries
+ch5_079 loose family=funnel_drop side=north unique=107 catalog=funnel_drop_axis_backtrack_east_14_0692
+  top sc=-10.00 n=12 start=(210,808) xr=4 yr=1 ch=RLLRRLRRRLL
+  loose exhausted after 0 wall-tries
+ch5_079 emergency family=funnel_drop side=north unique=475 catalog=funnel_drop_axis_backtrack_east_14_0692
+  top sc=11.27 n=12 start=(590,458) xr=4 yr=2 ch=RRRRRLRRRLL
+  try#1 n=12 walls=8 lit={'c1'} hits=12 ok=True c=(970,808)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_079.json
+path [(590.0, 458.0), (970.0, 458.0), (970.0, 108.0), (210.0, 108.0), (210.0, 808.0), (590.0, 808.0), (590.0, 1858.0), (970.0, 1858.0), (970.0, 1508.0), (210.0, 1508.0), (210.0, 1158.0), (970.0, 1158.0)]
+crystal 970.0 808.0 walls 8 chirs RRRRRLRRRLL
+FINAL mirrors=12 walls=8 tip_m1=406.0 ok_full=True lit={'c1'} hits=12 pattern=funnel_drop_axis_backtrack_east_14_0692
+OK
+
+=== ch5_080 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_080 strict family=island_hop side=east unique=12 catalog=island_hop_axis_backtrack_west_11_0667
+  top sc=8.92 n=12 start=(590,810) xr=4 yr=2 ch=LRRRLLRRLLL
+  strict exhausted after 0 wall-tries
+ch5_080 loose family=island_hop side=east unique=210 catalog=island_hop_axis_backtrack_west_11_0667
+  top sc=9.40 n=12 start=(590,460) xr=4 yr=3 ch=RRRRRRLLRRR
+  try#1 n=10 walls=9 lit={'c1'} hits=10 ok=True c=(640,1160)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_080.json
+path [(590.0, 460.0), (590.0, 810.0), (210.0, 810.0), (210.0, 110.0), (970.0, 110.0), (970.0, 1860.0), (590.0, 1860.0), (590.0, 1510.0), (210.0, 1510.0), (210.0, 1160.0)]
+crystal 640.0 1160.0 walls 9 chirs RLLLLLLRL
+FINAL mirrors=10 walls=9 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=island_hop_axis_backtrack_west_11_0667
+OK
+
+=== ch5_081 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_081 strict family=ridge_climb side=west unique=13 catalog=ridge_climb_helix_descent_south_11_0673
+  top sc=9.18 n=11 start=(232,450) xr=3 yr=3 ch=LRRLLLRRRR
+  try#1 n=11 walls=8 lit={'c1'} hits=11 ok=True c=(232,1070)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_081.json
+path [(232.0, 450.0), (232.0, 800.0), (612.0, 800.0), (612.0, 450.0), (992.0, 450.0), (992.0, 1150.0), (612.0, 1150.0), (612.0, 1850.0), (992.0, 1850.0), (992.0, 1500.0), (232.0, 1500.0)]
+crystal 232.0 1070.0 walls 8 chirs LRRLLLRRRR
+FINAL mirrors=11 walls=8 tip_m1=180.0 ok_full=True lit={'c1'} hits=11 pattern=ridge_climb_helix_descent_south_11_0673
+OK
+
+=== ch5_082 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+RRRLLRRR
+  strict exhausted after 0 wall-tries
+ch5_082 loose family=orbit_ring side=south unique=119 catalog=orbit_ring_ridge_traverse_north_14_0674
+  top sc=11.99 n=12 start=(210,1158) xr=5 yr=2 ch=LLLRRRRLLLL
+  loose exhausted after 0 wall-tries
+ch5_082 emergency family=orbit_ring side=south unique=448 catalog=orbit_ring_ridge_traverse_north_14_0674
+  top sc=8.67 n=12 start=(590,1508) xr=4 yr=2 ch=LLLLLRRLLLR
+  try#1 n=12 walls=13 lit={'c1'} hits=12 ok=True c=(970,808)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_082.json
+path [(590.0, 1508.0), (970.0, 1508.0), (970.0, 1858.0), (210.0, 1858.0), (210.0, 1158.0), (590.0, 1158.0), (590.0, 808.0), (210.0, 808.0), (210.0, 108.0), (590.0, 108.0), (590.0, 458.0), (970.0, 458.0)]
+crystal 970.0 808.0 walls 13 chirs LLLLLRRLLLR
+FINAL mirrors=12 walls=13 tip_m1=360.0 ok_full=True lit={'c1'} hits=12 pattern=orbit_ring_ridge_traverse_north_14_0674
+OK
+
+=== ch5_083 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+sted after 0 wall-tries
+ch5_083 loose family=mirror_cathedral side=north unique=107 catalog=mirror_cathedral_west_cascade_fan_east_11_0676
+  top sc=-10.00 n=12 start=(210,810) xr=4 yr=1 ch=RLLRRLRRRLL
+  loose exhausted after 0 wall-tries
+ch5_083 emergency family=mirror_cathedral side=north unique=470 catalog=mirror_cathedral_west_cascade_fan_east_11_0676
+  top sc=9.42 n=12 start=(970,460) xr=3 yr=2 ch=LLRRRLRLLLL
+  try#1 n=12 walls=9 lit={'c1'} hits=12 ok=True c=(970,810)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_083.json
+path [(970.0, 460.0), (590.0, 460.0), (590.0, 110.0), (210.0, 110.0), (210.0, 810.0), (590.0, 810.0), (590.0, 1510.0), (970.0, 1510.0), (970.0, 1860.0), (210.0, 1860.0), (210.0, 1160.0), (970.0, 1160.0)]
+crystal 970.0 810.0 walls 9 chirs LLRRRLRLLLL
+FINAL mirrors=12 walls=9 tip_m1=408.0 ok_full=True lit={'c1'} hits=12 pattern=mirror_cathedral_west_cascade_fan_east_11_0676
+OK
+
+=== ch5_084 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_084 strict family=zigzag_basin side=east unique=19 catalog=zigzag_basin_east_cascade_hourglass_west_14_0695
+  top sc=10.50 n=12 start=(590,800) xr=4 yr=2 ch=LRLLLLRRLLL
+  strict exhausted after 0 wall-tries
+ch5_084 loose family=zigzag_basin side=east unique=109 catalog=zigzag_basin_east_cascade_hourglass_west_14_0695
+  top sc=10.98 n=12 start=(590,1500) xr=4 yr=3 ch=LRRRRRLLRRR
+  try#1 n=10 walls=9 lit={'c1'} hits=10 ok=True c=(300,800)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_084.json
+path [(590.0, 1500.0), (590.0, 1850.0), (210.0, 1850.0), (210.0, 1150.0), (590.0, 1150.0), (590.0, 450.0), (210.0, 450.0), (210.0, 100.0), (970.0, 100.0), (970.0, 800.0)]
+crystal 300.0 800.0 walls 9 chirs RLLLRRLLL
+FINAL mirrors=10 walls=9 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=zigzag_basin_east_cascade_hourglass_west_14_0695
+OK
+
+=== ch5_085 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_085 strict family=double_loop side=west unique=6 catalog=double_loop_helix_descent_east_11_0688
+  top sc=6.77 n=11 start=(232,808) xr=3 yr=2 ch=LRRRRRLLRL
+  try#1 n=11 walls=8 lit={'c1'} hits=11 ok=True c=(232,1428)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_085.json
+path [(232.0, 808.0), (232.0, 1158.0), (612.0, 1158.0), (612.0, 108.0), (232.0, 108.0), (232.0, 458.0), (992.0, 458.0), (992.0, 1508.0), (612.0, 1508.0), (612.0, 1858.0), (232.0, 1858.0)]
+crystal 232.0 1428.0 walls 8 chirs LRRRRRLLRL
+FINAL mirrors=11 walls=8 tip_m1=180.0 ok_full=True lit={'c1'} hits=11 pattern=double_loop_helix_descent_east_11_0688
+OK
+
+=== ch5_086 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+hausted after 0 wall-tries
+ch5_086 loose family=cross_weave side=south unique=119 catalog=cross_weave_east_cascade_hourglass_north_11_0670
+  top sc=11.60 n=12 start=(210,1160) xr=5 yr=2 ch=LLLRRRRLLLL
+  loose exhausted after 0 wall-tries
+ch5_086 emergency family=cross_weave side=south unique=447 catalog=cross_weave_east_cascade_hourglass_north_11_0670
+  top sc=9.05 n=12 start=(590,1510) xr=4 yr=2 ch=LLLLLRRLLLR
+  try#1 n=12 walls=13 lit={'c1'} hits=12 ok=True c=(970,810)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_086.json
+path [(590.0, 1510.0), (970.0, 1510.0), (970.0, 1860.0), (210.0, 1860.0), (210.0, 1160.0), (590.0, 1160.0), (590.0, 810.0), (210.0, 810.0), (210.0, 110.0), (590.0, 110.0), (590.0, 460.0), (970.0, 460.0)]
+crystal 970.0 810.0 walls 13 chirs LLLLLRRLLLR
+FINAL mirrors=12 walls=13 tip_m1=358.0 ok_full=True lit={'c1'} hits=12 pattern=cross_weave_east_cascade_hourglass_north_11_0670
+OK
+
+=== ch5_087 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+RLLLLRRR
+  strict exhausted after 0 wall-tries
+ch5_087 loose family=spiral_helix side=north unique=45 catalog=spiral_helix_helix_descent_west_14_0683
+  top sc=-10.00 n=12 start=(210,450) xr=3 yr=1 ch=RRLLLRLRRLL
+  loose exhausted after 0 wall-tries
+ch5_087 emergency family=spiral_helix side=north unique=473 catalog=spiral_helix_helix_descent_west_14_0683
+  top sc=8.50 n=12 start=(970,450) xr=3 yr=2 ch=LLRRRLRLLLL
+  try#1 n=12 walls=9 lit={'c1'} hits=12 ok=True c=(970,800)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_087.json
+path [(970.0, 450.0), (590.0, 450.0), (590.0, 100.0), (210.0, 100.0), (210.0, 800.0), (590.0, 800.0), (590.0, 1500.0), (970.0, 1500.0), (970.0, 1850.0), (210.0, 1850.0), (210.0, 1150.0), (970.0, 1150.0)]
+crystal 970.0 800.0 walls 9 chirs LLRRRLRLLLL
+FINAL mirrors=12 walls=9 tip_m1=398.0 ok_full=True lit={'c1'} hits=12 pattern=spiral_helix_helix_descent_west_14_0683
+OK
+
+=== ch5_088 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_088 strict family=switchback_delta side=east unique=37 catalog=switchback_delta_ridge_traverse_east_14_0704
+  top sc=9.96 n=12 start=(590,458) xr=4 yr=3 ch=RRRRRRLLRRR
+  strict exhausted after 0 wall-tries
+ch5_088 loose family=switchback_delta side=east unique=210 catalog=switchback_delta_ridge_traverse_east_14_0704
+  top sc=9.96 n=12 start=(590,458) xr=4 yr=3 ch=RRRRRRLLRRR
+  try#1 n=10 walls=9 lit={'c1'} hits=10 ok=True c=(680,1158)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_088.json
+path [(590.0, 458.0), (590.0, 808.0), (210.0, 808.0), (210.0, 108.0), (970.0, 108.0), (970.0, 1858.0), (590.0, 1858.0), (590.0, 1508.0), (210.0, 1508.0), (210.0, 1158.0)]
+crystal 680.0 1158.0 walls 9 chirs RLLLLLLRL
+FINAL mirrors=10 walls=9 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=switchback_delta_ridge_traverse_east_14_0704
+OK
+
+=== ch5_089 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_089 strict family=ladder_ascent side=west unique=15 catalog=ladder_ascent_west_cascade_fan_south_14_0701
+  top sc=8.90 n=11 start=(232,1860) xr=4 yr=1 ch=RLRRLLRRRR
+  try#1 n=11 walls=8 lit={'c1'} hits=11 ok=True c=(612,930)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_089.json
+path [(232.0, 1860.0), (232.0, 1510.0), (612.0, 1510.0), (612.0, 1160.0), (232.0, 1160.0), (232.0, 810.0), (992.0, 810.0), (992.0, 110.0), (232.0, 110.0), (232.0, 460.0), (612.0, 460.0)]
+crystal 612.0 930.0 walls 8 chirs RLRRLLRRRR
+FINAL mirrors=11 walls=8 tip_m1=180.0 ok_full=True lit={'c1'} hits=11 pattern=ladder_ascent_west_cascade_fan_south_14_0701
+OK
+
+=== ch5_090 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+hausted after 0 wall-tries
+ch5_090 loose family=cascade_chamber side=south unique=64 catalog=cascade_chamber_axis_backtrack_north_11_0682
+  top sc=-10.00 n=12 start=(210,1150) xr=4 yr=1 ch=LRRLLRLLLRR
+  loose exhausted after 0 wall-tries
+ch5_090 emergency family=cascade_chamber side=south unique=450 catalog=cascade_chamber_axis_backtrack_north_11_0682
+  top sc=8.03 n=12 start=(590,1500) xr=4 yr=2 ch=LLLLLRRLLLR
+  try#1 n=12 walls=13 lit={'c1'} hits=12 ok=True c=(970,800)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_090.json
+path [(590.0, 1500.0), (970.0, 1500.0), (970.0, 1850.0), (210.0, 1850.0), (210.0, 1150.0), (590.0, 1150.0), (590.0, 800.0), (210.0, 800.0), (210.0, 100.0), (590.0, 100.0), (590.0, 450.0), (970.0, 450.0)]
+crystal 970.0 800.0 walls 13 chirs LLLLLRRLLLR
+FINAL mirrors=12 walls=13 tip_m1=368.0 ok_full=True lit={'c1'} hits=12 pattern=cascade_chamber_axis_backtrack_north_11_0682
+OK
+
+=== ch5_091 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+rict exhausted after 0 wall-tries
+ch5_091 loose family=prism_fan side=north unique=107 catalog=prism_fan_east_cascade_hourglass_south_11_0685
+  top sc=-10.00 n=12 start=(210,808) xr=4 yr=1 ch=RLLRRLRRRLL
+  loose exhausted after 0 wall-tries
+ch5_091 emergency family=prism_fan side=north unique=474 catalog=prism_fan_east_cascade_hourglass_south_11_0685
+  top sc=8.10 n=12 start=(590,458) xr=4 yr=2 ch=LLLLLRRLLLR
+  try#1 n=12 walls=13 lit={'c1'} hits=12 ok=True c=(210,1158)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_091.json
+path [(590.0, 458.0), (210.0, 458.0), (210.0, 108.0), (970.0, 108.0), (970.0, 808.0), (590.0, 808.0), (590.0, 1158.0), (970.0, 1158.0), (970.0, 1858.0), (590.0, 1858.0), (590.0, 1508.0), (210.0, 1508.0)]
+crystal 210.0 1158.0 walls 13 chirs LLLLLRRLLLR
+FINAL mirrors=12 walls=13 tip_m1=406.0 ok_full=True lit={'c1'} hits=12 pattern=prism_fan_east_cascade_hourglass_south_11_0685
+OK
+
+=== ch5_092 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_092 strict family=pillar_maze side=east unique=12 catalog=pillar_maze_west_cascade_fan_west_11_0691
+  top sc=8.99 n=12 start=(590,810) xr=4 yr=2 ch=LRRRLLRRLLL
+  strict exhausted after 0 wall-tries
+ch5_092 loose family=pillar_maze side=east unique=209 catalog=pillar_maze_west_cascade_fan_west_11_0691
+  top sc=9.47 n=12 start=(590,460) xr=4 yr=3 ch=RRRRRRLLRRR
+  try#1 n=10 walls=10 lit={'c1'} hits=10 ok=True c=(560,810)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_092.json
+path [(590.0, 1510.0), (590.0, 1160.0), (210.0, 1160.0), (210.0, 1860.0), (970.0, 1860.0), (970.0, 460.0), (590.0, 460.0), (590.0, 110.0), (210.0, 110.0), (210.0, 810.0)]
+crystal 560.0 810.0 walls 10 chirs LRRRRRLRR
+FINAL mirrors=10 walls=10 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=pillar_maze_west_cascade_fan_west_11_0691
+OK
+
+=== ch5_093 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_093 strict family=serpentine_ridge side=west unique=7 catalog=serpentine_ridge_ridge_traverse_south_14_0689
+  top sc=8.63 n=11 start=(232,450) xr=3 yr=2 ch=LRRLLLRRLL
+  try#1 n=11 walls=11 lit={'c1'} hits=11 ok=True c=(232,1380)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_093.json
+path [(232.0, 450.0), (232.0, 800.0), (612.0, 800.0), (612.0, 100.0), (992.0, 100.0), (992.0, 1150.0), (612.0, 1150.0), (612.0, 1500.0), (992.0, 1500.0), (992.0, 1850.0), (232.0, 1850.0)]
+crystal 232.0 1380.0 walls 11 chirs LRRLLLRRLL
+FINAL mirrors=11 walls=11 tip_m1=180.0 ok_full=True lit={'c1'} hits=11 pattern=serpentine_ridge_ridge_traverse_south_14_0689
+OK
+
+=== ch5_094 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+er 0 wall-tries
+ch5_094 loose family=corridor_gauntlet side=south unique=88 catalog=corridor_gauntlet_west_cascade_fan_north_14_0686
+  top sc=10.86 n=12 start=(210,1158) xr=5 yr=2 ch=LLLRRRRLLLL
+  loose exhausted after 0 wall-tries
+ch5_094 emergency family=corridor_gauntlet side=south unique=447 catalog=corridor_gauntlet_west_cascade_fan_north_14_0686
+  top sc=7.54 n=12 start=(590,1508) xr=4 yr=2 ch=RRRRRLLRRRL
+  try#1 n=12 walls=13 lit={'c1'} hits=12 ok=True c=(210,108)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_094.json
+path [(590.0, 1508.0), (210.0, 1508.0), (210.0, 1858.0), (970.0, 1858.0), (970.0, 1158.0), (590.0, 1158.0), (590.0, 808.0), (970.0, 808.0), (970.0, 108.0), (590.0, 108.0), (590.0, 458.0), (210.0, 458.0)]
+crystal 210.0 108.0 walls 13 chirs RRRRRLLRRRL
+FINAL mirrors=12 walls=13 tip_m1=360.0 ok_full=True lit={'c1'} hits=12 pattern=corridor_gauntlet_west_cascade_fan_north_14_0686
+OK
+
+=== ch5_095 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ict exhausted after 0 wall-tries
+ch5_095 loose family=diagonal_stair side=north unique=87 catalog=diagonal_stair_ridge_traverse_west_11_0679
+  top sc=-10.00 n=12 start=(210,810) xr=4 yr=1 ch=RLLRRLRRRLL
+  loose exhausted after 0 wall-tries
+ch5_095 emergency family=diagonal_stair side=north unique=469 catalog=diagonal_stair_ridge_traverse_west_11_0679
+  top sc=7.61 n=12 start=(590,810) xr=4 yr=2 ch=LRRLLRRRRRL
+  try#1 n=12 walls=14 lit={'c1'} hits=12 ok=True c=(970,1160)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_095.json
+path [(590.0, 460.0), (210.0, 460.0), (210.0, 110.0), (970.0, 110.0), (970.0, 810.0), (590.0, 810.0), (590.0, 1160.0), (210.0, 1160.0), (210.0, 1860.0), (590.0, 1860.0), (590.0, 1510.0), (970.0, 1510.0)]
+crystal 970.0 1160.0 walls 14 chirs LLLLLRLRRRL
+FINAL mirrors=12 walls=14 tip_m1=408.0 ok_full=True lit={'c1'} hits=12 pattern=diagonal_stair_ridge_traverse_west_11_0679
+OK
+
+=== ch5_096 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_096 strict family=phantom_grid side=east unique=3 catalog=orbit_ring_ridge_traverse_north_11_0694
+  top sc=6.77 n=11 start=(590,100) xr=3 yr=2 ch=RLRRRLLLRR
+  strict exhausted after 0 wall-tries
+ch5_096 loose family=phantom_grid side=east unique=53 catalog=orbit_ring_ridge_traverse_north_11_0694
+  top sc=8.02 n=11 start=(590,450) xr=3 yr=3 ch=LRRRRLLLRR
+  try#1 n=10 walls=10 lit={'c1'} hits=10 ok=True c=(720,1150)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_096.json
+path [(590.0, 450.0), (590.0, 800.0), (210.0, 800.0), (210.0, 100.0), (970.0, 100.0), (970.0, 1500.0), (590.0, 1500.0), (590.0, 1850.0), (210.0, 1850.0), (210.0, 1150.0)]
+crystal 720.0 1150.0 walls 10 chirs RLLLLLRLL
+FINAL mirrors=10 walls=10 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=orbit_ring_ridge_traverse_north_11_0694
+OK
+
+=== ch5_097 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_097 strict family=vertical_switchback side=west unique=5 catalog=split_yoke_axis_backtrack_south_11_0697
+  top sc=6.84 n=11 start=(232,1158) xr=3 yr=2 ch=RLLLLLRRLR
+  try#1 n=11 walls=8 lit={'c1'} hits=11 ok=True c=(232,538)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_097.json
+path [(232.0, 1158.0), (232.0, 808.0), (612.0, 808.0), (612.0, 1858.0), (232.0, 1858.0), (232.0, 1508.0), (992.0, 1508.0), (992.0, 458.0), (612.0, 458.0), (612.0, 108.0), (232.0, 108.0)]
+crystal 232.0 538.0 walls 8 chirs RLLLLLRRLR
+FINAL mirrors=11 walls=8 tip_m1=180.0 ok_full=True lit={'c1'} hits=11 pattern=split_yoke_axis_backtrack_south_11_0697
+OK
+
+=== ch5_098 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+fter 0 wall-tries
+ch5_098 loose family=woven_lattice side=south unique=88 catalog=hourglass_helix_east_cascade_hourglass_east_11_0700
+  top sc=10.37 n=12 start=(210,1160) xr=5 yr=2 ch=LLLRRRRLLLL
+  loose exhausted after 0 wall-tries
+ch5_098 emergency family=woven_lattice side=south unique=446 catalog=hourglass_helix_east_cascade_hourglass_east_11_0700
+  top sc=7.82 n=12 start=(590,1510) xr=4 yr=2 ch=RRRRRLLRRRL
+  try#1 n=12 walls=13 lit={'c1'} hits=12 ok=True c=(210,110)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_098.json
+path [(590.0, 1510.0), (210.0, 1510.0), (210.0, 1860.0), (970.0, 1860.0), (970.0, 1160.0), (590.0, 1160.0), (590.0, 810.0), (970.0, 810.0), (970.0, 110.0), (590.0, 110.0), (590.0, 460.0), (210.0, 460.0)]
+crystal 210.0 110.0 walls 13 chirs RRRRRLLRRRL
+FINAL mirrors=12 walls=13 tip_m1=358.0 ok_full=True lit={'c1'} hits=12 pattern=hourglass_helix_east_cascade_hourglass_east_11_0700
+OK
+
+=== ch5_099 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+RR
+  strict exhausted after 0 wall-tries
+ch5_099 loose family=matrix_spiral side=north unique=25 catalog=spiral_helix_helix_descent_west_11_0703
+  top sc=-10.00 n=12 start=(210,450) xr=3 yr=1 ch=RRLLLRLRRLL
+  loose exhausted after 0 wall-tries
+ch5_099 emergency family=matrix_spiral side=north unique=472 catalog=spiral_helix_helix_descent_west_11_0703
+  top sc=7.89 n=12 start=(590,450) xr=4 yr=2 ch=LLLLLRRLLLR
+  try#1 n=12 walls=13 lit={'c1'} hits=12 ok=True c=(210,1150)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_099.json
+path [(590.0, 450.0), (210.0, 450.0), (210.0, 100.0), (970.0, 100.0), (970.0, 800.0), (590.0, 800.0), (590.0, 1150.0), (970.0, 1150.0), (970.0, 1850.0), (590.0, 1850.0), (590.0, 1500.0), (210.0, 1500.0)]
+crystal 210.0 1150.0 walls 13 chirs LLLLLRRLLLR
+FINAL mirrors=12 walls=13 tip_m1=398.0 ok_full=True lit={'c1'} hits=12 pattern=spiral_helix_helix_descent_west_11_0703
+OK
+
+=== ch5_100 ===
+PRE mirrors=12 band=ch1 designer=canonical_v2
+HARDEN_EXIT=0
+ch5_100 strict family=hourglass_helix side=east unique=25 catalog=hourglass_helix_east_cascade_hourglass_east_14_0740
+  top sc=10.03 n=12 start=(590,458) xr=4 yr=3 ch=RRRRRRLLRRR
+  strict exhausted after 0 wall-tries
+ch5_100 loose family=hourglass_helix side=east unique=154 catalog=hourglass_helix_east_cascade_hourglass_east_14_0740
+  top sc=10.03 n=12 start=(590,458) xr=4 yr=3 ch=RRRRRRLLRRR
+  try#1 n=10 walls=10 lit={'c1'} hits=10 ok=True c=(600,808)
+WROTE /Users/naseerahmed/Projects/mirror_logic/assets/levels/ch5_100.json
+path [(590.0, 1508.0), (590.0, 1158.0), (210.0, 1158.0), (210.0, 1858.0), (970.0, 1858.0), (970.0, 458.0), (590.0, 458.0), (590.0, 108.0), (210.0, 108.0), (210.0, 808.0)]
+crystal 600.0 808.0 walls 10 chirs LRRRRRLRR
+FINAL mirrors=10 walls=10 tip_m1=438.0 ok_full=True lit={'c1'} hits=10 pattern=hourglass_helix_east_cascade_hourglass_east_14_0740
+OK

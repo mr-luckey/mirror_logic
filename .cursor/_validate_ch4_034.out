@@ -1,0 +1,23 @@
+FINAL:
+  title=Wing Route
+  designer=canonical_v2_hardened
+  band=ch4_insane
+  score=97.0
+  hardness=0.97
+  mirrors=12
+  obstacles=10
+  req=12
+  patternId=orbit_ring_ridge_traverse_north_11_0454
+  pathBias=orbit_ring
+  wallStyle=mid_segment_rails
+  light=[970.0, 130.0]
+  validate=True
+  lit={'c1'}
+  hits=12
+  ok_full=True
+  hardened=True
+  mem_updated=True
+  last_hardened=ch4_034
+  stats.lastAssigned={'level': 'ch4_034', 'patternId': 'orbit_ring_ridge_traverse_north_11_0454'}
+  used_entry={'patternId': 'orbit_ring_ridge_traverse_north_11_0454', 'family': 'orbit_ring', 'pathKind': 'ridge_traverse', 'wallStyle': 'mid_segment_rails', 'lightSide': 'north', 'suggestedMirrors': 11, 'status': 'used', 'levelRef': 'ch4_034', 'title': 'Wing Route', 'notes': 'north-light 12-mirror orbit_ring (4 x-reversals, 2 y-folds); start (970,98); crystal (210,1338); 10 rails/skip lids; all required'}
+ASSERT ok_full PASSED

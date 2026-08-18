@@ -1,0 +1,29 @@
+{
+  "title": "Keep Passage",
+  "mirrors": 11,
+  "obstacles": 7,
+  "req": 11,
+  "metadata": {
+    "designer": "canonical_v2",
+    "difficultyBand": "ch1",
+    "difficultyScore": 38.0,
+    "hardness": 0.73,
+    "wallStyle": "mid_segment_rails",
+    "patternId": "cross_weave_east_cascade_hourglass_north_11_0610"
+  },
+  "ok_full": true,
+  "validate_ok": true,
+  "lit": [
+    "c1"
+  ],
+  "hits": 11,
+  "tip": [
+    210.0,
+    1868.0
+  ],
+  "m1": [
+    210.0,
+    1860.0
+  ],
+  "tip_m1": 8.0
+}
