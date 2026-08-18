@@ -26,4 +26,15 @@ class BannerAdSelection {
 
   /// Stable key for forcing a fresh widget when the strip refreshes.
   Object get mountKey => Object.hash(network, placementId, slotIndex);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BannerAdSelection &&
+          network == other.network &&
+          placementId == other.placementId &&
+          slotIndex == other.slotIndex;
+
+  @override
+  int get hashCode => Object.hash(network, placementId, slotIndex);
 }
