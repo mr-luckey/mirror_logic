@@ -12,82 +12,101 @@ enum AdPlacement {
   rewarded,
 }
 
+/// One slot in a placement waterfall.
+///
+/// Unity is tried first; Meta is the fallback for the same slot. Keeping both
+/// ids together preserves the five-slot structure while switching networks.
+class AdSlotIds {
+  const AdSlotIds({required this.unity, required this.meta});
+
+  final String unity;
+  final String meta;
+}
+
 /// Every ad unit the game is allowed to request, in the order it tries them.
 ///
 /// Each placement holds five slots because a single unit is a single point of
-/// failure: a new unit that has not warmed up, one throttled by low fill in a
-/// region, or one a mediation partner is temporarily starving all return the
-/// same "no ad" as a broken id. [AdsService] walks the list top to bottom and
-/// shows the first unit that fills, so a dead slot costs one failed request
-/// rather than the impression.
+/// failure. [AdsService] walks the list top to bottom; within each slot it
+/// tries Unity first, then Meta.
 ///
-/// Replace the ids in place when the real units are cut. The loader only cares
-/// about the order — first entry gets every request that can be filled, later
-/// entries only ever see traffic the ones above them could not take.
+/// Replace the example ids with real Unity placement ids and Meta placement ids
+/// before shipping. Slot count must stay at five.
 abstract final class AdUnitIds {
-  /// Google's own test units, which always fill. Every slot holds the same id
-  /// on purpose: five distinct placeholders would only mean five identical
-  /// requests. Swap each line for its real unit before shipping.
-  static const List<String> _androidBanner = [
-    'ca-app-pub-6018501407074634/9018064835',
-    'ca-app-pub-6018501407074634/6419821659',
-    'ca-app-pub-6018501407074634/7541331633',
-    'ca-app-pub-6018501407074634/2144062547',
-    'ca-app-pub-6018501407074634/3518326144',
+  /// Unity Monetization game id. Use test id in debug; swap for production.
+  static String get unityGameId {
+    return defaultTargetPlatform == TargetPlatform.iOS ? _iosUnityGameId : _androidUnityGameId;
+  }
+
+  /// Unity test game ids — swap for production ids before release.
+  static const String _androidUnityGameId = kDebugMode ? '14851' : '5880850';
+  static const String _iosUnityGameId = kDebugMode ? '14850' : '5880851';
+
+  /// Meta test app id — swap for production id before release.
+  static const String metaAppId = kDebugMode ? '123456789012345' : '123456789012345';
+
+  // -- Unity test placement ids (game ids 14850/14851) --
+  static const String _unityTestBanner = 'banner';
+  static const String _unityTestInterstitial = 'video';
+  static const String _unityTestRewarded = 'rewardedVideo';
+
+  // -- Meta Audience Network test placement ids --
+  static const String _metaTestBanner = 'IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID';
+  static const String _metaTestInterstitial = 'IMG_16_9_APP_INSTALL#YOUR_PLACEMENT_ID';
+  static const String _metaTestRewarded = 'VID_HD_16_9_46S_APP_INSTALL#YOUR_PLACEMENT_ID';
+
+  static const List<AdSlotIds> _androidBanner = [
+    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_Android_1', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_Android_2', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_Android_3', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_Android_4', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_Android_5', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
   ];
 
-  static const List<String> _androidInterstitial = [
-    'ca-app-pub-6018501407074634/5476802894',
-    'ca-app-pub-6018501407074634/5883997006',
-    'ca-app-pub-6018501407074634/4083684384',
-    'ca-app-pub-6018501407074634/1697194191',
-    'ca-app-pub-6018501407074634/6228249967',
+  static const List<AdSlotIds> _androidInterstitial = [
+    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_Android_1', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_Android_2', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_Android_3', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_Android_4', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_Android_5', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
   ];
 
-  static const List<String> _androidRewarded = [
-    'ca-app-pub-6018501407074634/2850639558',
-    'ca-app-pub-6018501407074634/9384112521',
-    'ca-app-pub-6018501407074634/2452656484',
-    'ca-app-pub-6018501407074634/1457521047',
-    'ca-app-pub-6018501407074634/7911394547',
+  static const List<AdSlotIds> _androidRewarded = [
+    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_Android_1', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_Android_2', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_Android_3', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_Android_4', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_Android_5', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
   ];
 
-  static const List<String> _iosBanner = [
-    'ca-app-pub-3940256099942544/2934735716',
-    'ca-app-pub-3940256099942544/2934735716',
-    'ca-app-pub-3940256099942544/2934735716',
-    'ca-app-pub-3940256099942544/2934735716',
-    'ca-app-pub-3940256099942544/2934735716',
+  static const List<AdSlotIds> _iosBanner = [
+    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_iOS_1', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_iOS_2', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_iOS_3', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_iOS_4', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestBanner : 'Banner_iOS_5', meta: kDebugMode ? _metaTestBanner : 'IMG_16_9_APP_INSTALL#5892850513905237'),
   ];
 
-  static const List<String> _iosInterstitial = [
-    'ca-app-pub-3940256099942544/4411468910',
-    'ca-app-pub-3940256099942544/4411468910',
-    'ca-app-pub-3940256099942544/4411468910',
-    'ca-app-pub-3940256099942544/4411468910',
-    'ca-app-pub-3940256099942544/4411468910',
+  static const List<AdSlotIds> _iosInterstitial = [
+    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_iOS_1', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_iOS_2', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_iOS_3', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_iOS_4', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestInterstitial : 'Interstitial_iOS_5', meta: kDebugMode ? _metaTestInterstitial : 'IMG_16_9_APP_INSTALL#5892850513905237'),
   ];
 
-  static const List<String> _iosRewarded = [
-    'ca-app-pub-3940256099942544/1712485313',
-    'ca-app-pub-3940256099942544/1712485313',
-    'ca-app-pub-3940256099942544/1712485313',
-    'ca-app-pub-3940256099942544/1712485313',
-    'ca-app-pub-3940256099942544/1712485313',
+  static const List<AdSlotIds> _iosRewarded = [
+    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_iOS_1', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_iOS_2', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_iOS_3', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_iOS_4', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
+    AdSlotIds(unity: kDebugMode ? _unityTestRewarded : 'Rewarded_iOS_5', meta: kDebugMode ? _metaTestRewarded : 'VID_HD_16_9_46S_APP_INSTALL#5892850513905237'),
   ];
 
   /// Fewest units a placement may carry.
-  ///
-  /// The loader walks whatever the list holds, so a sixth entry costs nothing
-  /// to add — this is only here so a list that loses an entry to a careless
-  /// find-and-replace fails a test instead of quietly serving four deep.
   static const int minUnitsPerPlacement = 5;
 
   /// The waterfall for [placement] on the platform the game is running on.
-  ///
-  /// Reads [defaultTargetPlatform] rather than `dart:io` so tests can pump the
-  /// service without a device underneath them.
-  static List<String> forPlacement(AdPlacement placement) {
+  static List<AdSlotIds> slotsFor(AdPlacement placement) {
     final ios = defaultTargetPlatform == TargetPlatform.iOS;
     switch (placement) {
       case AdPlacement.banner:

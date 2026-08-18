@@ -1,40 +1,17 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/app/ad_banner_host.dart';
 import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_remote_config.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 
-const MethodChannel _adChannel = MethodChannel(
-  'plugins.flutter.io/google_mobile_ads',
-);
-
 void main() {
-  final binding = TestWidgetsFlutterBinding.ensureInitialized();
-
-  setUp(() {
-    // No AdMob plugin is registered under a unit test, and the SDK fires one
-    // channel call from a getter without awaiting it — so leaving the channel
-    // unimplemented throws where nothing can catch it. Answering everything
-    // with null instead gives the service exactly the shape of failure a device
-    // with no ads behind it produces, which is the case worth pinning down: the
-    // game has to stay playable through it.
-    binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      _adChannel,
-      (call) async => null,
-    );
-  });
-
-  tearDown(() {
-    binding.defaultBinaryMessenger.setMockMethodCallHandler(_adChannel, null);
-  });
+  TestWidgetsFlutterBinding.ensureInitialized();
 
   group('ad unit waterfall', () {
     test('every placement carries a full set of slots', () {
       for (final placement in AdPlacement.values) {
         expect(
-          AdUnitIds.forPlacement(placement).length,
+          AdUnitIds.slotsFor(placement).length,
           greaterThanOrEqualTo(AdUnitIds.minUnitsPerPlacement),
           reason: 'AdPlacement.${placement.name} lost a slot',
         );
@@ -43,19 +20,18 @@ void main() {
 
     test('no slot is left blank', () {
       for (final placement in AdPlacement.values) {
-        for (final unitId in AdUnitIds.forPlacement(placement)) {
-          expect(unitId.trim(), isNotEmpty);
-          expect(unitId, startsWith('ca-app-pub-'));
+        for (final slot in AdUnitIds.slotsFor(placement)) {
+          expect(slot.unity.trim(), isNotEmpty);
+          expect(slot.meta.trim(), isNotEmpty);
         }
       }
     });
 
-    test('the three placements do not share a unit', () {
-      final banner = AdUnitIds.forPlacement(AdPlacement.banner).first;
-      final interstitial = AdUnitIds.forPlacement(
-        AdPlacement.interstitial,
-      ).first;
-      final rewarded = AdUnitIds.forPlacement(AdPlacement.rewarded).first;
+    test('the three placements do not share a unity unit', () {
+      final banner = AdUnitIds.slotsFor(AdPlacement.banner).first.unity;
+      final interstitial =
+          AdUnitIds.slotsFor(AdPlacement.interstitial).first.unity;
+      final rewarded = AdUnitIds.slotsFor(AdPlacement.rewarded).first.unity;
       expect({banner, interstitial, rewarded}, hasLength(3));
     });
   });
@@ -66,7 +42,6 @@ void main() {
 
       expect(ads.claimFullScreenSlot(), isTrue);
       expect(ads.isFullScreenAdShowing, isTrue);
-      // The rewarded hint asking while the level-end interstitial is up.
       expect(ads.claimFullScreenSlot(), isFalse);
 
       ads.releaseFullScreenSlot(shown: true);
@@ -80,7 +55,20 @@ void main() {
       expect(ads.hasRewardedAd, isFalse);
       expect(await ads.showInterstitial(), isFalse);
       expect(await ads.showRewarded(), RewardedAdOutcome.unavailable);
-      expect(await ads.loadBanner(AdSize.banner), isNull);
+      expect(ads.bannerCandidates(), isEmpty);
+    });
+  });
+
+  group('banner candidates', () {
+    test('each slot carries both unity and meta ids', () {
+      for (final placement in AdPlacement.values) {
+        final slots = AdUnitIds.slotsFor(placement);
+        expect(slots.length, AdUnitIds.minUnitsPerPlacement);
+        for (final slot in slots) {
+          expect(slot.unity.trim(), isNotEmpty);
+          expect(slot.meta.trim(), isNotEmpty);
+        }
+      }
     });
   });
 
@@ -105,7 +93,6 @@ void main() {
       ads.registerLevelCleared();
       expect(ads.interstitialDue, isTrue);
 
-      // The player watched a video for a hint on the way to this clear.
       ads.claimFullScreenSlot();
       ads.releaseFullScreenSlot(shown: true);
       expect(ads.interstitialDue, isFalse);

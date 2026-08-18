@@ -18,7 +18,7 @@ abstract interface class AdsConfig {
 
 /// Best-effort Firebase Remote Config controls for banner and interstitial ads.
 ///
-/// Rewarded ads and AdMob unit IDs deliberately stay outside Remote Config.
+/// Rewarded ads and placement ids deliberately stay outside Remote Config.
 /// Until Firebase is available, these in-code defaults preserve the app's
 /// current ad behavior.
 class AdsRemoteConfig implements AdsConfig {

@@ -71,6 +71,11 @@ android {
     }
 }
 
+dependencies {
+    implementation("androidx.annotation:annotation:1.9.1")
+    implementation("com.facebook.android:audience-network-sdk:6.22.0")
+}
+
 flutter {
     source = "../.."
 }

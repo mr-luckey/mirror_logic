@@ -4,7 +4,7 @@ import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 /// Publishes the ad stack to the widget tree.
 ///
 /// Lookup is deliberately nullable, matching `AudioScope`: a screen pumped in a
-/// widget test has no AdMob under it, and every ad in the game is optional, so
+/// widget test has no ad SDK under it, and every ad in the game is optional, so
 /// "no service" and "no fill" collapse into the same quiet branch.
 class AdsScope extends StatelessWidget {
   const AdsScope({super.key, required this.ads, required this.child});
