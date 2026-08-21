@@ -19,8 +19,8 @@ If you do not agree with this policy, please do not install or use the Game.
 - Your game progress, coins, hints, and settings are stored only on your own
   device.
 - The Game shows advertisements supplied by third-party advertising networks
-  (Google AdMob). These networks may collect device and advertising identifiers
-  in order to serve and measure ads.
+  (Unity Ads and Meta Audience Network). These networks may collect device and
+  advertising identifiers in order to serve and measure ads.
 - You can reset advertising identifiers or opt out of personalised advertising
   from your device settings at any time.
 - You can delete everything the Game has stored by uninstalling the Game or by
@@ -67,9 +67,10 @@ displays advertisements, which may include banner ads, full-screen
 (interstitial) ads, and optional rewarded video ads that you may choose to watch
 in exchange for in-game rewards such as coins or hints.
 
-Advertising is delivered through third-party advertising partners, primarily:
+Advertising is delivered through third-party advertising partners:
 
-- Google AdMob (Google LLC and its affiliates)
+- Unity Ads (Unity Technologies)
+- Meta Audience Network (Meta Platforms, Inc.)
 
 To serve, cap, and measure advertisements, and to detect invalid traffic and
 fraud, these advertising partners may collect and process information such as:
@@ -90,16 +91,10 @@ receive your advertising identifier or IP address in a form that identifies you
 personally; we receive only aggregated, non-identifying reports such as total
 impressions and revenue.
 
-Google's privacy policy and information about how Google uses data from apps
-that use its services are available at:
+Partner privacy policies:
 
-- https://policies.google.com/privacy
-- https://policies.google.com/technologies/partner-sites
-
-Google AdMob's own policies are available at:
-
-- https://support.google.com/admob/answer/6128543
-
+- Unity Ads: https://unity.com/legal/privacy-policy
+- Meta Audience Network: https://www.facebook.com/privacy/policy/
 
 5. YOUR ADVERTISING CHOICES
 

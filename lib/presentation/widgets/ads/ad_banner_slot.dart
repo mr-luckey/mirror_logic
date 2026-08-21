@@ -113,9 +113,11 @@ class _MetaBannerPlatformViewState extends State<_MetaBannerPlatformView> {
       case 'onLoaded':
         _callbackFired = true;
         widget.onLoaded();
+        break;
       case 'onError':
         _callbackFired = true;
         widget.onFailed();
+        break;
     }
   }
 
@@ -133,10 +135,7 @@ class _MetaBannerPlatformViewState extends State<_MetaBannerPlatformView> {
     }
     return AndroidView(
       viewType: 'meta_banner_ad',
-      creationParams: {
-        'placementId': widget.placementId,
-        'height': 50,
-      },
+      creationParams: {'placementId': widget.placementId, 'height': 50},
       creationParamsCodec: const StandardMessageCodec(),
       onPlatformViewCreated: (int id) {
         final channel = MethodChannel('meta_banner_ad_$id');

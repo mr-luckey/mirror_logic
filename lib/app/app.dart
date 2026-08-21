@@ -103,9 +103,8 @@ class _Router extends StatelessWidget {
 
 /// Keeps Material [ThemeData] in sync with the equipped hall.
 ///
-/// Uses [ListenableBuilder]'s `child` slot so the navigator element is not
-/// recreated here (recreating it previously silenced audio). Page chrome is
-/// refreshed by [MedievalWoodBackground] + [ThemeScope] instead.
+/// [AdBannerHost] stays **above** the theme [ListenableBuilder] so hall swaps
+/// never recreate the banner cubit (that was wiping fills mid-load).
 class HallHost extends StatelessWidget {
   const HallHost({super.key, required this.child});
 
@@ -113,15 +112,17 @@ class HallHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: ThemeController.notifier,
-      builder: (context, preserved) {
-        return Theme(
-          data: AppTheme.dark,
-          child: AdBannerHost(child: preserved ?? const SizedBox.shrink()),
-        );
-      },
-      child: child,
+    return AdBannerHost(
+      child: ListenableBuilder(
+        listenable: ThemeController.notifier,
+        builder: (context, preserved) {
+          return Theme(
+            data: AppTheme.dark,
+            child: preserved ?? const SizedBox.shrink(),
+          );
+        },
+        child: child,
+      ),
     );
   }
 }

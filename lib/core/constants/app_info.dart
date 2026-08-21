@@ -14,8 +14,8 @@ abstract final class AppInfo {
       'An optical puzzle set in a candlelit keep. Turn the mirrors, bend the '
       'beam, and light every crystal.';
 
-  /// Published privacy policy. Empty until one exists: the About screen hides
-  /// the row rather than handing the player a dead link, and Play requires this
-  /// to be reachable from the listing once the app ships with ads.
-  static const privacyPolicyUrl = '';
+  /// Hosted privacy policy (Unity Ads + Meta Audience Network). Required on
+  /// the Play listing when the binary serves ads.
+  static const privacyPolicyUrl =
+      'https://raw.githubusercontent.com/mr-luckey/mirror_logic/main/mirror_logic-PRIVACY_POLICY.txt';
 }

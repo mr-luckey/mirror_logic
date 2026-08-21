@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.appwaretech.mirrorlogic.ads.AdStoreGuard
 import io.flutter.embedding.android.FlutterActivity
@@ -13,12 +15,14 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
 
     companion object {
-        private const val TAG = "AdStoreGuard"
+        private const val TAG = "AdLifecycle"
         private const val LIFECYCLE_CHANNEL = "ad_lifecycle"
+        private const val RECLAIM_DELAY_MS = 120L
     }
 
     private var metaAdsManager: MetaAdsManager? = null
     private val adTaskGuard = AdTaskGuard()
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -38,6 +42,7 @@ class MainActivity : FlutterActivity() {
             when (call.method) {
                 "adStarted" -> AdStoreGuard.onAdStarted()
                 "adDismissed" -> AdStoreGuard.onAdDismissed()
+                "adClicked" -> AdStoreGuard.onAdClicked()
                 else -> {
                     result.notImplemented()
                     return@setMethodCallHandler
@@ -48,7 +53,7 @@ class MainActivity : FlutterActivity() {
 
         flutterEngine.platformViewsController.registry.registerViewFactory(
             "meta_banner_ad",
-            MetaBannerAdFactory(flutterEngine.dartExecutor.binaryMessenger)
+            MetaBannerAdFactory(this, flutterEngine.dartExecutor.binaryMessenger)
         )
     }
 
@@ -103,7 +108,12 @@ class MainActivity : FlutterActivity() {
         override fun onActivityDestroyed(activity: Activity) {
             if (!AdStoreGuard.isUnityAdActivity(activity)) return
             AdStoreGuard.onAdDismissed()
-            bringGameToForeground()
+            if (!AdStoreGuard.consumeShouldReclaimGame()) {
+                Log.d(TAG, "Genuine ad click; leaving external destination")
+                return
+            }
+            // Slight delay so a blocked store intent settles, then reclaim.
+            mainHandler.postDelayed({ bringGameToForeground() }, RECLAIM_DELAY_MS)
         }
     }
 }

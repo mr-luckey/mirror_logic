@@ -10,8 +10,8 @@ import android.os.UserHandle
 import android.util.Log
 
 /**
- * Delegates every Activity lifecycle call to the real [Instrumentation], and
- * swallows Play Store VIEW intents that Unity fires as the ad closes.
+ * Delegates to the real [Instrumentation], and swallows Play Store VIEW
+ * intents that Unity fires on ad close (see [AdStoreGuard.shouldBlock]).
  */
 class StoreGuardingInstrumentation(
     private val base: Instrumentation,
@@ -30,7 +30,7 @@ class StoreGuardingInstrumentation(
         intent: Intent?,
         requestCode: Int,
         options: Bundle?,
-    ): ActivityResult? = gate(intent) {
+    ): ActivityResult? = gate(who, intent) {
         invokeOriginal(
             arrayOf(
                 Context::class.java,
@@ -54,7 +54,7 @@ class StoreGuardingInstrumentation(
         intent: Intent?,
         requestCode: Int,
         options: Bundle?,
-    ): ActivityResult? = gate(intent) {
+    ): ActivityResult? = gate(who, intent) {
         invokeOriginal(
             arrayOf(
                 Context::class.java,
@@ -79,7 +79,7 @@ class StoreGuardingInstrumentation(
         requestCode: Int,
         options: Bundle?,
         user: UserHandle?,
-    ): ActivityResult? = gate(intent) {
+    ): ActivityResult? = gate(who, intent) {
         invokeOriginal(
             arrayOf(
                 Context::class.java,
@@ -96,11 +96,12 @@ class StoreGuardingInstrumentation(
     }
 
     private inline fun gate(
+        who: Context?,
         intent: Intent?,
         launch: () -> ActivityResult?,
     ): ActivityResult? {
-        if (intent != null && AdStoreGuard.shouldBlock(intent)) {
-            Log.w(TAG, "Blocked Play Store launch from ad: $intent")
+        if (intent != null && AdStoreGuard.shouldBlock(intent, who)) {
+            Log.w(TAG, "Blocked auto Play Store launch from ad close: $intent")
             return ActivityResult(Activity.RESULT_CANCELED, null)
         }
         return launch()

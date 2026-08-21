@@ -7,9 +7,8 @@ import 'package:mirror_logic/presentation/widgets/ads/ad_banner_slot.dart';
 
 /// Lays the bottom banner under whichever screen is on top.
 ///
-/// One strip for the whole app rather than one per screen. Banner candidates
-/// are tried Unity-first, Meta-second per slot, and the strip hides while a
-/// full-screen ad holds the screen so two ads never overlap.
+/// One strip for the whole app. Meta first, then Unity, looping until a fill
+/// sticks. Hides only while a full-screen ad is up or on splash/onboarding.
 class AdBannerHost extends StatelessWidget {
   const AdBannerHost({super.key, required this.child});
 
@@ -42,64 +41,38 @@ class _AdBannerBody extends StatelessWidget {
         final location =
             AppRouter.router.routerDelegate.currentConfiguration.uri.path;
         final isGameplayScreen = location.startsWith('/play/');
-        final showOverlayBanner = isGameplayScreen && state.visible;
 
-        final content = showOverlayBanner
-            ? Stack(
-                children: [
-                  child,
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: AdBannerSlot(
-                      key: ValueKey(
-                        '${selection!.mountKey}-${state.mountGeneration}',
-                      ),
-                      selection: selection,
-                      onLoaded: cubit.onBannerLoaded,
-                      onFailed: cubit.onBannerFailed,
-                    ),
-                  ),
-                ],
-              )
-            : state.visible && selection != null
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: MediaQuery.removePadding(
-                      context: context,
-                      removeBottom: true,
-                      child: child,
-                    ),
-                  ),
-                  AdBannerSlot(
-                    key: ValueKey(
-                      '${selection.mountKey}-${state.mountGeneration}',
-                    ),
-                    selection: selection,
-                    onLoaded: cubit.onBannerLoaded,
-                    onFailed: cubit.onBannerFailed,
-                  ),
-                ],
-              )
-            : child;
+        // Mount as soon as a candidate is chosen so Unity/Meta can load.
+        // Keep the same key across load→loaded so the fill is not destroyed.
+        if (!state.show || selection == null) return child;
 
-        return Stack(
+        final banner = AdBannerSlot(
+          key: ValueKey('${selection.mountKey}-${state.mountGeneration}'),
+          selection: selection,
+          onLoaded: cubit.onBannerLoaded,
+          onFailed: cubit.onBannerFailed,
+        );
+
+        if (isGameplayScreen) {
+          return Stack(
+            children: [
+              child,
+              Positioned(left: 0, right: 0, bottom: 0, child: banner),
+            ],
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            content,
-            if (state.loading && selection != null)
-              Offstage(
-                child: AdBannerSlot(
-                  key: ValueKey(
-                    'load-${selection.mountKey}-${state.mountGeneration}',
-                  ),
-                  selection: selection,
-                  onLoaded: cubit.onBannerLoaded,
-                  onFailed: cubit.onBannerFailed,
-                ),
+            Expanded(
+              child: MediaQuery.removePadding(
+                context: context,
+                removeBottom: true,
+                child: child,
               ),
+            ),
+            banner,
           ],
         );
       },

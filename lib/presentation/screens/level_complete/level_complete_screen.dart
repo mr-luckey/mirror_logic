@@ -161,8 +161,8 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
   /// Between two levels is the one moment in this game where a full-screen ad
   /// interrupts nothing: the board is finished, the reward is already written to
   /// the save, and the player has not started thinking about the next puzzle
-  /// yet. Only Next Level waits for the cadence to come round — see
-  /// [AdsService]; the two buttons that step off the run always pay.
+  /// yet. Next Level waits for the level cadence; Replay / Levels / Home only
+  /// honour the quiet period so ads never stack back-to-back.
   Future<void> _leave(
     String route, {
     required bool replace,
@@ -328,7 +328,7 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
                                 onPressed: () => _leave(
                                   '/play/${args.levelId}',
                                   replace: true,
-                                  policy: InterstitialPolicy.always,
+                                  policy: InterstitialPolicy.quietPeriod,
                                 ),
                               ),
                             ),
@@ -341,7 +341,7 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
                                 onPressed: () => _leave(
                                   '/levels/${args.chapterId}',
                                   replace: false,
-                                  policy: InterstitialPolicy.always,
+                                  policy: InterstitialPolicy.quietPeriod,
                                 ),
                               ),
                             ),
@@ -357,7 +357,7 @@ class _LevelCompleteScreenState extends State<LevelCompleteScreen> {
                           onPressed: () => _leave(
                             '/menu',
                             replace: false,
-                            policy: InterstitialPolicy.always,
+                            policy: InterstitialPolicy.quietPeriod,
                           ),
                         ).animate().fadeIn(delay: 1050.ms),
                       ],

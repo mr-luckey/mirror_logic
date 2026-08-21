@@ -58,16 +58,17 @@ abstract final class AdUnitIds {
     AdSlotIds(unity: 'inter_1', meta: '1385141237044547_1385143267044344'),
     AdSlotIds(unity: 'inter_2', meta: '1385141237044547_1385143203711017'),
     AdSlotIds(unity: 'inter_3', meta: '1385141237044547_1385144233710914'),
-    AdSlotIds(unity: 'inter_3', meta: '1385141237044547_1385144537044217'),
-    AdSlotIds(unity: 'inter_3', meta: '1385141237044547_1385144607044210'),
+    AdSlotIds(unity: 'inter_4', meta: '1385141237044547_1385144537044217'),
+    AdSlotIds(unity: 'inter_5', meta: '1385141237044547_1385144607044210'),
   ];
 
   static const List<AdSlotIds> _androidRewarded = [
     AdSlotIds(unity: 'reward_1', meta: '1385141237044547_1385144887044182'),
     AdSlotIds(unity: 'reward_2', meta: '1385141237044547_1385145023710835'),
-    AdSlotIds(unity: 'reward_1', meta: '1385141237044547_1385145177044153'),
-    AdSlotIds(unity: 'reward_2', meta: '1385141237044547_1385145240377480'),
-    AdSlotIds(unity: 'reward_1', meta: '1385141237044547_1385145240377480'),
+    AdSlotIds(unity: 'reward_3', meta: '1385141237044547_1385145177044153'),
+    AdSlotIds(unity: 'reward_4', meta: '1385141237044547_1385145240377480'),
+    // Fifth Unity slot; Meta reuses the prior placement until a dedicated id exists.
+    AdSlotIds(unity: 'reward_5', meta: '1385141237044547_1385145240377480'),
   ];
 
   static const List<AdSlotIds> _iosBanner = [

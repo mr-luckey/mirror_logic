@@ -8,27 +8,35 @@ import android.util.Log
 import java.lang.reflect.Field
 
 /**
- * Stops Unity full-screen ads from dumping the player into the Play Store
- * when the ad closes. AdMob interstitials / rewarded stay in-process on
- * dismiss; Unity's test and install creatives often fire a store VIEW intent
- * from the ad activity as it finishes, even when the player only tapped X.
+ * Keeps the player in-app when a Unity interstitial/rewarded **closes**,
+ * without blocking a real install CTA.
  *
- * Rate Us still works: those intents come from [com.appwaretech.mirrorlogic.MainActivity],
- * which is never hooked.
+ * Unity often fires a Play Store VIEW as the ad activity finishes even when
+ * the user only tapped X. We block those auto-redirects. A genuine click
+ * (onClick well before dismiss, or while the ad is still up after a real
+ * tap) is allowed through so network / Play click-through policy stays intact.
+ *
+ * Rate Us from [com.appwaretech.mirrorlogic.MainActivity] is never blocked.
  */
 object AdStoreGuard {
     private const val TAG = "AdStoreGuard"
-    private const val DISMISS_GRACE_MS = 2_500L
+    private const val DISMISS_GRACE_MS = 2_000L
+    /** Fake Unity "click" on close usually lands within this of dismiss. */
+    private const val GENUINE_CLICK_LEAD_MS = 450L
 
     @Volatile
     var adVisible: Boolean = false
         private set
 
     @Volatile
+    private var clickAtElapsed: Long = 0L
+
+    @Volatile
     private var dismissAtElapsed: Long = 0L
 
     fun onAdStarted() {
         adVisible = true
+        clickAtElapsed = 0L
         dismissAtElapsed = 0L
         Log.d(TAG, "Full-screen ad started")
     }
@@ -39,9 +47,42 @@ object AdStoreGuard {
         Log.d(TAG, "Full-screen ad dismissed")
     }
 
+    fun onAdClicked() {
+        clickAtElapsed = SystemClock.elapsedRealtime()
+        Log.d(TAG, "Ad click reported")
+    }
+
+    /**
+     * True when the player actually tapped the creative (not Unity's
+     * close-frame click spam).
+     */
+    fun isGenuineClickThrough(): Boolean {
+        val clickAt = clickAtElapsed
+        if (clickAt == 0L) return false
+        val now = SystemClock.elapsedRealtime()
+        val dismissAt = dismissAtElapsed
+        return if (dismissAt == 0L) {
+            // Mid-show: require the click to have aged — same-frame "click" on
+            // close is treated as auto-redirect, not a CTA.
+            now - clickAt >= GENUINE_CLICK_LEAD_MS
+        } else {
+            dismissAt - clickAt >= GENUINE_CLICK_LEAD_MS
+        }
+    }
+
+    fun consumeShouldReclaimGame(): Boolean {
+        val reclaim = !isGenuineClickThrough()
+        clickAtElapsed = 0L
+        return reclaim
+    }
+
     fun isUnityAdActivity(activity: Activity): Boolean {
-        val name = activity.javaClass.name
-        return name.startsWith("com.unity3d.")
+        return activity.javaClass.name.startsWith("com.unity3d.")
+    }
+
+    fun isOurGameActivity(context: Any?): Boolean {
+        val name = context?.javaClass?.name ?: return false
+        return name == "com.appwaretech.mirrorlogic.MainActivity"
     }
 
     fun isStoreIntent(intent: Intent): Boolean {
@@ -54,14 +95,14 @@ object AdStoreGuard {
         if (data.startsWith("market:")) return true
         if (data.contains("play.google.com")) return true
         if (data.contains("play.app.goo.gl")) return true
-        if (intent.action == Intent.ACTION_VIEW && data.contains("itunes.apple.com")) {
-            return true
-        }
         return false
     }
 
-    fun shouldBlock(intent: Intent): Boolean {
+    fun shouldBlock(intent: Intent, who: Any? = null): Boolean {
         if (!isStoreIntent(intent)) return false
+        // About / Settings Rate Us must always work.
+        if (isOurGameActivity(who)) return false
+        if (isGenuineClickThrough()) return false
         if (adVisible) return true
         val dismissAt = dismissAtElapsed
         if (dismissAt == 0L) return false

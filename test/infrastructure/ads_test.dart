@@ -27,10 +27,22 @@ void main() {
       }
     });
 
+    test('android unity placements are unique within each placement', () {
+      for (final placement in AdPlacement.values) {
+        final unityIds = AdUnitIds.slotsFor(placement).map((s) => s.unity);
+        expect(
+          unityIds.toSet().length,
+          unityIds.length,
+          reason: 'AdPlacement.${placement.name} has duplicate Unity ids',
+        );
+      }
+    });
+
     test('the three placements do not share a unity unit', () {
       final banner = AdUnitIds.slotsFor(AdPlacement.banner).first.unity;
-      final interstitial =
-          AdUnitIds.slotsFor(AdPlacement.interstitial).first.unity;
+      final interstitial = AdUnitIds.slotsFor(
+        AdPlacement.interstitial,
+      ).first.unity;
       final rewarded = AdUnitIds.slotsFor(AdPlacement.rewarded).first.unity;
       expect({banner, interstitial, rewarded}, hasLength(3));
     });
@@ -179,8 +191,8 @@ void main() {
     });
   });
 
-  group('the exits that always charge', () {
-    test('wait for neither the cadence nor the quiet period', () {
+  group('navigation exits honour the quiet period', () {
+    test('always still waits for the quiet gap', () {
       final ads = AdsService(
         levelsBetweenInterstitials: 3,
         minGapBetweenFullScreenAds: const Duration(minutes: 1),
@@ -194,6 +206,19 @@ void main() {
         ads.interstitialAllowed(policy: InterstitialPolicy.quietPeriod),
         isFalse,
       );
+      expect(
+        ads.interstitialAllowed(policy: InterstitialPolicy.always),
+        isFalse,
+      );
+    });
+
+    test('always skips only the level cadence when quiet has passed', () {
+      final ads = AdsService(
+        levelsBetweenInterstitials: 3,
+        minGapBetweenFullScreenAds: Duration.zero,
+      );
+
+      expect(ads.interstitialDue, isFalse);
       expect(
         ads.interstitialAllowed(policy: InterstitialPolicy.always),
         isTrue,

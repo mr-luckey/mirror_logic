@@ -637,8 +637,8 @@ class _GameplayCanvasState extends State<_GameplayCanvas>
 /// playing and being allowed to is a toll on the wrong door.
 ///
 /// The level cadence is waived throughout, because none of these are level
-/// breaks. The three exits that actually leave the board go further and waive
-/// the quiet period too — see [InterstitialPolicy.always].
+/// breaks. Quiet period still applies so consecutive full-screen ads never
+/// stack (Play Better Ads).
 Future<void> _leavePause(
   BuildContext context,
   VoidCallback action, {
@@ -723,7 +723,7 @@ class _PauseOverlay extends StatelessWidget {
                         _leavePause(
                           context,
                           () => context.go('/levels/$chapter'),
-                          policy: InterstitialPolicy.always,
+                          policy: InterstitialPolicy.quietPeriod,
                         ),
                       );
                     },
@@ -735,7 +735,7 @@ class _PauseOverlay extends StatelessWidget {
                     onPressed: () => _leavePause(
                       context,
                       () => context.push('/settings'),
-                      policy: InterstitialPolicy.always,
+                      policy: InterstitialPolicy.quietPeriod,
                     ),
                   ),
                   const SizedBox(height: 9),
@@ -746,7 +746,7 @@ class _PauseOverlay extends StatelessWidget {
                     onPressed: () => _leavePause(
                       context,
                       () => context.go('/menu'),
-                      policy: InterstitialPolicy.always,
+                      policy: InterstitialPolicy.quietPeriod,
                     ),
                   ),
                 ],

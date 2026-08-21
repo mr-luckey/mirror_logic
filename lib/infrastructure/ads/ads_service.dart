@@ -23,8 +23,8 @@ enum InterstitialPolicy {
   /// still should not stack two ads on top of each other.
   quietPeriod,
 
-  /// Shows on every tap, gates waived. For the handful of exits the game
-  /// charges for without exception.
+  /// Waives only the level-clear cadence. Still honours the quiet period so
+  /// consecutive full-screen ads never stack (Play Better Ads / AdMob-style).
   always,
 }
 
@@ -198,13 +198,16 @@ class AdsService with WidgetsBindingObserver {
   @visibleForTesting
   bool interstitialAllowed({required InterstitialPolicy policy}) {
     if (!interstitialAdsEnabled) return false;
-    if (policy == InterstitialPolicy.always) return true;
 
+    // Quiet period applies to every policy — including [always] — so two
+    // full-screen ads never fire back-to-back (Play disruptive-ads rules).
     final last = _lastFullScreenAt;
     if (last != null &&
         DateTime.now().difference(last) < minGapBetweenFullScreenAds) {
       return false;
     }
+    if (policy == InterstitialPolicy.always) return true;
+
     final requiredClears =
         !_hasShownInterstitial && !_remoteConfig.interstitialSkipFirst
         ? 1
@@ -216,9 +219,9 @@ class AdsService with WidgetsBindingObserver {
     return true;
   }
 
-  /// Ordered banner candidates: Unity then Meta for each of the five slots.
-  ///
-  /// [AdBannerHost] walks this list until one widget reports a load.
+  /// Ordered banner candidates: Meta first, then Unity, for each of the five
+  /// slots. The banner cubit walks this list in a continuous loop until one
+  /// fills, then keeps that widget mounted.
   List<BannerAdSelection> bannerCandidates({int startSlot = 0}) {
     if (!_ready || !bannerAdsEnabled) return const [];
     final slots = AdUnitIds.slotsFor(AdPlacement.banner);
@@ -227,15 +230,15 @@ class AdsService with WidgetsBindingObserver {
       final slot = slots[i];
       candidates.add(
         BannerAdSelection(
-          network: AdNetwork.unity,
-          placementId: slot.unity,
+          network: AdNetwork.meta,
+          placementId: slot.meta,
           slotIndex: i,
         ),
       );
       candidates.add(
         BannerAdSelection(
-          network: AdNetwork.meta,
-          placementId: slot.meta,
+          network: AdNetwork.unity,
+          placementId: slot.unity,
           slotIndex: i,
         ),
       );
@@ -276,7 +279,13 @@ class AdsService with WidgetsBindingObserver {
   Future<RewardedAdOutcome> showRewarded() async {
     if (!await _hasInternet()) return RewardedAdOutcome.unavailable;
     if (!_ready) return RewardedAdOutcome.unavailable;
-    final cache = _rewarded;
+    var cache = _rewarded;
+    if (cache == null) {
+      // Brief wait so a first tap after warm-up can still fill — never blocks
+      // longer than forcedFillWait, and never grants without a complete.
+      await _fillRewarded().timeout(forcedFillWait, onTimeout: () {});
+      cache = _rewarded;
+    }
     if (cache == null) {
       unawaited(_fillRewarded());
       return RewardedAdOutcome.unavailable;
@@ -475,6 +484,7 @@ class AdsService with WidgetsBindingObserver {
           shown = true;
           _notifyAdLifecycle('adStarted');
         },
+        onClick: (_) => _notifyAdLifecycle('adClicked'),
         onComplete: (_) {
           _notifyAdLifecycle('adDismissed');
           releaseFullScreenSlot(shown: true);
@@ -513,6 +523,7 @@ class AdsService with WidgetsBindingObserver {
           shown = true;
           _notifyAdLifecycle('adStarted');
         },
+        onClick: (_) => _notifyAdLifecycle('adClicked'),
         onComplete: (_) {
           earned = true;
           _notifyAdLifecycle('adDismissed');
