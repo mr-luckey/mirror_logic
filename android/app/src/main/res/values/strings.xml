@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Must match AdUnitIds.metaAppId (Meta Developer App ID). -->
-    <string name="facebook_app_id">1340478374904617</string>
-    <string name="facebook_client_token">1efd3fb7b16c23ce121270a30a22fa55</string>
+    <!-- MUST equal the first half of every Meta placement id (before "_"). -->
+    <string name="facebook_app_id">1385141237044547</string>
+    <!-- Client token for the same Meta app as facebook_app_id above. -->
+    <string name="facebook_client_token">9dd3395365fd7c95d7875b3cb75279f5</string>
 </resources>

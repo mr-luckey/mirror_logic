@@ -25,9 +25,9 @@
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FacebookAppID</key>
-	<string>1340478374904617</string>
+	<string>1385141237044547</string>
 	<key>FacebookClientToken</key>
-	<string>1efd3fb7b16c23ce121270a30a22fa55</string>
+	<string>9dd3395365fd7c95d7875b3cb75279f5</string>
 	<key>FacebookDisplayName</key>
 	<string>Mirror Logic</string>
 	<key>LSRequiresIPhoneOS</key>

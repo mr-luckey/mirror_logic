@@ -31,6 +31,9 @@ class AdBannerCubit extends Cubit<AdBannerState> with WidgetsBindingObserver {
   static const Duration _poll = Duration(seconds: 1);
   static const Duration _perCandidateTimeout = Duration(seconds: 10);
   static const Duration _betweenAttempts = Duration(seconds: 2);
+  /// After a full Meta+Unity pass with zero fills, wait longer so Meta does
+  /// not return 1002 (load too frequently) and burn the rest of the cycle.
+  static const Duration _afterFullCycle = Duration(seconds: 30);
 
   final AdsService _ads;
   bool _appInForeground = true;
@@ -79,7 +82,8 @@ class AdBannerCubit extends Cubit<AdBannerState> with WidgetsBindingObserver {
 
   void onBannerLoaded() {
     if (isClosed || state.bannerLoaded) return;
-    debugPrint(
+    // ignore: avoid_print — release diagnosis for empty banners
+    print(
       'Banner loaded: ${state.selection?.network.name} '
       '${state.selection?.placementId}',
     );
@@ -88,7 +92,8 @@ class AdBannerCubit extends Cubit<AdBannerState> with WidgetsBindingObserver {
 
   void onBannerFailed() {
     if (isClosed) return;
-    debugPrint(
+    // ignore: avoid_print — release diagnosis for empty banners
+    print(
       'Banner failed: ${state.selection?.network.name} '
       '${state.selection?.placementId}',
     );
@@ -114,7 +119,8 @@ class AdBannerCubit extends Cubit<AdBannerState> with WidgetsBindingObserver {
       _ads.isFullScreenAdShowing;
 
   void _beginCandidate(BannerAdSelection selection) {
-    debugPrint(
+    // ignore: avoid_print — release diagnosis for empty banners
+    print(
       'Banner trying: ${selection.network.name} ${selection.placementId}',
     );
     emit(
@@ -181,8 +187,11 @@ class AdBannerCubit extends Cubit<AdBannerState> with WidgetsBindingObserver {
       if (loaded) continue;
       if (_mustHide()) continue;
 
-      _candidateIndex = (_candidateIndex + 1) % candidates.length;
-      await Future<void>.delayed(_betweenAttempts);
+      final next = (_candidateIndex + 1) % candidates.length;
+      _candidateIndex = next;
+      await Future<void>.delayed(
+        next == 0 ? _afterFullCycle : _betweenAttempts,
+      );
     }
   }
 

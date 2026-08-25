@@ -7,7 +7,7 @@ import 'package:mirror_logic/presentation/widgets/ads/ad_banner_slot.dart';
 
 /// Lays the bottom banner under whichever screen is on top.
 ///
-/// One strip for the whole app. Meta first, then Unity, looping until a fill
+/// One strip for the whole app. Unity first, then Meta, looping until a fill
 /// sticks. Hides only while a full-screen ad is up or on splash/onboarding.
 class AdBannerHost extends StatelessWidget {
   const AdBannerHost({super.key, required this.child});

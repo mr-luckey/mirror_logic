@@ -74,6 +74,8 @@ android {
 dependencies {
     implementation("androidx.annotation:annotation:1.9.1")
     implementation("com.facebook.android:audience-network-sdk:6.22.0")
+    // Required by Meta Audience Network for AAID / production fill.
+    implementation("com.google.android.gms:play-services-ads-identifier:18.2.0")
 }
 
 flutter {

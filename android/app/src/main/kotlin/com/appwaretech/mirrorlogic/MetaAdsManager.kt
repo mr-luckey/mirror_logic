@@ -64,25 +64,40 @@ class MetaAdsManager(private val activity: Activity) : MethodChannel.MethodCallH
     // -----------------------------------------------------------------------
 
     private fun initialize(call: MethodCall, result: MethodChannel.Result) {
-        if (initialized) {
+        if (initialized || AudienceNetworkAds.isInitialized(activity)) {
+            initialized = true
             result.success(true)
             return
         }
         val testMode = call.argument<Boolean>("testMode") ?: false
         try {
-            if (testMode) {
-                AdSettings.setTestMode(true)
+            AdSettings.setTestMode(testMode)
+            // Reply once after init (or timeout). Never leave Flutter hanging —
+            // a stuck await keeps AdsService !_ready and blocks all banners.
+            var replied = false
+            fun reply(ok: Boolean) {
+                if (replied) return
+                replied = true
+                initialized = ok
+                result.success(ok)
             }
+            mainHandler.postDelayed({
+                val ok = AudienceNetworkAds.isInitialized(activity)
+                Log.w(TAG, "Meta SDK init timed out (isInitialized=$ok)")
+                reply(ok)
+            }, 8_000L)
             AudienceNetworkAds.buildInitSettings(activity)
                 .withInitListener { initResult ->
-                    Log.d(TAG, "Meta SDK init: ${initResult.message}")
+                    Log.d(
+                        TAG,
+                        "Meta SDK init: success=${initResult.isSuccess} ${initResult.message}",
+                    )
+                    reply(initResult.isSuccess || AudienceNetworkAds.isInitialized(activity))
                 }
                 .initialize()
-            initialized = true
-            Log.d(TAG, "Meta Audience Network initialized (testMode=$testMode)")
-            result.success(true)
         } catch (e: Exception) {
             Log.e(TAG, "Meta SDK init failed", e)
+            initialized = false
             result.success(false)
         }
     }

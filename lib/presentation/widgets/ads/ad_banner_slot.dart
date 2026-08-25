@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:mirror_logic/app/theme/medieval_colors.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
@@ -71,7 +73,11 @@ class _BannerBody extends StatelessWidget {
             placementId: selection.placementId,
             size: BannerSize.standard,
             onLoad: (_) => onLoaded(),
-            onFailed: (_, e, m) => onFailed(),
+            onFailed: (_, error, message) {
+              // ignore: avoid_print — release diagnosis
+              print('Unity banner error: $error $message');
+              onFailed();
+            },
           ),
         );
       case AdNetwork.meta:
@@ -116,9 +122,19 @@ class _MetaBannerPlatformViewState extends State<_MetaBannerPlatformView> {
         break;
       case 'onError':
         _callbackFired = true;
+        final args = call.arguments;
+        // ignore: avoid_print — release diagnosis
+        print('Meta banner error: $args');
         widget.onFailed();
         break;
     }
+  }
+
+  void _bindChannel(int id) {
+    final channel = MethodChannel('meta_banner_ad_$id');
+    channel.setMethodCallHandler((call) async {
+      _handlePlatformCall(call);
+    });
   }
 
   @override
@@ -133,15 +149,34 @@ class _MetaBannerPlatformViewState extends State<_MetaBannerPlatformView> {
       });
       return const SizedBox.shrink();
     }
-    return AndroidView(
+    // Hybrid composition: VirtualDisplay often shows a blank strip in release
+    // while the SDK reports a load.
+    return PlatformViewLink(
       viewType: 'meta_banner_ad',
-      creationParams: {'placementId': widget.placementId, 'height': 50},
-      creationParamsCodec: const StandardMessageCodec(),
-      onPlatformViewCreated: (int id) {
-        final channel = MethodChannel('meta_banner_ad_$id');
-        channel.setMethodCallHandler((call) async {
-          _handlePlatformCall(call);
-        });
+      surfaceFactory: (context, controller) {
+        return AndroidViewSurface(
+          controller: controller as AndroidViewController,
+          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+        );
+      },
+      onCreatePlatformView: (params) {
+        final controller = PlatformViewsService.initSurfaceAndroidView(
+          id: params.id,
+          viewType: 'meta_banner_ad',
+          layoutDirection: TextDirection.ltr,
+          creationParams: {
+            'placementId': widget.placementId,
+            'height': 50,
+          },
+          creationParamsCodec: const StandardMessageCodec(),
+          onFocus: () => params.onFocusChanged(true),
+        );
+        controller
+          ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+          ..addOnPlatformViewCreatedListener(_bindChannel)
+          ..create();
+        return controller;
       },
     );
   }

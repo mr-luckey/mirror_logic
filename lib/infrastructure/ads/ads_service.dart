@@ -156,7 +156,13 @@ class AdsService with WidgetsBindingObserver {
     );
 
     try {
-      await MetaAdsBridge.initialize(testMode: kDebugMode);
+      await MetaAdsBridge.initialize(testMode: kDebugMode).timeout(
+        requestTimeout,
+        onTimeout: () {
+          debugPrint('Meta Audience Network init timed out');
+          return false;
+        },
+      );
     } catch (error) {
       debugPrint('Meta Audience Network init failed: $error');
     }
@@ -219,9 +225,9 @@ class AdsService with WidgetsBindingObserver {
     return true;
   }
 
-  /// Ordered banner candidates: Meta first, then Unity, for each of the five
-  /// slots. The banner cubit walks this list in a continuous loop until one
-  /// fills, then keeps that widget mounted.
+  /// Ordered banner candidates: Unity first (usually fills in release), then
+  /// Meta, for each of the five slots. The banner cubit walks this list in a
+  /// continuous loop until one fills, then keeps that widget mounted.
   List<BannerAdSelection> bannerCandidates({int startSlot = 0}) {
     if (!_ready || !bannerAdsEnabled) return const [];
     final slots = AdUnitIds.slotsFor(AdPlacement.banner);
@@ -230,15 +236,15 @@ class AdsService with WidgetsBindingObserver {
       final slot = slots[i];
       candidates.add(
         BannerAdSelection(
-          network: AdNetwork.meta,
-          placementId: slot.meta,
+          network: AdNetwork.unity,
+          placementId: slot.unity,
           slotIndex: i,
         ),
       );
       candidates.add(
         BannerAdSelection(
-          network: AdNetwork.unity,
-          placementId: slot.unity,
+          network: AdNetwork.meta,
+          placementId: slot.meta,
           slotIndex: i,
         ),
       );
