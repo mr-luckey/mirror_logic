@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/app/ad_banner_host.dart';
 import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
+import 'package:mirror_logic/infrastructure/ads/ad_placement_load_state.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_remote_config.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 
@@ -41,6 +43,15 @@ void main() {
       }
     });
 
+    test('android slots inside a placement are unique', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      for (final placement in AdPlacement.values) {
+        final units = AdUnitIds.forPlacement(placement);
+        expect(units.toSet(), hasLength(units.length), reason: placement.name);
+      }
+    });
+
     test('no slot is left blank', () {
       for (final placement in AdPlacement.values) {
         for (final unitId in AdUnitIds.forPlacement(placement)) {
@@ -51,12 +62,35 @@ void main() {
     });
 
     test('the three placements do not share a unit', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
       final banner = AdUnitIds.forPlacement(AdPlacement.banner).first;
       final interstitial = AdUnitIds.forPlacement(
         AdPlacement.interstitial,
       ).first;
       final rewarded = AdUnitIds.forPlacement(AdPlacement.rewarded).first;
       expect({banner, interstitial, rewarded}, hasLength(3));
+    });
+  });
+
+  group('ad unit rotation', () {
+    test('stays on a filling unit and only advances after a miss', () {
+      final state = AdPlacementLoadState(['a', 'b', 'c', 'd', 'e']);
+      expect(state.currentUnitId, 'a');
+      state.onFilled();
+      expect(state.currentUnitId, 'a');
+      state.onEmpty();
+      expect(state.currentUnitId, 'b');
+    });
+
+    test('backs off after a full miss cycle rather than spinning', () {
+      final state = AdPlacementLoadState(['a', 'b', 'c', 'd', 'e']);
+      for (var i = 0; i < 5; i++) {
+        state.onEmpty();
+      }
+      expect(state.currentUnitId, 'a');
+      expect(state.backoff, AdPlacementLoadState.initialCycleBackoff);
+      expect(state.delayUntilAllowed, greaterThan(Duration.zero));
     });
   });
 

@@ -12,18 +12,15 @@ enum AdPlacement {
   rewarded,
 }
 
-/// Every ad unit the game is allowed to request, in the order it tries them.
+/// Every ad unit the game is allowed to request.
 ///
-/// Each placement holds five slots because a single unit is a single point of
-/// failure: a new unit that has not warmed up, one throttled by low fill in a
-/// region, or one a mediation partner is temporarily starving all return the
-/// same "no ad" as a broken id. [AdsService] walks the list top to bottom and
-/// shows the first unit that fills, so a dead slot costs one failed request
-/// rather than the impression.
+/// Five ids per placement are a **rotation**, not a burst. [AdsService] asks
+/// for **one** unit at a time, keeps a unit that fills, and only moves to the
+/// next id after a no-fill — with a gap between attempts. Requesting every id
+/// in a tight loop is invalid traffic and is what gets accounts limited.
 ///
-/// Replace the ids in place when the real units are cut. The loader only cares
-/// about the order — first entry gets every request that can be filled, later
-/// entries only ever see traffic the ones above them could not take.
+/// Put the strongest / newest unit first. Later entries only see traffic when
+/// the current one misses.
 abstract final class AdUnitIds {
   /// Google's own test units, which always fill. Every slot holds the same id
   /// on purpose: five distinct placeholders would only mean five identical

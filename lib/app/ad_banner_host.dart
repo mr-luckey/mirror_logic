@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/app/ads_scope.dart';
 import 'package:mirror_logic/app/router.dart';
+import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
+import 'package:mirror_logic/infrastructure/ads/ad_placement_load_state.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 import 'package:mirror_logic/presentation/widgets/ads/ad_banner_slot.dart';
 
@@ -41,22 +43,15 @@ class _AdBannerHostState extends State<AdBannerHost>
 
   /// How long a filled banner stays up before it is replaced.
   ///
-  /// The refresh is driven from here rather than by AdMob, so server-side
-  /// auto-refresh must stay **off** for the banner units — the two together
-  /// would refresh the same strip twice over. Note that AdMob's own floor for a
-  /// refresh interval is 30 seconds; anything shorter is out of policy and can
-  /// have the units limited for invalid traffic.
-  static const Duration _refreshInterval = Duration(seconds: 40);
-
-  /// How long to wait before asking again after a round of requests came back
-  /// empty. Unlike the refresh, this never gives up: a launch that landed with
-  /// the radio still waking up, or in a tunnel, should still get its banner
-  /// whenever the network comes back rather than staying blank for the session.
-  static const Duration _retryDelay = Duration(seconds: 15);
+  /// Client-driven refresh; keep AdMob console auto-refresh **off**. The floor
+  /// is 30 seconds — shorter intervals are invalid traffic.
+  static const Duration _refreshInterval = Duration(seconds: 45);
 
   late bool _show = AdBannerHost.showsBannerAt(_location);
   BannerAd? _ad;
   bool _requested = false;
+  bool _foreground = true;
+  int _wake = 0;
 
   @override
   void initState() {
@@ -85,9 +80,12 @@ class _AdBannerHostState extends State<AdBannerHost>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      unawaited(_refreshRemoteConfig());
-    }
+    final ads = context.ads;
+    final foreground = state == AppLifecycleState.resumed;
+    _foreground = foreground;
+    ads?.setAppForeground(foreground);
+    _wake++;
+    if (foreground) unawaited(_refreshRemoteConfig());
   }
 
   Future<void> _refreshRemoteConfig() async {
@@ -109,39 +107,62 @@ class _AdBannerHostState extends State<AdBannerHost>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || _show == show) return;
       setState(() => _show = show);
+      _wake++;
     });
   }
 
-  /// Keeps a live banner in the strip for as long as this host is mounted.
+  /// Loads a banner only while it can actually be shown.
   ///
-  /// One loop covers both jobs, because they are the same job: ask for a banner,
-  /// put up whatever comes back, wait, ask again. A round that fills waits out
-  /// [_refreshInterval]; a round that comes back empty waits [_retryDelay] and
-  /// tries again, without limit.
+  /// One unit per attempt (rotation + backoff live in [AdsService]). Never
+  /// request on splash/onboarding, in the background, or while ads are off.
   Future<void> _load(AdsService ads) async {
     while (mounted) {
-      if (!ads.bannerAdsEnabled) {
-        _clearBanner();
-        await Future<void>.delayed(_retryDelay);
-        continue;
-      }
+      await _waitUntilVisible(ads);
+      if (!mounted) return;
       final ad = await ads.loadBanner(_size);
       if (!mounted) {
         await ad?.dispose();
         return;
       }
-      if (!ads.bannerAdsEnabled) {
+      if (!_canShow(ads)) {
         await ad?.dispose();
         _clearBanner();
-        await Future<void>.delayed(_retryDelay);
         continue;
       }
       if (ad == null) {
-        await Future<void>.delayed(_retryDelay);
+        var delay = ads.retryDelayFor(AdPlacement.banner);
+        if (delay < AdPlacementLoadState.nextUnitGap) {
+          delay = AdPlacementLoadState.nextUnitGap;
+        }
+        await _sleep(delay);
         continue;
       }
       _swapIn(ad);
-      await Future<void>.delayed(_refreshInterval);
+      await _sleep(_refreshInterval);
+    }
+  }
+
+  bool _canShow(AdsService ads) =>
+      ads.bannerAdsEnabled && _show && _foreground;
+
+  Future<void> _waitUntilVisible(AdsService ads) async {
+    while (mounted && !_canShow(ads)) {
+      _clearBanner();
+      await _sleep(const Duration(seconds: 1));
+    }
+  }
+
+  Future<void> _sleep(Duration duration) async {
+    final token = _wake;
+    final until = DateTime.now().add(duration);
+    while (mounted && DateTime.now().isBefore(until)) {
+      if (_wake != token) return;
+      final left = until.difference(DateTime.now());
+      final slice = left > const Duration(milliseconds: 400)
+          ? const Duration(milliseconds: 400)
+          : left;
+      if (slice <= Duration.zero) return;
+      await Future<void>.delayed(slice);
     }
   }
 

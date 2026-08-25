@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
+import 'package:mirror_logic/infrastructure/ads/ad_placement_load_state.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_remote_config.dart';
 
 /// How much of the interstitial cadence a placement agrees to wait for.
@@ -72,7 +73,7 @@ class AdsService {
   bool get interstitialAdsEnabled =>
       GameConstants.adsEnabled && _remoteConfig.interstitialAdsEnabled;
 
-  /// How long one unit gets to fill before the waterfall moves down a slot.
+  /// How long one unit gets to fill before the attempt is abandoned.
   final Duration requestTimeout;
 
   /// How long an [InterstitialPolicy.always] caller will stand and wait for an
@@ -95,6 +96,14 @@ class AdsService {
   RewardedAd? _rewarded;
   Future<void>? _interstitialFill;
   Future<void>? _rewardedFill;
+  bool _appForeground = true;
+  Timer? _interstitialRetry;
+  Timer? _rewardedRetry;
+
+  final Map<AdPlacement, AdPlacementLoadState> _loadState = {
+    for (final placement in AdPlacement.values)
+      placement: AdPlacementLoadState(AdUnitIds.forPlacement(placement)),
+  };
 
   /// Whether the SDK came up. False leaves everything below a no-op.
   bool get isReady => _ready;
@@ -108,6 +117,22 @@ class AdsService {
   /// has to be fetched leaves the player on a dead button for several seconds,
   /// which reads as a broken game rather than a slow network.
   bool get hasRewardedAd => _rewarded != null;
+
+  /// Requests pause while the app is not visible. Ads that cannot be shown
+  /// must not be requested — that request/impression gap is invalid traffic.
+  void setAppForeground(bool foreground) {
+    _appForeground = foreground;
+    if (!foreground) {
+      _interstitialRetry?.cancel();
+      _rewardedRetry?.cancel();
+      return;
+    }
+    _fillCaches();
+  }
+
+  /// Remaining wait before [placement] may issue another request.
+  Duration retryDelayFor(AdPlacement placement) =>
+      _loadState[placement]!.delayUntilAllowed;
 
   /// Brings the SDK up. Safe to call from anywhere, any number of times.
   ///
@@ -152,7 +177,7 @@ class AdsService {
   }
 
   void _fillCaches() {
-    if (!_ready) return;
+    if (!_ready || !_appForeground) return;
     if (interstitialAdsEnabled) unawaited(_fillInterstitial());
     unawaited(_fillRewarded());
   }
@@ -223,7 +248,7 @@ class AdsService {
     }
     if (ad == null) {
       // Nothing cached: leave the cadence counter alone so the next clear gets
-      // another go, and start the fetch that should have been ready by now.
+      // another go. Prefetch respects per-unit backoff — never a burst retry.
       unawaited(_fillInterstitial());
       return false;
     }
@@ -315,15 +340,20 @@ class AdsService {
   /// Ownership passes to the caller: whoever mounts the ad disposes it.
   Future<BannerAd?> loadBanner(AdSize size) async {
     await init();
-    if (!_ready || !bannerAdsEnabled) return null;
-    if (!await _hasInternet()) return null;
-    return _waterfall(
+    if (!_ready || !bannerAdsEnabled || !_appForeground) return null;
+    if (!await _hasInternet()) {
+      _loadState[AdPlacement.banner]!.onSkipped();
+      return null;
+    }
+    return _loadNext(
       AdPlacement.banner,
       (unitId) => _requestBanner(unitId, size),
     );
   }
 
   Future<void> dispose() async {
+    _interstitialRetry?.cancel();
+    _rewardedRetry?.cancel();
     _interstitial?.dispose();
     _interstitial = null;
     _rewarded?.dispose();
@@ -383,15 +413,20 @@ class AdsService {
   // Loading
   // ---------------------------------------------------------------------------
 
-  /// Walks [placement]'s units top to bottom and returns the first fill.
-  Future<T?> _waterfall<T extends Object>(
+  /// One unit, then stop. Rotation happens on the next allowed attempt.
+  Future<T?> _loadNext<T extends Object>(
     AdPlacement placement,
     Future<T?> Function(String unitId) request,
   ) async {
-    for (final unitId in AdUnitIds.forPlacement(placement)) {
-      final ad = await request(unitId);
-      if (ad != null) return ad;
+    final state = _loadState[placement]!;
+    await state.waitUntilAllowed();
+    if (!_ready || !_appForeground) return null;
+    final ad = await request(state.currentUnitId);
+    if (ad != null) {
+      state.onFilled();
+      return ad;
     }
+    state.onEmpty();
     return null;
   }
 
@@ -401,26 +436,63 @@ class AdsService {
       _interstitial = null;
       return;
     }
-    if (!_ready || _interstitial != null) return;
-    if (!await _hasInternet()) return;
-    // A second caller joins the request in flight rather than racing a parallel
-    // waterfall down the same list and throwing one of the two ads away.
+    if (!_ready || !_appForeground || _interstitial != null) return;
+    if (!await _hasInternet()) {
+      _loadState[AdPlacement.interstitial]!.onSkipped();
+      _scheduleInterstitialRetry();
+      return;
+    }
     return _interstitialFill ??= _runFill(
-      () async => _interstitial = await _waterfall(
-        AdPlacement.interstitial,
-        _requestInterstitial,
-      ),
+      () async {
+        _interstitial = await _loadNext(
+          AdPlacement.interstitial,
+          _requestInterstitial,
+        );
+        if (_interstitial == null) _scheduleInterstitialRetry();
+      },
       onDone: () => _interstitialFill = null,
     );
   }
 
   Future<void> _fillRewarded() async {
-    if (!await _hasInternet()) return;
-    if (!_ready || _rewarded != null) return Future<void>.value();
+    if (!_ready || !_appForeground || _rewarded != null) {
+      return Future<void>.value();
+    }
+    if (!await _hasInternet()) {
+      _loadState[AdPlacement.rewarded]!.onSkipped();
+      _scheduleRewardedRetry();
+      return;
+    }
     return _rewardedFill ??= _runFill(
-      () async =>
-          _rewarded = await _waterfall(AdPlacement.rewarded, _requestRewarded),
+      () async {
+        _rewarded = await _loadNext(AdPlacement.rewarded, _requestRewarded);
+        if (_rewarded == null) _scheduleRewardedRetry();
+      },
       onDone: () => _rewardedFill = null,
+    );
+  }
+
+  void _scheduleInterstitialRetry() {
+    _interstitialRetry?.cancel();
+    if (!_appForeground || !interstitialAdsEnabled) return;
+    final delay = retryDelayFor(AdPlacement.interstitial);
+    _interstitialRetry = Timer(
+      delay == Duration.zero
+          ? AdPlacementLoadState.nextUnitGap
+          : delay,
+      () => unawaited(_fillInterstitial()),
+    );
+  }
+
+  void _scheduleRewardedRetry() {
+    _rewardedRetry?.cancel();
+    if (!_appForeground) return;
+    final delay = retryDelayFor(AdPlacement.rewarded);
+    _rewardedRetry = Timer(
+      delay == Duration.zero
+          ? AdPlacementLoadState.nextUnitGap
+          : delay,
+      () => unawaited(_fillRewarded()),
     );
   }
 
