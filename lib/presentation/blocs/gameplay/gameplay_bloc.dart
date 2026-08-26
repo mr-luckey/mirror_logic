@@ -12,6 +12,7 @@ import 'package:mirror_logic/domain/beam/reflection_math.dart';
 import 'package:mirror_logic/domain/beam/vec2.dart';
 import 'package:mirror_logic/domain/level/level_model.dart';
 import 'package:mirror_logic/domain/level/win_condition_evaluator.dart';
+import 'package:mirror_logic/infrastructure/analytics/analytics_service.dart';
 
 enum GameplayPhase { loading, loadFailed, playing, paused, hint, solved }
 
@@ -246,7 +247,9 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
     BeamSimulator? simulator,
     WinConditionEvaluator? winEvaluator,
     BeamAlignmentFinder? alignmentFinder,
+    AnalyticsService? analytics,
   }) : _levelRepository = levelRepository,
+       _analytics = analytics,
        _simulator = simulator ?? BeamSimulator(),
        _win = winEvaluator ?? const WinConditionEvaluator(),
        _alignment =
@@ -289,6 +292,7 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
   static const double _detentRelease = 5.5;
 
   final LevelRepository _levelRepository;
+  final AnalyticsService? _analytics;
   final BeamSimulator _simulator;
   final WinConditionEvaluator _win;
   final BeamAlignmentFinder _alignment;
@@ -357,6 +361,16 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
       ),
     );
     _startTicker();
+    unawaited(
+      _analytics?.logLevelStarted(
+        levelNumber: GameConstants.displayLevelNumber(
+          event.level.chapterId,
+          event.level.levelIndex,
+        ),
+        difficulty: event.level.chapterId,
+        source: 'gameplay',
+      ),
+    );
   }
 
   void _onDragStarted(
@@ -549,6 +563,19 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
             elapsedSeconds: _elapsedSeconds,
           ),
         );
+        final level = state.level!;
+        unawaited(
+          _analytics?.logLevelCompleted(
+            levelNumber: GameConstants.displayLevelNumber(
+              level.chapterId,
+              level.levelIndex,
+            ),
+            difficulty: level.chapterId,
+            moves: state.moves,
+            timeSeconds: _elapsedSeconds.round(),
+            source: 'gameplay',
+          ),
+        );
         return;
       }
     } else {
@@ -660,6 +687,15 @@ class GameplayBloc extends Bloc<GameplayEvent, GameplayState> {
         hintsUsed: state.hintsUsed + 1,
         solutionRevealed: true,
         clearHighlight: true,
+      ),
+    );
+    unawaited(
+      _analytics?.logHintUsed(
+        levelNumber: GameConstants.displayLevelNumber(
+          level.chapterId,
+          level.levelIndex,
+        ),
+        source: 'gameplay',
       ),
     );
   }

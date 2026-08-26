@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mirror_logic/app/ad_banner_host.dart';
@@ -9,7 +11,9 @@ import 'package:mirror_logic/app/router.dart';
 import 'package:mirror_logic/app/theme/app_theme.dart';
 import 'package:mirror_logic/domain/theme/theme_controller.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
+import 'package:mirror_logic/infrastructure/analytics/analytics_service.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
+import 'package:mirror_logic/infrastructure/notifications/local_notification_service.dart';
 import 'package:mirror_logic/infrastructure/review/review_service.dart';
 import 'package:mirror_logic/infrastructure/update/app_update_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
@@ -17,8 +21,34 @@ import 'package:mirror_logic/presentation/blocs/economy/rewarded_coins_cubit.dar
 import 'package:mirror_logic/presentation/blocs/progress/progress_bloc.dart';
 import 'package:mirror_logic/presentation/blocs/theme/theme_cubit.dart';
 
-class MirrorLogicApp extends StatelessWidget {
+class MirrorLogicApp extends StatefulWidget {
   const MirrorLogicApp({super.key});
+
+  @override
+  State<MirrorLogicApp> createState() => _MirrorLogicAppState();
+}
+
+class _MirrorLogicAppState extends State<MirrorLogicApp> {
+  @override
+  void initState() {
+    super.initState();
+    // After the first frame the Activity exists, so the permission dialog
+    // and notification channel can be created correctly.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(_bootstrapNotifications());
+    });
+  }
+
+  Future<void> _bootstrapNotifications() async {
+    final notifications = context.read<LocalNotificationService>();
+    final analytics = context.read<AnalyticsService>();
+    final count = await notifications.scheduleNotifications();
+    if (count > 0) {
+      unawaited(
+        analytics.logNotificationScheduled(count: count, source: 'launch'),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

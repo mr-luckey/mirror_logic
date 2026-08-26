@@ -6,6 +6,7 @@ import 'package:mirror_logic/core/constants/game_constants.dart';
 import 'package:mirror_logic/data/repositories/economy_repository.dart';
 import 'package:mirror_logic/domain/economy/player_save.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
+import 'package:mirror_logic/infrastructure/analytics/analytics_service.dart';
 
 enum RewardedCoinsFeedback { earned, skipped, unavailable, quotaReached }
 
@@ -62,8 +63,10 @@ class RewardedCoinsCubit extends Cubit<RewardedCoinsState> {
   RewardedCoinsCubit({
     required EconomyRepository economyRepository,
     AdsService? adsService,
+    AnalyticsService? analytics,
   }) : _economyRepository = economyRepository,
        _adsService = adsService,
+       _analytics = analytics,
        super(
          const RewardedCoinsState(
            adsWatched: 0,
@@ -77,6 +80,7 @@ class RewardedCoinsCubit extends Cubit<RewardedCoinsState> {
 
   final EconomyRepository _economyRepository;
   final AdsService? _adsService;
+  final AnalyticsService? _analytics;
 
   static RewardedCoinsState _fromSave(PlayerSave save) {
     final watched = save.rewardedAdsWatched;
@@ -120,8 +124,9 @@ class RewardedCoinsCubit extends Cubit<RewardedCoinsState> {
       return;
     }
 
-    ads.warmUp();
-    if (!ads.hasRewardedAd) {
+    ads.warmUp(rewardedPlacement: 'coins');
+    await ads.preloadRewarded(placement: 'coins');
+    if (!ads.hasRewardedFor('coins')) {
       emit(
         state.copyWith(
           adInProgress: false,
@@ -131,7 +136,7 @@ class RewardedCoinsCubit extends Cubit<RewardedCoinsState> {
       return;
     }
 
-    final outcome = await ads.showRewarded();
+    final outcome = await ads.showRewarded(placement: 'coins');
     switch (outcome) {
       case RewardedAdOutcome.earned:
         final grant = await _economyRepository.grantRewardedAdCoins();
@@ -144,6 +149,18 @@ class RewardedCoinsCubit extends Cubit<RewardedCoinsState> {
           );
           return;
         }
+        unawaited(
+          _analytics?.logRewardedAdCompleted(
+            placement: 'coins',
+            source: 'economy',
+          ),
+        );
+        unawaited(
+          _analytics?.logRewardClaimed(
+            rewardType: 'coins',
+            source: 'rewarded_ad',
+          ),
+        );
         emit(
           _fromSave(grant.save).copyWith(
             adInProgress: false,

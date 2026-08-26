@@ -18,10 +18,19 @@ class FakeAdsService extends AdsService {
   bool get hasRewardedAd => cached;
 
   @override
-  void warmUp() {}
+  bool hasRewardedFor(String placement) => cached;
 
   @override
-  Future<RewardedAdOutcome> showRewarded() async {
+  void warmUp({
+    String interstitialPlacement = 'level_break',
+    String rewardedPlacement = 'hint',
+  }) {}
+
+  @override
+  Future<void> preloadRewarded({String placement = 'hint'}) async {}
+
+  @override
+  Future<RewardedAdOutcome> showRewarded({String placement = 'hint'}) async {
     if (showDelay > Duration.zero) {
       await Future<void>.delayed(showDelay);
     }

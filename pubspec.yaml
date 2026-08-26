@@ -1,7 +1,7 @@
 name: mirror_logic
 description: Mirror Logic — optical puzzle. Reflect, align, solve.
 publish_to: 'none'
-version: 6.0.0+6
+version: 8.0.0+8
 
 environment:
   sdk: ^3.11.5
@@ -28,6 +28,11 @@ dependencies:
   connectivity_plus: ^7.3.1
   firebase_core: ^4.13.0
   firebase_remote_config: ^6.5.6
+  firebase_analytics: ^12.5.0
+  flutter_local_notifications: ^22.3.0
+  timezone: ^0.11.1
+  flutter_timezone: ^5.1.0
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:
@@ -43,6 +48,7 @@ flutter:
   assets:
     # Level catalog is split into 10-level batches (manifest.json + batch_XXX.json).
     - assets/levels/
+    - assets/notifications/notifications.json
 
     - assets/images/medieval/crystal_cut.webp
     - assets/images/medieval/emitter_cut.webp

@@ -1,125 +1,106 @@
 import 'dart:async';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
-import 'package:mirror_logic/infrastructure/ads/ad_placement_load_state.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_remote_config.dart';
+import 'package:mirror_logic/infrastructure/network/network_guard.dart';
 
 /// How much of the interstitial cadence a placement agrees to wait for.
 enum InterstitialPolicy {
-  /// Waits for both the level-clear count and the quiet period. What an ad
-  /// riding a level break asks for.
+  /// Waits for both the level-clear count and the quiet period.
   levelBreak,
 
-  /// Waits only for the quiet period. For exits that are not level breaks but
-  /// still should not stack two ads on top of each other.
+  /// Waits only for the quiet period (pause-menu exits).
   quietPeriod,
 
-  /// Shows on every tap, gates waived. For the handful of exits the game
-  /// charges for without exception.
+  /// Shows on every tap, gates waived (forced exits).
   always,
 }
 
 /// What became of a rewarded video the player asked for.
 enum RewardedAdOutcome {
-  /// Watched far enough to be paid. The caller owes the reward.
   earned,
-
-  /// Closed early. No reward, and no charge either.
   skipped,
-
-  /// Nothing to show: no fill, the SDK is down, or another full-screen ad
-  /// already holds the screen.
   unavailable,
 }
 
-/// Loads and shows the game's ads.
+/// Loads and shows ads. Placement-based unit IDs. No fill waterfall.
 ///
-/// Everything here is best-effort. A device that cannot reach AdMob, a region
-/// with no fill, or a unit id that was never cut all leave the game fully
-/// playable with the ad simply absent — no method on this class throws at its
-/// caller, and none of them are on a path the player cannot complete without.
+/// Offline = idle. No-fill is legitimate. Best-effort — never throws to UI.
 class AdsService {
   AdsService({
     AdsConfig? remoteConfig,
+    NetworkGuard? network,
     this.levelsBetweenInterstitials = 3,
     Duration? minGapBetweenFullScreenAds,
     this.requestTimeout = const Duration(seconds: 10),
     this.forcedFillWait = const Duration(seconds: 4),
+    this.maxRetries = 2,
+    this.retryBackoff = const Duration(seconds: 30),
   }) : _remoteConfig = remoteConfig ?? AdsRemoteConfig.instance,
+       _network = network ?? NetworkGuard(),
        _minGapOverride = minGapBetweenFullScreenAds;
 
   final AdsConfig _remoteConfig;
+  final NetworkGuard _network;
   final Duration? _minGapOverride;
 
-  /// Level clears between two interstitials. The counter starts at zero every
-  /// launch, so the opening boards of any session are always quiet.
   final int levelsBetweenInterstitials;
+  final Duration requestTimeout;
+  final Duration forcedFillWait;
+  final int maxRetries;
+  final Duration retryBackoff;
 
-  /// Quiet period after any full-screen ad, rewarded ones included: a player
-  /// who just sat through a video to buy a hint should not meet an interstitial
-  /// the moment they finish the board.
   Duration get minGapBetweenFullScreenAds =>
       _minGapOverride ?? _remoteConfig.interstitialMinInterval;
 
-  /// Whether Remote Config currently permits banner requests.
   bool get bannerAdsEnabled =>
       GameConstants.adsEnabled && _remoteConfig.bannerAdsEnabled;
 
-  /// Whether Remote Config currently permits interstitial requests and shows.
   bool get interstitialAdsEnabled =>
       GameConstants.adsEnabled && _remoteConfig.interstitialAdsEnabled;
 
-  /// How long one unit gets to fill before the attempt is abandoned.
-  final Duration requestTimeout;
-
-  /// How long an [InterstitialPolicy.always] caller will stand and wait for an
-  /// empty cache to fill before giving up and letting the player through.
-  ///
-  /// The cache is refilled the moment an ad closes, so the only realistic way
-  /// one of these placements finds it empty is being tapped during that refill.
-  /// Waiting out those few seconds is what makes "always" mean it, and the cap
-  /// is what keeps a dead network from parking the player on a button.
-  final Duration forcedFillWait;
+  bool get isOnline => _network.isOnline;
 
   bool _ready = false;
+  bool _initializing = false;
   bool _fullScreenShowing = false;
+  bool _appForeground = true;
   DateTime? _lastFullScreenAt;
   int _clearsSinceInterstitial = 0;
   bool _hasShownInterstitial = false;
   Future<void>? _bringUp;
 
   InterstitialAd? _interstitial;
+  String? _interstitialPlacement;
   RewardedAd? _rewarded;
+  String? _rewardedPlacement;
   Future<void>? _interstitialFill;
   Future<void>? _rewardedFill;
-  bool _appForeground = true;
+
+  int _interstitialAttempts = 0;
+  int _rewardedAttempts = 0;
   Timer? _interstitialRetry;
   Timer? _rewardedRetry;
 
-  final Map<AdPlacement, AdPlacementLoadState> _loadState = {
-    for (final placement in AdPlacement.values)
-      placement: AdPlacementLoadState(AdUnitIds.forPlacement(placement)),
-  };
-
-  /// Whether the SDK came up. False leaves everything below a no-op.
   bool get isReady => _ready;
-
-  /// Whether a full-screen ad holds the screen right now.
   bool get isFullScreenAdShowing => _fullScreenShowing;
+  bool get hasRewardedAd => hasRewardedFor('hint');
 
-  /// Whether a rewarded video is cached and can start on the next tap.
-  ///
-  /// The hint sheet only offers the video when this is true: an ad that still
-  /// has to be fetched leaves the player on a dead button for several seconds,
-  /// which reads as a broken game rather than a slow network.
-  bool get hasRewardedAd => _rewarded != null;
+  bool hasRewardedFor(String placement) =>
+      _rewarded != null && _rewardedPlacement == placement;
 
-  /// Requests pause while the app is not visible. Ads that cannot be shown
-  /// must not be requested — that request/impression gap is invalid traffic.
+  /// Maps cadence policy → named AdMob placement (one unit ID).
+  static String interstitialPlacementFor(InterstitialPolicy policy) {
+    return switch (policy) {
+      InterstitialPolicy.levelBreak => 'level_break',
+      InterstitialPolicy.quietPeriod => 'pause_exit',
+      InterstitialPolicy.always => 'forced_exit',
+    };
+  }
+
   void setAppForeground(bool foreground) {
     _appForeground = foreground;
     if (!foreground) {
@@ -127,88 +108,91 @@ class AdsService {
       _rewardedRetry?.cancel();
       return;
     }
-    _fillCaches();
+    if (_network.isOnline) _fillCaches();
   }
 
-  /// Remaining wait before [placement] may issue another request.
-  Duration retryDelayFor(AdPlacement placement) =>
-      _loadState[placement]!.delayUntilAllowed;
+  Future<void> init() => _bringUp ??= _bootstrap();
 
-  /// Brings the SDK up. Safe to call from anywhere, any number of times.
-  ///
-  /// The future is kept so later callers can join a bring-up already in flight
-  /// instead of racing it. Launch fires this without waiting, and the SDK can
-  /// take a few seconds on a cold first run — which is longer than the splash
-  /// screen, so the first banner request would otherwise arrive while the SDK
-  /// was still starting and be turned away for good.
-  Future<void> init() => _bringUp ??= _initialize();
-
-  Future<void> _initialize() async {
+  Future<void> _bootstrap() async {
     if (!GameConstants.adsEnabled) {
       _ready = false;
       debugPrint('AdsService disabled: GameConstants.adsEnabled is false');
       return;
     }
     await _remoteConfig.ensureInitialized();
+    await _network.start(onOnline: _onNetworkRestored);
+    if (!_network.isOnline) {
+      debugPrint('AdsService idle: offline at bootstrap');
+      return;
+    }
+    await _ensureSdk();
+    _fillCaches();
+  }
+
+  void _onNetworkRestored() {
+    unawaited(() async {
+      await _ensureSdk();
+      if (_appForeground) _fillCaches();
+    }());
+  }
+
+  Future<void> _ensureSdk() async {
+    if (_ready || _initializing || !GameConstants.adsEnabled) return;
+    if (!_network.isOnline) return;
+    _initializing = true;
     try {
       await MobileAds.instance.initialize();
       _ready = true;
     } catch (error, stack) {
-      // No ad is worth a black screen on launch.
       _ready = false;
-      debugPrint('AdsService disabled: $error\n$stack');
-      return;
+      debugPrint('AdsService SDK init failed: $error\n$stack');
+    } finally {
+      _initializing = false;
     }
-    _fillCaches();
   }
 
-  /// Fills the full-screen caches in the background, standing the SDK up first
-  /// if launch's own attempt has not landed yet.
-  ///
-  /// Both ads are fetched well ahead of the tap that shows them: a rewarded
-  /// video is tens of megabytes, and fetching it on demand would put the wait
-  /// between the player's decision and their reward.
-  void warmUp() => unawaited(_warmUpIfOnline());
+  void warmUp({
+    String interstitialPlacement = 'level_break',
+    String rewardedPlacement = 'hint',
+  }) {
+    unawaited(_warmUp(interstitialPlacement, rewardedPlacement));
+  }
 
-  Future<void> _warmUpIfOnline() async {
-    if (!await _hasInternet()) return;
+  Future<void> _warmUp(String interstitialPlacement, String rewardedPlacement) async {
     await init();
-    _fillCaches();
+    if (!_network.isOnline || !_appForeground) return;
+    await _ensureSdk();
+    if (interstitialAdsEnabled) {
+      unawaited(preloadInterstitial(placement: interstitialPlacement));
+    }
+    unawaited(preloadRewarded(placement: rewardedPlacement));
   }
 
   void _fillCaches() {
-    if (!_ready || !_appForeground) return;
-    if (interstitialAdsEnabled) unawaited(_fillInterstitial());
-    unawaited(_fillRewarded());
+    if (!_ready || !_appForeground || !_network.isOnline) return;
+    if (interstitialAdsEnabled) {
+      unawaited(preloadInterstitial(placement: 'level_break'));
+    }
+    unawaited(preloadRewarded(placement: 'hint'));
   }
 
-  /// Refreshes the cached controls and immediately applies any ad kill switch.
   Future<void> refreshRemoteConfig() async {
     await _remoteConfig.refreshIfNeeded();
     if (!interstitialAdsEnabled) {
       await _interstitial?.dispose();
       _interstitial = null;
+      _interstitialPlacement = null;
       return;
     }
-    if (_ready) unawaited(_fillInterstitial());
+    if (_ready) unawaited(preloadInterstitial(placement: 'level_break'));
   }
 
-  /// Counts a cleared board towards the next interstitial.
   void registerLevelCleared() => _clearsSinceInterstitial++;
 
-  /// Whether the level-break cadence allows an interstitial right now.
-  ///
-  /// Pure bookkeeping — it says nothing about whether an ad is actually cached.
   @visibleForTesting
   bool get interstitialDue =>
       interstitialAllowed(policy: InterstitialPolicy.levelBreak);
 
-  /// Whether an interstitial may be shown, by the rules the caller plays under.
-  ///
-  /// See [InterstitialPolicy]. The clear counter only applies to ads that ride a
-  /// level break: leaving the board from the pause menu is already a deliberate
-  /// stop, so an ad there does not interrupt a puzzle in progress and does not
-  /// need to wait for the third clear.
   @visibleForTesting
   bool interstitialAllowed({required InterstitialPolicy policy}) {
     if (!interstitialAdsEnabled) return false;
@@ -230,31 +214,76 @@ class AdsService {
     return true;
   }
 
-  /// Shows an interstitial, if [policy] allows one and one is cached.
-  ///
-  /// Completes when the ad closes, so callers can hold navigation until the
-  /// player is back. Returns whether anything was shown.
+  Future<void> preloadInterstitial({
+    String placement = 'level_break',
+  }) async {
+    if (!interstitialAdsEnabled) return;
+    if (_interstitial != null && _interstitialPlacement == placement) return;
+    if (!_ready || !_appForeground) return;
+    if (!_network.isOnline) return;
+    if (_interstitialAttempts > maxRetries) return;
+
+    final unitId = AppAdsConfig.interstitialUnitId(placement);
+    if (unitId == null) return;
+
+    return _interstitialFill ??= _runFill(() async {
+      try {
+        _interstitialRetry?.cancel();
+        await _interstitial?.dispose();
+        _interstitial = null;
+        _interstitialPlacement = null;
+
+        final request = _AdRequest<InterstitialAd>(
+          unitId: unitId,
+          timeout: requestTimeout,
+        );
+        unawaited(
+          InterstitialAd.load(
+            adUnitId: unitId,
+            request: const AdRequest(),
+            adLoadCallback: InterstitialAdLoadCallback(
+              onAdLoaded: request.filled,
+              onAdFailedToLoad: request.empty,
+            ),
+          ),
+        );
+        final ad = await request.result;
+        if (ad == null) {
+          _interstitialAttempts++;
+          _scheduleInterstitialRetry(placement);
+          return;
+        }
+        _interstitialAttempts = 0;
+        _interstitial = ad;
+        _interstitialPlacement = placement;
+      } catch (error, stack) {
+        debugPrint('preloadInterstitial failed: $error\n$stack');
+      }
+    }, onDone: () => _interstitialFill = null);
+  }
+
   Future<bool> showInterstitial({
     InterstitialPolicy policy = InterstitialPolicy.levelBreak,
   }) async {
     if (!interstitialAdsEnabled) return false;
-    if (!await _hasInternet()) return false;
+    if (!_network.isOnline) return false;
     if (!_ready || !interstitialAllowed(policy: policy)) return false;
 
-    var ad = _interstitial;
+    final placement = interstitialPlacementFor(policy);
+    var ad = (_interstitialPlacement == placement) ? _interstitial : null;
     if (ad == null && policy == InterstitialPolicy.always) {
-      await _fillInterstitial().timeout(forcedFillWait, onTimeout: () {});
-      ad = _interstitial;
+      await preloadInterstitial(placement: placement)
+          .timeout(forcedFillWait, onTimeout: () {});
+      ad = (_interstitialPlacement == placement) ? _interstitial : null;
     }
     if (ad == null) {
-      // Nothing cached: leave the cadence counter alone so the next clear gets
-      // another go. Prefetch respects per-unit backoff — never a burst retry.
-      unawaited(_fillInterstitial());
+      unawaited(preloadInterstitial(placement: placement));
       return false;
     }
     if (!claimFullScreenSlot()) return false;
 
     _interstitial = null;
+    _interstitialPlacement = null;
     _clearsSinceInterstitial = 0;
 
     final closed = Completer<void>();
@@ -264,14 +293,14 @@ class AdsService {
         _hasShownInterstitial = true;
         releaseFullScreenSlot(shown: true);
         _settle(closed);
-        unawaited(_fillInterstitial());
+        unawaited(preloadInterstitial(placement: placement));
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
         debugPrint('interstitial failed to show: $error');
         ad.dispose();
         releaseFullScreenSlot(shown: false);
         _settle(closed);
-        unawaited(_fillInterstitial());
+        unawaited(preloadInterstitial(placement: placement));
       },
     );
 
@@ -287,21 +316,64 @@ class AdsService {
     return true;
   }
 
-  /// Plays a rewarded video and reports whether the player earned the reward.
-  ///
-  /// Only ever shows an already-cached ad, so the video starts on the tap that
-  /// asked for it.
-  Future<RewardedAdOutcome> showRewarded() async {
-    if (!await _hasInternet()) return RewardedAdOutcome.unavailable;
+  Future<void> preloadRewarded({String placement = 'hint'}) async {
+    if (_rewarded != null && _rewardedPlacement == placement) return;
+    if (!_ready || !_appForeground) return;
+    if (!_network.isOnline) return;
+    if (_rewardedAttempts > maxRetries) return;
+
+    final unitId = AppAdsConfig.rewardedUnitId(placement);
+    if (unitId == null) return;
+
+    return _rewardedFill ??= _runFill(() async {
+      try {
+        _rewardedRetry?.cancel();
+        await _rewarded?.dispose();
+        _rewarded = null;
+        _rewardedPlacement = null;
+
+        final request = _AdRequest<RewardedAd>(
+          unitId: unitId,
+          timeout: requestTimeout,
+        );
+        unawaited(
+          RewardedAd.load(
+            adUnitId: unitId,
+            request: const AdRequest(),
+            rewardedAdLoadCallback: RewardedAdLoadCallback(
+              onAdLoaded: request.filled,
+              onAdFailedToLoad: request.empty,
+            ),
+          ),
+        );
+        final ad = await request.result;
+        if (ad == null) {
+          _rewardedAttempts++;
+          _scheduleRewardedRetry(placement);
+          return;
+        }
+        _rewardedAttempts = 0;
+        _rewarded = ad;
+        _rewardedPlacement = placement;
+      } catch (error, stack) {
+        debugPrint('preloadRewarded failed: $error\n$stack');
+      }
+    }, onDone: () => _rewardedFill = null);
+  }
+
+  Future<RewardedAdOutcome> showRewarded({String placement = 'hint'}) async {
+    if (!_network.isOnline) return RewardedAdOutcome.unavailable;
     if (!_ready) return RewardedAdOutcome.unavailable;
-    final ad = _rewarded;
+
+    var ad = (_rewardedPlacement == placement) ? _rewarded : null;
     if (ad == null) {
-      unawaited(_fillRewarded());
+      unawaited(preloadRewarded(placement: placement));
       return RewardedAdOutcome.unavailable;
     }
     if (!claimFullScreenSlot()) return RewardedAdOutcome.unavailable;
 
     _rewarded = null;
+    _rewardedPlacement = null;
     var earned = false;
     final closed = Completer<void>();
     ad.fullScreenContentCallback = FullScreenContentCallback(
@@ -309,14 +381,14 @@ class AdsService {
         ad.dispose();
         releaseFullScreenSlot(shown: true);
         _settle(closed);
-        unawaited(_fillRewarded());
+        unawaited(preloadRewarded(placement: placement));
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
         debugPrint('rewarded failed to show: $error');
         ad.dispose();
         releaseFullScreenSlot(shown: false);
         _settle(closed);
-        unawaited(_fillRewarded());
+        unawaited(preloadRewarded(placement: placement));
       },
     );
 
@@ -332,191 +404,18 @@ class AdsService {
     return earned ? RewardedAdOutcome.earned : RewardedAdOutcome.skipped;
   }
 
-  /// The first banner unit that fills at [size], or null if none do.
-  ///
-  /// Waits out the SDK bring-up rather than failing against it, because the
-  /// first banner of a session is asked for seconds after launch.
-  ///
-  /// Ownership passes to the caller: whoever mounts the ad disposes it.
-  Future<BannerAd?> loadBanner(AdSize size) async {
+  /// Loads the single unit for [placement]. Caller owns dispose.
+  Future<BannerAd?> loadBanner(
+    AdSize size, {
+    String placement = 'app',
+  }) async {
     await init();
     if (!_ready || !bannerAdsEnabled || !_appForeground) return null;
-    if (!await _hasInternet()) {
-      _loadState[AdPlacement.banner]!.onSkipped();
-      return null;
-    }
-    return _loadNext(
-      AdPlacement.banner,
-      (unitId) => _requestBanner(unitId, size),
-    );
-  }
+    if (!_network.isOnline) return null;
 
-  Future<void> dispose() async {
-    _interstitialRetry?.cancel();
-    _rewardedRetry?.cancel();
-    _interstitial?.dispose();
-    _interstitial = null;
-    _rewarded?.dispose();
-    _rewarded = null;
-    _ready = false;
-    _bringUp = null;
-  }
+    final unitId = AppAdsConfig.bannerUnitId(placement);
+    if (unitId == null) return null;
 
-  // ---------------------------------------------------------------------------
-  // The full-screen gate
-  // ---------------------------------------------------------------------------
-
-  /// Claims the right to put a full-screen ad up, or refuses.
-  ///
-  /// An interstitial and a rewarded video can both sit cached at once, and the
-  /// two paths that show them are independent — the win fanfare can fire a
-  /// level-end interstitial in the same frame a hint tap resolves, and a double
-  /// tap can ask twice. Two `show()` calls in flight stack two native
-  /// activities, and the one underneath never gets the dismiss callback it is
-  /// waiting on: its reward is lost and the gate would stay shut for good. So
-  /// whoever claims it first shows, and the loser backs off quietly.
-  @visibleForTesting
-  bool claimFullScreenSlot() {
-    if (_fullScreenShowing) return false;
-    _fullScreenShowing = true;
-    return true;
-  }
-
-  @visibleForTesting
-  void releaseFullScreenSlot({required bool shown}) {
-    if (!_fullScreenShowing) return;
-    _fullScreenShowing = false;
-    // Only a real impression starts the quiet period; an ad that failed to
-    // show should not buy the next one a reprieve.
-    if (shown) _lastFullScreenAt = DateTime.now();
-  }
-
-  /// Waits for the ad to close, but never forever.
-  ///
-  /// A dismiss callback that never arrives would leave the gate shut and the
-  /// caller's navigation hanging behind an ad the player has already closed.
-  Future<void> _awaitClose(Completer<void> closed) {
-    return closed.future.timeout(
-      const Duration(minutes: 5),
-      onTimeout: () {
-        debugPrint('full-screen ad never reported its dismissal');
-        releaseFullScreenSlot(shown: true);
-      },
-    );
-  }
-
-  void _settle(Completer<void> completer) {
-    if (!completer.isCompleted) completer.complete();
-  }
-
-  // ---------------------------------------------------------------------------
-  // Loading
-  // ---------------------------------------------------------------------------
-
-  /// One unit, then stop. Rotation happens on the next allowed attempt.
-  Future<T?> _loadNext<T extends Object>(
-    AdPlacement placement,
-    Future<T?> Function(String unitId) request,
-  ) async {
-    final state = _loadState[placement]!;
-    await state.waitUntilAllowed();
-    if (!_ready || !_appForeground) return null;
-    final ad = await request(state.currentUnitId);
-    if (ad != null) {
-      state.onFilled();
-      return ad;
-    }
-    state.onEmpty();
-    return null;
-  }
-
-  Future<void> _fillInterstitial() async {
-    if (!interstitialAdsEnabled) {
-      await _interstitial?.dispose();
-      _interstitial = null;
-      return;
-    }
-    if (!_ready || !_appForeground || _interstitial != null) return;
-    if (!await _hasInternet()) {
-      _loadState[AdPlacement.interstitial]!.onSkipped();
-      _scheduleInterstitialRetry();
-      return;
-    }
-    return _interstitialFill ??= _runFill(
-      () async {
-        _interstitial = await _loadNext(
-          AdPlacement.interstitial,
-          _requestInterstitial,
-        );
-        if (_interstitial == null) _scheduleInterstitialRetry();
-      },
-      onDone: () => _interstitialFill = null,
-    );
-  }
-
-  Future<void> _fillRewarded() async {
-    if (!_ready || !_appForeground || _rewarded != null) {
-      return Future<void>.value();
-    }
-    if (!await _hasInternet()) {
-      _loadState[AdPlacement.rewarded]!.onSkipped();
-      _scheduleRewardedRetry();
-      return;
-    }
-    return _rewardedFill ??= _runFill(
-      () async {
-        _rewarded = await _loadNext(AdPlacement.rewarded, _requestRewarded);
-        if (_rewarded == null) _scheduleRewardedRetry();
-      },
-      onDone: () => _rewardedFill = null,
-    );
-  }
-
-  void _scheduleInterstitialRetry() {
-    _interstitialRetry?.cancel();
-    if (!_appForeground || !interstitialAdsEnabled) return;
-    final delay = retryDelayFor(AdPlacement.interstitial);
-    _interstitialRetry = Timer(
-      delay == Duration.zero
-          ? AdPlacementLoadState.nextUnitGap
-          : delay,
-      () => unawaited(_fillInterstitial()),
-    );
-  }
-
-  void _scheduleRewardedRetry() {
-    _rewardedRetry?.cancel();
-    if (!_appForeground) return;
-    final delay = retryDelayFor(AdPlacement.rewarded);
-    _rewardedRetry = Timer(
-      delay == Duration.zero
-          ? AdPlacementLoadState.nextUnitGap
-          : delay,
-      () => unawaited(_fillRewarded()),
-    );
-  }
-
-  Future<void> _runFill(
-    Future<void> Function() fill, {
-    required VoidCallback onDone,
-  }) async {
-    try {
-      await fill();
-    } finally {
-      onDone();
-    }
-  }
-
-  Future<bool> _hasInternet() async {
-    try {
-      final status = await Connectivity().checkConnectivity();
-      return status.any((s) => s != ConnectivityResult.none);
-    } catch (_) {
-      return false;
-    }
-  }
-
-  Future<BannerAd?> _requestBanner(String unitId, AdSize size) {
     final request = _AdRequest<BannerAd>(
       unitId: unitId,
       timeout: requestTimeout,
@@ -537,49 +436,82 @@ class AdsService {
     return request.result;
   }
 
-  Future<InterstitialAd?> _requestInterstitial(String unitId) {
-    final request = _AdRequest<InterstitialAd>(
-      unitId: unitId,
-      timeout: requestTimeout,
-    );
-    unawaited(
-      InterstitialAd.load(
-        adUnitId: unitId,
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: request.filled,
-          onAdFailedToLoad: request.empty,
-        ),
-      ),
-    );
-    return request.result;
+  Future<void> dispose() async {
+    _interstitialRetry?.cancel();
+    _rewardedRetry?.cancel();
+    await _interstitial?.dispose();
+    _interstitial = null;
+    await _rewarded?.dispose();
+    _rewarded = null;
+    _ready = false;
+    _bringUp = null;
+    await _network.dispose();
   }
 
-  Future<RewardedAd?> _requestRewarded(String unitId) {
-    final request = _AdRequest<RewardedAd>(
-      unitId: unitId,
-      timeout: requestTimeout,
+  @visibleForTesting
+  bool claimFullScreenSlot() {
+    if (_fullScreenShowing) return false;
+    _fullScreenShowing = true;
+    return true;
+  }
+
+  @visibleForTesting
+  void releaseFullScreenSlot({required bool shown}) {
+    if (!_fullScreenShowing) return;
+    _fullScreenShowing = false;
+    if (shown) _lastFullScreenAt = DateTime.now();
+  }
+
+  Future<void> _awaitClose(Completer<void> closed) {
+    return closed.future.timeout(
+      const Duration(minutes: 5),
+      onTimeout: () {
+        debugPrint('full-screen ad never reported its dismissal');
+        releaseFullScreenSlot(shown: true);
+      },
     );
-    unawaited(
-      RewardedAd.load(
-        adUnitId: unitId,
-        request: const AdRequest(),
-        rewardedAdLoadCallback: RewardedAdLoadCallback(
-          onAdLoaded: request.filled,
-          onAdFailedToLoad: request.empty,
-        ),
-      ),
+  }
+
+  void _settle(Completer<void> completer) {
+    if (!completer.isCompleted) completer.complete();
+  }
+
+  Future<void> _runFill(
+    Future<void> Function() fill, {
+    required VoidCallback onDone,
+  }) async {
+    try {
+      await fill();
+    } finally {
+      onDone();
+    }
+  }
+
+  void _scheduleInterstitialRetry(String placement) {
+    _interstitialRetry?.cancel();
+    if (!_appForeground || !interstitialAdsEnabled) return;
+    if (_interstitialAttempts > maxRetries) return;
+    if (!_network.isOnline) return;
+    final delay = retryBackoff * _interstitialAttempts.clamp(1, 8);
+    _interstitialRetry = Timer(
+      delay > const Duration(minutes: 5) ? const Duration(minutes: 5) : delay,
+      () => unawaited(preloadInterstitial(placement: placement)),
     );
-    return request.result;
+  }
+
+  void _scheduleRewardedRetry(String placement) {
+    _rewardedRetry?.cancel();
+    if (!_appForeground) return;
+    if (_rewardedAttempts > maxRetries) return;
+    if (!_network.isOnline) return;
+    final delay = retryBackoff * _rewardedAttempts.clamp(1, 8);
+    _rewardedRetry = Timer(
+      delay > const Duration(minutes: 5) ? const Duration(minutes: 5) : delay,
+      () => unawaited(preloadRewarded(placement: placement)),
+    );
   }
 }
 
-/// One unit's turn in the waterfall, as a future that always resolves.
-///
-/// AdMob answers a request with one of two callbacks, or — on a wedged network
-/// stack — neither. The timeout is what keeps a single silent unit from
-/// stalling the whole list, and [_settled] is what keeps a late answer from
-/// handing back an ad nobody is waiting for any more.
 class _AdRequest<T extends Ad> {
   _AdRequest({required this.unitId, required Duration timeout}) {
     _timer = Timer(timeout, () {
@@ -598,7 +530,6 @@ class _AdRequest<T extends Ad> {
 
   void filled(T ad) {
     if (_settled) {
-      // The waterfall has already moved on; this ad has no owner to dispose it.
       ad.dispose();
       return;
     }

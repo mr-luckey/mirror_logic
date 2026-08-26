@@ -11,8 +11,10 @@ import 'package:mirror_logic/data/repositories/economy_repository.dart';
 import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/data/repositories/save_repository.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
+import 'package:mirror_logic/infrastructure/analytics/analytics_service.dart';
 import 'package:mirror_logic/infrastructure/art/game_art.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
+import 'package:mirror_logic/infrastructure/notifications/local_notification_service.dart';
 import 'package:mirror_logic/infrastructure/review/review_service.dart';
 import 'package:mirror_logic/infrastructure/update/app_update_service.dart';
 import 'package:mirror_logic/presentation/blocs/economy/economy_bloc.dart';
@@ -71,6 +73,13 @@ Future<void> main() async {
   final adsService = sl<AdsService>();
   unawaited(adsService.init());
 
+  final analyticsService = sl<AnalyticsService>();
+  unawaited(analyticsService.init());
+
+  final notifications = sl<LocalNotificationService>();
+  // Permission + schedule need an Activity — kicked off after first frame
+  // from [MirrorLogicApp], not here before runApp.
+
   unawaited(
     GameArt.loadForTheme(
       // Prefer the saved hall so first paint matches the equipped theme.
@@ -86,6 +95,10 @@ Future<void> main() async {
         RepositoryProvider<LevelRepository>.value(value: levelRepository),
         RepositoryProvider<AudioService>.value(value: audioService),
         RepositoryProvider<AdsService>.value(value: adsService),
+        RepositoryProvider<AnalyticsService>.value(value: analyticsService),
+        RepositoryProvider<LocalNotificationService>.value(
+          value: notifications,
+        ),
         RepositoryProvider<ReviewService>.value(value: sl<ReviewService>()),
         RepositoryProvider<AppUpdateService>.value(
           value: sl<AppUpdateService>(),
@@ -114,6 +127,7 @@ Future<void> main() async {
             create: (_) => RewardedCoinsCubit(
               economyRepository: economyRepository,
               adsService: adsService,
+              analytics: analyticsService,
             ),
           ),
         ],

@@ -4,29 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/app/ads_scope.dart';
 import 'package:mirror_logic/app/router.dart';
-import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
-import 'package:mirror_logic/infrastructure/ads/ad_placement_load_state.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 import 'package:mirror_logic/presentation/widgets/ads/ad_banner_slot.dart';
 
 /// Lays the bottom banner under whichever screen is on top.
 ///
-/// One strip for the whole app rather than one per screen: the banner then
-/// outlives every navigation, so walking from the menu into a chapter and back
-/// costs a single ad request instead of one per screen the player passes
-/// through. It also means one owner for the question of whether the strip is
-/// there at all, which the screens above have to agree with — they give up their
-/// bottom inset to it, and only while it is actually serving.
+/// One strip for the whole app. Loads the single `app` placement unit — never
+/// a multi-ID waterfall. Collapses when empty. No infinite retry storm.
 class AdBannerHost extends StatefulWidget {
   const AdBannerHost({super.key, required this.child});
 
   final Widget child;
 
-  /// Whether the route at [location] carries a banner.
-  ///
-  /// Splash is on screen for a second and a half, and onboarding is the first
-  /// thing a new player ever sees — neither is worth the impression. Everywhere
-  /// else earns.
   static bool showsBannerAt(String location) =>
       !location.startsWith('/splash') && !location.startsWith('/onboarding');
 
@@ -36,22 +25,19 @@ class AdBannerHost extends StatefulWidget {
 
 class _AdBannerHostState extends State<AdBannerHost>
     with WidgetsBindingObserver {
-  /// Fixed 320x50 rather than an adaptive size, which returns anything from 50
-  /// to 90 points tall depending on the device. The strip is a constant height,
-  /// and a constant slot can only honestly hold a constant ad.
   static const AdSize _size = AdSize.banner;
 
-  /// How long a filled banner stays up before it is replaced.
-  ///
-  /// Client-driven refresh; keep AdMob console auto-refresh **off**. The floor
-  /// is 30 seconds — shorter intervals are invalid traffic.
+  /// Client refresh; keep AdMob console auto-refresh off. Floor is 30s.
   static const Duration _refreshInterval = Duration(seconds: 45);
+  static const Duration _retryBackoff = Duration(seconds: 30);
+  static const int _maxRetries = 2;
 
   late bool _show = AdBannerHost.showsBannerAt(_location);
   BannerAd? _ad;
   bool _requested = false;
   bool _foreground = true;
   int _wake = 0;
+  int _failStreak = 0;
 
   @override
   void initState() {
@@ -63,11 +49,10 @@ class _AdBannerHostState extends State<AdBannerHost>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // The service comes from the scope, so the request cannot go in initState.
     final ads = context.ads;
     if (_requested || ads == null) return;
     _requested = true;
-    _load(ads);
+    unawaited(_load(ads));
   }
 
   @override
@@ -101,25 +86,20 @@ class _AdBannerHostState extends State<AdBannerHost>
   void _sync() {
     final show = AdBannerHost.showsBannerAt(_location);
     if (!mounted || show == _show) return;
-    // This host sits above the router, and the delegate can notify while the
-    // router below it is building. Marking an ancestor dirty mid-build throws,
-    // so the strip changes on the frame after the route does.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || _show == show) return;
       setState(() => _show = show);
       _wake++;
+      if (show) _failStreak = 0;
     });
   }
 
-  /// Loads a banner only while it can actually be shown.
-  ///
-  /// One unit per attempt (rotation + backoff live in [AdsService]). Never
-  /// request on splash/onboarding, in the background, or while ads are off.
   Future<void> _load(AdsService ads) async {
     while (mounted) {
       await _waitUntilVisible(ads);
       if (!mounted) return;
-      final ad = await ads.loadBanner(_size);
+
+      final ad = await ads.loadBanner(_size, placement: 'app');
       if (!mounted) {
         await ad?.dispose();
         return;
@@ -130,13 +110,17 @@ class _AdBannerHostState extends State<AdBannerHost>
         continue;
       }
       if (ad == null) {
-        var delay = ads.retryDelayFor(AdPlacement.banner);
-        if (delay < AdPlacementLoadState.nextUnitGap) {
-          delay = AdPlacementLoadState.nextUnitGap;
+        _failStreak++;
+        if (_failStreak > _maxRetries) {
+          // Stop hammering. Wait a full refresh window before one more try.
+          _failStreak = 0;
+          await _sleep(_refreshInterval);
+          continue;
         }
-        await _sleep(delay);
+        await _sleep(_retryBackoff * _failStreak);
         continue;
       }
+      _failStreak = 0;
       _swapIn(ad);
       await _sleep(_refreshInterval);
     }
@@ -166,13 +150,6 @@ class _AdBannerHostState extends State<AdBannerHost>
     }
   }
 
-  /// Puts [ad] in the strip and retires the one it replaces.
-  ///
-  /// The outgoing ad is disposed a frame late, on purpose: its `AdWidget` is
-  /// still mounted until the build this setState schedules, and tearing the
-  /// native ad out from under a live platform view leaves an empty hole in the
-  /// strip. Swapping this way — new ad in first, old one released after — also
-  /// means the strip never collapses between two banners.
   void _swapIn(BannerAd ad) {
     final outgoing = _ad;
     setState(() => _ad = ad);
@@ -190,15 +167,11 @@ class _AdBannerHostState extends State<AdBannerHost>
   @override
   Widget build(BuildContext context) {
     final ad = _ad;
-    // An empty strip is 56 points of wood taken off the puzzle for nothing, so
-    // until an ad is actually in hand the screens get the whole window.
     if (!_show || ad == null) return widget.child;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // The strip has taken over the bottom inset, so the screens above must
-        // not reserve room for it a second time in their own SafeArea.
         Expanded(
           child: MediaQuery.removePadding(
             context: context,

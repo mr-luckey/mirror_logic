@@ -47,6 +47,10 @@ abstract final class GameConstants {
   /// and hints are free (no rewarded video) so QA can still use them.
   static const bool adsEnabled = true;
 
+  /// Set to false before shipping. When true, local notifications fire every
+  /// minute from `notifications.json` instead of the 17:00 / 21:00 schedule.
+  static const bool notificationTestEveryMinute = false;
+
   static const String chapter1Id = 'ch1';
   static const String chapter2Id = 'ch2';
 

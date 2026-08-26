@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mirror_logic/app/ad_banner_host.dart';
 import 'package:mirror_logic/core/constants/ad_unit_ids.dart';
-import 'package:mirror_logic/infrastructure/ads/ad_placement_load_state.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_remote_config.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
 
@@ -16,12 +15,6 @@ void main() {
   final binding = TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    // No AdMob plugin is registered under a unit test, and the SDK fires one
-    // channel call from a getter without awaiting it — so leaving the channel
-    // unimplemented throws where nothing can catch it. Answering everything
-    // with null instead gives the service exactly the shape of failure a device
-    // with no ads behind it produces, which is the case worth pinning down: the
-    // game has to stay playable through it.
     binding.defaultBinaryMessenger.setMockMethodCallHandler(
       _adChannel,
       (call) async => null,
@@ -32,65 +25,36 @@ void main() {
     binding.defaultBinaryMessenger.setMockMethodCallHandler(_adChannel, null);
   });
 
-  group('ad unit waterfall', () {
-    test('every placement carries a full set of slots', () {
-      for (final placement in AdPlacement.values) {
-        expect(
-          AdUnitIds.forPlacement(placement).length,
-          greaterThanOrEqualTo(AdUnitIds.minUnitsPerPlacement),
-          reason: 'AdPlacement.${placement.name} lost a slot',
-        );
-      }
-    });
-
-    test('android slots inside a placement are unique', () {
+  group('ad unit placements', () {
+    test('every format carries five named slots', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      for (final placement in AdPlacement.values) {
-        final units = AdUnitIds.forPlacement(placement);
-        expect(units.toSet(), hasLength(units.length), reason: placement.name);
-      }
+      expect(AppAdsConfig.bannerAdUnits, hasLength(AppAdsConfig.maxUnitsPerFormat));
+      expect(
+        AppAdsConfig.interstitialAdUnits,
+        hasLength(AppAdsConfig.maxUnitsPerFormat),
+      );
+      expect(
+        AppAdsConfig.rewardedAdUnits,
+        hasLength(AppAdsConfig.maxUnitsPerFormat),
+      );
     });
 
-    test('no slot is left blank', () {
-      for (final placement in AdPlacement.values) {
-        for (final unitId in AdUnitIds.forPlacement(placement)) {
-          expect(unitId.trim(), isNotEmpty);
-          expect(unitId, startsWith('ca-app-pub-'));
-        }
-      }
+    test('named placements resolve without waterfall', () {
+      // Debug builds always use Google test IDs (testMode).
+      expect(AppAdsConfig.bannerUnitId('app'), isNotNull);
+      expect(AppAdsConfig.interstitialUnitId('level_break'), isNotNull);
+      expect(AppAdsConfig.rewardedUnitId('hint'), isNotNull);
+      expect(AppAdsConfig.bannerUnitId('missing'), isNull);
     });
 
-    test('the three placements do not share a unit', () {
+    test('android production lists use unique units per format', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      final banner = AdUnitIds.forPlacement(AdPlacement.banner).first;
-      final interstitial = AdUnitIds.forPlacement(
-        AdPlacement.interstitial,
-      ).first;
-      final rewarded = AdUnitIds.forPlacement(AdPlacement.rewarded).first;
-      expect({banner, interstitial, rewarded}, hasLength(3));
-    });
-  });
-
-  group('ad unit rotation', () {
-    test('stays on a filling unit and only advances after a miss', () {
-      final state = AdPlacementLoadState(['a', 'b', 'c', 'd', 'e']);
-      expect(state.currentUnitId, 'a');
-      state.onFilled();
-      expect(state.currentUnitId, 'a');
-      state.onEmpty();
-      expect(state.currentUnitId, 'b');
-    });
-
-    test('backs off after a full miss cycle rather than spinning', () {
-      final state = AdPlacementLoadState(['a', 'b', 'c', 'd', 'e']);
-      for (var i = 0; i < 5; i++) {
-        state.onEmpty();
-      }
-      expect(state.currentUnitId, 'a');
-      expect(state.backoff, AdPlacementLoadState.initialCycleBackoff);
-      expect(state.delayUntilAllowed, greaterThan(Duration.zero));
+      // Skip when testMode forces samples — still verify lists themselves.
+      expect(AppAdsConfig.bannerAdUnits.toSet().length, 5);
+      expect(AppAdsConfig.interstitialAdUnits.toSet().length, 5);
+      expect(AppAdsConfig.rewardedAdUnits.toSet().length, 5);
     });
   });
 
@@ -100,7 +64,6 @@ void main() {
 
       expect(ads.claimFullScreenSlot(), isTrue);
       expect(ads.isFullScreenAdShowing, isTrue);
-      // The rewarded hint asking while the level-end interstitial is up.
       expect(ads.claimFullScreenSlot(), isFalse);
 
       ads.releaseFullScreenSlot(shown: true);
@@ -139,7 +102,6 @@ void main() {
       ads.registerLevelCleared();
       expect(ads.interstitialDue, isTrue);
 
-      // The player watched a video for a hint on the way to this clear.
       ads.claimFullScreenSlot();
       ads.releaseFullScreenSlot(shown: true);
       expect(ads.interstitialDue, isFalse);

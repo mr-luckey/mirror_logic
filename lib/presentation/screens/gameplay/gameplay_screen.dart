@@ -16,6 +16,7 @@ import 'package:mirror_logic/data/repositories/level_repository.dart';
 import 'package:mirror_logic/domain/beam/beam_alignment.dart';
 import 'package:mirror_logic/domain/beam/beam_types.dart';
 import 'package:mirror_logic/infrastructure/ads/ads_service.dart';
+import 'package:mirror_logic/infrastructure/analytics/analytics_service.dart';
 import 'package:mirror_logic/infrastructure/art/game_art.dart';
 import 'package:mirror_logic/infrastructure/audio/audio_service.dart';
 import 'package:mirror_logic/domain/theme/theme_controller.dart';
@@ -65,7 +66,10 @@ class _GameplayScreenState extends State<GameplayScreen> {
     ThemeController.watch(context);
     return BlocProvider(
       create: (context) =>
-          GameplayBloc(levelRepository: context.read<LevelRepository>())
+          GameplayBloc(
+            levelRepository: context.read<LevelRepository>(),
+            analytics: context.read<AnalyticsService>(),
+          )
             ..add(GameplayLoadLevel(widget.levelId)),
       child: const _GameplayBody(),
     );
@@ -342,17 +346,26 @@ Future<bool> _payForHint(BuildContext context) async {
     return false;
   }
   if (!context.mounted) return false;
-  if (!ads.hasRewardedAd) ads.warmUp();
+  if (!ads.hasRewardedFor('hint')) {
+    await ads.preloadRewarded(placement: 'hint');
+  }
+  if (!context.mounted) return false;
   return _watchForHint(context, ads);
 }
 
 /// Plays a rewarded video and pays out only if the player sat through it.
 Future<bool> _watchForHint(BuildContext context, AdsService ads) async {
-  final outcome = await ads.showRewarded();
+  final outcome = await ads.showRewarded(placement: 'hint');
   if (!context.mounted) return false;
 
   switch (outcome) {
     case RewardedAdOutcome.earned:
+      unawaited(
+        context.read<AnalyticsService>().logRewardedAdCompleted(
+          placement: 'hint',
+          source: 'gameplay',
+        ),
+      );
       return true;
     case RewardedAdOutcome.skipped:
       MedievalToast.show(
