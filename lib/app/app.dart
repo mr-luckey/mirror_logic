@@ -40,13 +40,17 @@ class _MirrorLogicAppState extends State<MirrorLogicApp> {
   }
 
   Future<void> _bootstrapNotifications() async {
-    final notifications = context.read<LocalNotificationService>();
-    final analytics = context.read<AnalyticsService>();
-    final count = await notifications.scheduleNotifications();
-    if (count > 0) {
-      unawaited(
-        analytics.logNotificationScheduled(count: count, source: 'launch'),
-      );
+    try {
+      final notifications = context.read<LocalNotificationService>();
+      final analytics = context.read<AnalyticsService>();
+      final count = await notifications.scheduleNotifications();
+      if (count > 0) {
+        unawaited(
+          analytics.logNotificationScheduled(count: count, source: 'launch'),
+        );
+      }
+    } catch (error, stack) {
+      debugPrint('Notification bootstrap failed: $error\n$stack');
     }
   }
 

@@ -60,10 +60,12 @@ class AdsRemoteConfig implements AdsConfig {
 
   @override
   Duration get interstitialMinInterval {
+    // Floor at 30s so a bad Remote Config value (e.g. 1s) cannot spam
+    // interstitials or look like a hang/crash loop on level transitions.
     final seconds = _int(
       _keyInterstitialMinIntervalSeconds,
       defaultInterstitialMinInterval.inSeconds,
-    ).clamp(0, 3600);
+    ).clamp(30, 3600);
     return Duration(seconds: seconds);
   }
 

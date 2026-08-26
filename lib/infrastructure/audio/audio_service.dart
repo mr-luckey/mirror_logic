@@ -120,8 +120,10 @@ class AudioService {
             // Mix under whatever the player already has going.
             audioFocus: AndroidAudioFocus.none,
           ),
+          // mixWithOthers is only valid with playback / playAndRecord / multiRoute
+          // — ambient + mixWithOthers asserts (and can brick audio on some builds).
           iOS: AudioContextIOS(
-            category: AVAudioSessionCategory.ambient,
+            category: AVAudioSessionCategory.playback,
             options: const {AVAudioSessionOptions.mixWithOthers},
           ),
         ),

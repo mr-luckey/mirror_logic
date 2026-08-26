@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mirror_logic/app/router.dart';
 import 'package:mirror_logic/core/constants/game_constants.dart';
@@ -28,7 +29,14 @@ T sl<T extends Object>() {
 }
 
 Future<void> configureDependencies() async {
-  final box = await Hive.openBox<dynamic>('mirror_logic');
+  Box<dynamic> box;
+  try {
+    box = await Hive.openBox<dynamic>('mirror_logic');
+  } catch (error, stack) {
+    debugPrint('Hive open failed, resetting box: $error\n$stack');
+    await Hive.deleteBoxFromDisk('mirror_logic');
+    box = await Hive.openBox<dynamic>('mirror_logic');
+  }
   final storage = LocalStorageService(box);
   final saveRepository = SaveRepository(storage);
   final economyRepository = EconomyRepository(saveRepository);

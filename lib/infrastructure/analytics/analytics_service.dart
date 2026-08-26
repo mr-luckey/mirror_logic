@@ -1,4 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mirror_logic/infrastructure/analytics/analytics_config.dart';
 
@@ -8,15 +9,36 @@ class AnalyticsService {
     AnalyticsConfig config = const AnalyticsConfig(),
     FirebaseAnalytics? analytics,
   }) : _config = config,
-       _analytics = analytics ?? FirebaseAnalytics.instance;
+       _analyticsOverride = analytics;
 
   final AnalyticsConfig _config;
-  final FirebaseAnalytics _analytics;
+  final FirebaseAnalytics? _analyticsOverride;
+  FirebaseAnalytics? _analytics;
+  bool _unavailable = false;
+
+  FirebaseAnalytics? get _client {
+    if (_unavailable) return null;
+    if (_analyticsOverride != null) return _analyticsOverride;
+    if (_analytics != null) return _analytics;
+    try {
+      if (Firebase.apps.isEmpty) {
+        _unavailable = true;
+        return null;
+      }
+      return _analytics = FirebaseAnalytics.instance;
+    } catch (error) {
+      _unavailable = true;
+      debugPrint('Analytics unavailable: $error');
+      return null;
+    }
+  }
 
   Future<void> init() async {
     if (!_config.enabled) return;
     try {
-      await _analytics.setAnalyticsCollectionEnabled(true);
+      final client = _client;
+      if (client == null) return;
+      await client.setAnalyticsCollectionEnabled(true);
     } catch (error, stack) {
       debugPrint('Analytics init failed: $error\n$stack');
     }
@@ -103,7 +125,9 @@ class AnalyticsService {
   Future<void> logEvent(String name, [Map<String, Object>? parameters]) async {
     if (!_config.enabled) return;
     try {
-      await _analytics.logEvent(
+      final client = _client;
+      if (client == null) return;
+      await client.logEvent(
         name: name,
         parameters: parameters == null ? null : _sanitize(parameters),
       );

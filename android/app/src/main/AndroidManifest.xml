@@ -39,6 +39,12 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-6619866004331477~1908110434" />
+        <!-- Impeller/Vulkan races on Mali (MediaTek) can abort with
+             "pthread_mutex_lock called on a destroyed mutex" in mali-cmar-backe.
+             Skia is the stable path on these SoCs until Flutter ships a fix. -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
